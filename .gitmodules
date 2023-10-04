@@ -7,3 +7,12 @@
 [submodule "cppzmq"]
 	path = cppzmq
 	url = https://github.com/zeromq/cppzmq
+[submodule "submodules/zmqRemoteApi"]
+	path = submodules/zmqRemoteApi
+	url = https://github.com/CoppeliaRobotics/zmqRemoteApi.git
+[submodule "submodules/jsoncons"]
+	path = submodules/jsoncons
+	url = https://github.com/danielaparker/jsoncons
+[submodule "submodules/cppzmq"]
+	path = submodules/cppzmq
+	url = https://github.com/zeromq/cppzmq
