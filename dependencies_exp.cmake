@@ -32,20 +32,15 @@ if(NOT COPPELIASIM_INCLUDE_DIR)
 endif()
 
 set(SUBMODULES ${CMAKE_CURRENT_SOURCE_DIR}/submodules)
-set(ZMQ_REMOTE_API_PATH ${SUBMODULES}/zmqRemoteApi/)
+set(ZMQ_REMOTE_API_PATH ${CMAKE_CURRENT_SOURCE_DIR}/coppeliarobotics/zmqRemoteApi/)
 set(SOURCE_DIR ${ZMQ_REMOTE_API_PATH}/clients/cpp)
+
+
 
 
 list(APPEND CMAKE_MODULE_PATH
     ${SOURCE_DIR}/cmake/modules #${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules
     ${COPPELIASIM_INCLUDE_DIR}/cmake)
-#find_package(CoppeliaSim 4.1.0.0 REQUIRED)
-find_package(Python3 REQUIRED COMPONENTS Interpreter)
-
-set(GENERATE OFF CACHE BOOL "Generate wrappers for objects and methods (requires CoppeliaSim to be running).")
-set(GENERATE_INCLUDE_OBJECTS "" CACHE STRING "Include only given objects (e.g.: \"sim,simIK\") or leave blank to include all objects in wrapper code generation.")
-set(GENERATE_EXCLUDE_OBJECTS "simEigen,simB0,simRemoteApi,simQML,simOMPL,simUI,simIM,simIGL,simURDF,simSkel,simBWF,simCmd,simSubprocess,simURLDrop,simWS,simZMQ" CACHE STRING "Exclude given objects (e.g.: \"simUI,simIM\") from being generated. Note: option GENERATE_INCLUDE_OBJECTS, if different from \"\", has precedence over this.")
-set(GENERATE_EXCLUDE_METHODS "sim.test,sim.auxFunc,sim.handleExtCalls,sim.getStringSignal,sim.getInt32Signal,sim.getFloatSignal" CACHE STRING "Exclude given methods (e.g.: \"sim.test,simUI.foo\") from being generated.")
 
 include(FetchContent)
 
