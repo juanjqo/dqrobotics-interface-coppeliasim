@@ -19,7 +19,7 @@ int main()
         sim.setStepping(true);
         sim.startSimulation();
         double simTime = 0.0;
-        while((simTime = sim.getSimulationTime()) < 3)
+        while((simTime = sim.getSimulationTime()) < 10)
         {
             std::cout << "Simulation time: " << std::setprecision(3) << simTime << " [s]" << std::endl;
             // auto retVal = sim.testCB(21, "myCallback@func", 42); // sim.testCB is calling back above "myFunc"
