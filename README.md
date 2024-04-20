@@ -11,7 +11,7 @@
 #### Install some brew packages
 
 ```shell
-brew install pkg-config boost cppzmq
+brew install pkg-config boost cppzmq eigen
 ```
 
 #### Download and install CoppeliaSim for MacOS arm64
