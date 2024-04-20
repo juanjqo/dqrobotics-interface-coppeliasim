@@ -20,7 +20,7 @@ ADD_COMPILE_OPTIONS(-Werror=return-type -Wall -Wextra -Wmissing-declarations -Wr
 # The library is installed here when using the regular cmake ., make, sudo make install
 LINK_DIRECTORIES(
     /usr/local/lib/
-    /opt/homebrew/lib
+    /opt/homebrew/lib/
     #/Applications/coppeliaSim.app/Contents/MacOS/
     #/Applications/coppeliaSim.app/Contents/
     #/Applications/coppeliaSim.app/Contents/Frameworks
@@ -30,14 +30,30 @@ LINK_DIRECTORIES(
 #set(VCPKG_TARGET_ARCHITECTURE arm64)
 #set(VCPKG_OSX_ARCHITECTURES arm64)
 
-set(CMAKE_OSX_ARCHITECTURES arm64)
-set(VCPKG_TARGET_TRIPLET arm64-osx) #x64-windows)
-set(CMAKE_TOOLCHAIN_FILE /Users/juanjqo/vcpkg/scripts/buildsystems/vcpkg.cmake)
-include(/Users/juanjqo/vcpkg/scripts/buildsystems/vcpkg.cmake)
+#set(CMAKE_OSX_ARCHITECTURES arm64)
+#set(VCPKG_TARGET_TRIPLET arm64-osx) #x64-windows)
+#set(CMAKE_TOOLCHAIN_FILE /Users/juanjqo/vcpkg/scripts/buildsystems/vcpkg.cmake)
+#include(/Users/juanjqo/vcpkg/scripts/buildsystems/vcpkg.cmake)
+
+find_package(cppzmq REQUIRED)
+find_package(ZeroMQ REQUIRED)
+
 
 
 endif()
 
+
+
+#set(CMAKE_INCLUDE_CURRENT_DIR ON)
+#set(CMAKE_MACOSX_RPATH 1)
+
+if(NOT COPPELIASIM_INCLUDE_DIR)
+    if(DEFINED ENV{COPPELIASIM_ROOT_DIR})
+        set(COPPELIASIM_INCLUDE_DIR $ENV{COPPELIASIM_ROOT_DIR}/programming/include)
+    else()
+        message(FATAL_ERROR "Environment variable COPPELIASIM_ROOT_DIR is not set")
+    endif()
+endif()
 
 set(SUBMODULES ${CMAKE_CURRENT_SOURCE_DIR}/submodules)
 set(ZMQ_REMOTE_API_PATH ${SUBMODULES}/zmqRemoteApi/)
@@ -70,16 +86,17 @@ if(NOT jsoncons_POPULATED)
     #add_subdirectory(${jsoncons_SOURCE_DIR} ${jsoncons_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
-set(CPPZMQ_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-FetchContent_Declare(cppzmq
-    GIT_REPOSITORY https://github.com/zeromq/cppzmq
-    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/cppzmq
-)
-FetchContent_GetProperties(cppzmq)
-if(NOT cppzmq_POPULATED)
-    FetchContent_Populate(cppzmq)
-    add_subdirectory(${cppzmq_SOURCE_DIR} ${cppzmq_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
+#set(CPPZMQ_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+#FetchContent_Declare(cppzmq
+#    GIT_REPOSITORY https://github.com/zeromq/cppzmq
+#    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/cppzmq
+#)
+#FetchContent_GetProperties(cppzmq)
+#if(NOT cppzmq_POPULATED)
+#    FetchContent_Populate(cppzmq)
+#    add_subdirectory(${cppzmq_SOURCE_DIR} ${cppzmq_BINARY_DIR} EXCLUDE_FROM_ALL)
+#endif()
+
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
