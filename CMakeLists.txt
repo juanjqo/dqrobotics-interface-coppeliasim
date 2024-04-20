@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(COPPELIASIM_INCLUDE_DIR /Applications/coppeliaSim.app/Contents/)
 set(Python3_EXECUTABLE /usr/local/bin/python3)
-include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies_exp.cmake)
 
 
 
