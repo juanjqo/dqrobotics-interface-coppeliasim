@@ -14,6 +14,8 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies_exp.cmake)
 
 
 
+
+
 # Required for MacOS
 # brew install pkg-config
 # brew install boost
@@ -22,5 +24,5 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies_exp.cmake)
 # Required vcpkg packages
 #./vcpkg install cppzmq  Not anymore!
 
-add_executable(cpp-interface-coppelia src/main.cpp)
-target_link_libraries(cpp-interface-coppelia PRIVATE RemoteAPIClient)
+add_executable(example src/main.cpp)
+target_link_libraries(example PRIVATE ${PROJECT_NAME})
