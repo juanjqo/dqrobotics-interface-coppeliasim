@@ -32,6 +32,7 @@ class DQ_CoppeliaSimInterface
 public:
     DQ_CoppeliaSimInterface();
 
+
     void connect(const std::string& host = "localhost",
                  const int& rpcPort = 23000,
                  const int& cntPort = -1,
@@ -41,22 +42,19 @@ public:
     void stop_simulation()  const;
     void disconnect();
 
-    [[deprecated]] void set_synchronous(const bool& flag);
+    [[deprecated("The synchronous mode is now called stepping mode. Consider using set_stepping_mode(flag) instead.")]]
+    void set_synchronous(const bool& flag);
     void set_stepping_mode(const bool& flag);
 
     double get_simulation_time();
 
     void trigger_next_simulation_step();
-    [[deprecated]] int wait_for_simulation_step_to_end();
+    [[deprecated("This method is supposed to be used in the legacy mode only.")]]
+    int wait_for_simulation_step_to_end();
 
 
 private:
     std::unique_ptr<RemoteAPIClient> client_;
-
-
-
-    //[[deprecated]] bool connect(const int &port, const int& TIMEOUT_IN_MILISECONDS, const int& MAX_TRY_COUNT);
-    //[[deprecated]] bool connect(const std::string& ip, const int& port, const int& TIMEOUT_IN_MILISECONDS, const int& MAX_TRY_COUNT);
 
 };
 
