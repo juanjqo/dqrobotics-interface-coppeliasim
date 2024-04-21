@@ -1,10 +1,19 @@
-![Static Badge](https://img.shields.io/badge/status-experimental-critical)![Static Badge](https://img.shields.io/badge/Platform-Apple_silicon-magenta)![Static Badge](https://img.shields.io/badge/Tested-Apple)![Static Badge](https://img.shields.io/badge/Platform-Ubuntu_x64-orange)![Static Badge](https://img.shields.io/badge/Untested-red)![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)
+![Static Badge](https://img.shields.io/badge/status-experimental-critical)![Static Badge](https://img.shields.io/badge/Platform-Apple_silicon-magenta)![Static Badge](https://img.shields.io/badge/Tested-Apple)![Static Badge](https://img.shields.io/badge/Platform-Ubuntu_x64-orange)![Static Badge](https://img.shields.io/badge/Untested-red)![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/Written_in-C%2B%2B17-blue)![GitHub License](https://img.shields.io/github/license/juanjqo/capybara_toolkit)
 
 # cpp-interface-coppeliasim 
 
-An unofficial DQ Robotics interface with CoppeliaSim based on ZeroMQ remote API.
+An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API and C++17.
 
-Note: This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS (Apple Silicon) only. Ubuntu versions are expected later.
+![Static Badge](https://img.shields.io/badge/warning-yellow)
+This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS (Apple Silicon) only. Ubuntu versions are expected later.
+
+
+| CoppeliaSim  | SO | Status |
+| ------------- | ------------- |------------- |
+| v4.6.0-rev18 (arm64)  | macOS Sonoma (Apple Silicon) | ![Static Badge](https://img.shields.io/badge/experimental-red)|
+| v4.6.0-rev18 (x64)   | Ubuntu 22.04 LTS  |  ![Static Badge](https://img.shields.io/badge/Unsupported-gray)|
+| v4.6.0-rev18 (x64)   | Windows 11  |  ![Static Badge](https://img.shields.io/badge/Unsupported-gray)
+
 
 ## Requirements
 
