@@ -31,6 +31,7 @@ class DQ_CoppeliaSimInterface
 private:
     bool _client_created = false;
     std::string _map_simulation_state(const int& state) const;
+    //void _set_status_bar_message(const std::string& message) const;
 public:
     DQ_CoppeliaSimInterface();
     void connect(const std::string& host = "localhost",

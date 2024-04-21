@@ -33,8 +33,10 @@ std::string DQ_CoppeliaSimInterface::_map_simulation_state(const int &state) con
         default:
             str = "Unknown status";
     }
-    return str;
+        return str;
 }
+
+
 
 DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
     :_client_created(false)
@@ -42,8 +44,16 @@ DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
 
 }
 
-
+//-------------------Private components-----------------------//
 std::unique_ptr<RemoteAPIClient> client_;
+
+
+void _set_status_bar_message(const std::string &message, const int& verbosity_type)
+{
+    client_->getObject().sim().addLog(verbosity_type, message);
+}
+
+//-------------------------------------------------------------//
 
 /**
  * @brief _create_client
@@ -80,8 +90,9 @@ void DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
         _create_client(host, rpcPort, cntPort, verbose_, _client_created);
         _client_created = true;
         set_status_bar_message("       ");
-        set_status_bar_message("DQ_CoppeliaSimInterface "
-                               "is brought to you by Juan Jose Quiroz");
+        _set_status_bar_message("DQ_CoppeliaSimInterface "
+                                "is brought to you by Juan Jose Quiroz Omana",
+                                client_->getObject().sim().verbosity_warnings);
     }
     catch (const std::runtime_error& e)
     {
@@ -189,7 +200,7 @@ int DQ_CoppeliaSimInterface::get_simulation_state() const
  */
 void DQ_CoppeliaSimInterface::set_status_bar_message(const std::string &message) const
 {
-    client_->getObject().sim().addLog(client_->getObject().sim().verbosity_undecorated, message);
+    _set_status_bar_message(message, client_->getObject().sim().verbosity_undecorated);
 }
 
 
