@@ -21,6 +21,7 @@ void _create_client(const std::string& host = "localhost",
         client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
     }
 
+
 };
 
 /**
@@ -38,7 +39,7 @@ void DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
         //client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
         _create_client(host, rpcPort, cntPort, verbose_, _client_created);
         _client_created = true;
-
+        set_status_bar_message("DQ_CoppeliaSimInterface is brought to you by Juan Jose Quiroz");
     }
     catch (const std::runtime_error& e)
     {
@@ -113,4 +114,12 @@ bool DQ_CoppeliaSimInterface::get_client_flag()
 {
     return _client_created;
 }
+
+
+
+void DQ_CoppeliaSimInterface::set_status_bar_message(const std::string &message)
+{
+    client_->getObject().sim().addLog(client_->getObject().sim().verbosity_undecorated, message);
+}
+
 

@@ -52,6 +52,9 @@ public:
     int wait_for_simulation_step_to_end();
     bool get_client_flag();
 
+    void set_status_bar_message(const std::string& message);
+
+
 private:
     bool _client_created = false;
 
