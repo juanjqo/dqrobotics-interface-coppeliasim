@@ -1,5 +1,6 @@
 #include "dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h"
-
+#include<chrono>
+#include<thread>
 
 int main()
 {
@@ -11,16 +12,21 @@ int main()
         vi.start_simulation();
         double t = 0.0;
 
+
+
         while (t < 4.0)
         {
-            std::cout<<"status: "<<vi.is_simulation_running()<<std::endl;
+            std::cout<<"status: "<<vi.is_simulation_running()<<" "
+                      <<vi.get_simulation_state()<<std::endl;
             t = vi.get_simulation_time();
             std::cout<<"Simulation time: "<<t<<std::endl;
             vi.trigger_next_simulation_step();
 
         }
         vi.stop_simulation();
-        std::cout<<"status: "<<vi.is_simulation_running()<<std::endl;
+        vi.get_simulation_state();
+        std::cout<<"status: "<<vi.is_simulation_running()<<" "
+                  <<vi.get_simulation_state()<<std::endl;
     }
     catch (const std::runtime_error& e)
     {

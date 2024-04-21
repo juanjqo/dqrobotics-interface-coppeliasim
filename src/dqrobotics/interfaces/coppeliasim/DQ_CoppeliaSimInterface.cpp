@@ -1,6 +1,41 @@
 #include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
 #include <RemoteAPIClient.h>
 
+std::string DQ_CoppeliaSimInterface::_map_simulation_state(const int &state) const
+{
+    std::string str;
+    switch (state)
+    {
+        case 0:
+            str = "simulation_stopped";
+            break;
+        case 8:
+            str = "simulation_paused";
+            break;
+        case 17:
+            str = "simulation_advancing_running";
+            break;
+        case 22:
+            str = " simulation_advancing_lastbeforestop";
+            break;
+        case 19:
+            str = "simulation_advancing_lastbeforepause";
+            break;
+        case 16:
+            str = "simulation_advancing_firstafterstop or simulation_advancing";
+            break;
+        case 20:
+            str = "simulation_advancing_firstafterpause";
+            break;
+        case 21:
+            str = "simulation_advancing_abouttostop";
+            break;
+        default:
+            str = "Unknown status";
+    }
+    return str;
+}
+
 DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
     :_client_created(false)
 {
@@ -44,6 +79,7 @@ void DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
     {
         _create_client(host, rpcPort, cntPort, verbose_, _client_created);
         _client_created = true;
+        set_status_bar_message("       ");
         set_status_bar_message("DQ_CoppeliaSimInterface "
                                "is brought to you by Juan Jose Quiroz");
     }
@@ -60,6 +96,15 @@ void DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
 void DQ_CoppeliaSimInterface::start_simulation() const
 {
     client_->getObject().sim().startSimulation();
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::pause_simulation pauses the CoppeliaSim simulation.
+ */
+void DQ_CoppeliaSimInterface::pause_simulation() const
+{
+    client_->getObject().sim().pauseSimulation();
+
 }
 
 
@@ -104,23 +149,44 @@ void DQ_CoppeliaSimInterface::trigger_next_simulation_step() const
 
 
 
-
+/**
+ * @brief DQ_CoppeliaSimInterface::is_simulation_running checks if the simulation is running.
+ * @return True if the simulation is running. False otherwise.
+ */
 bool DQ_CoppeliaSimInterface::is_simulation_running() const
 {
-    /*
-    sim.simulation_stopped
-    sim.simulation_paused
-    sim.simulation_advancing_firstafterstop
-    sim.simulation_advancing_running
-    sim.simulation_advancing_lastbeforepause
-    sim.simulation_advancing_firstafterpause
-    sim.simulation_advancing_abouttostop
-    sim.simulation_advancing_lastbeforestop
-     */
-    return (client_->getObject().sim().getSimulationState() ==
-            client_->getObject().sim().simulation_advancing_running);
+    return (client_->getObject().sim().getSimulationState() >
+            client_->getObject().sim().simulation_paused);
 }
 
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_simulation_state
+ *        See more in https://manual.coppeliarobotics.com/en/simulation.htm
+ *
+ * @return The simulation state.
+ *         simulation_advancing = 16
+ *         simulation_advancing_abouttostop = 21
+ *         simulation_advancing_firstafterpause = 20
+ *         simulation_advancing_firstafterstop = 16
+ *         simulation_advancing_lastbeforepause = 19
+ *         simulation_advancing_lastbeforestop = 22
+ *         simulation_advancing_running = 17
+ *         simulation_paused = 8
+ *         simulation_stopped = 0
+ *
+ */
+int DQ_CoppeliaSimInterface::get_simulation_state() const
+{
+    return client_->getObject().sim().getSimulationState();
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_status_bar_message sends a message to CoppeliaSim to be
+ *        displayed in the status bar.
+ *
+ * @param message
+ */
 void DQ_CoppeliaSimInterface::set_status_bar_message(const std::string &message) const
 {
     client_->getObject().sim().addLog(client_->getObject().sim().verbosity_undecorated, message);

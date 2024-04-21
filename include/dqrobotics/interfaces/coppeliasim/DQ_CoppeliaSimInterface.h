@@ -30,6 +30,7 @@ class DQ_CoppeliaSimInterface
 {
 private:
     bool _client_created = false;
+    std::string _map_simulation_state(const int& state) const;
 public:
     DQ_CoppeliaSimInterface();
     void connect(const std::string& host = "localhost",
@@ -38,11 +39,13 @@ public:
                  const int& verbose_ = -1);
 
     void start_simulation() const;
+    void pause_simulation() const;
     void stop_simulation()  const;    
     void set_stepping_mode(const bool& flag);
     double get_simulation_time() const;
     void trigger_next_simulation_step() const;
     bool is_simulation_running() const;
+    int get_simulation_state() const;
     void set_status_bar_message(const std::string& message) const;
 
     //-----------Deprecated methods---------------------------//
