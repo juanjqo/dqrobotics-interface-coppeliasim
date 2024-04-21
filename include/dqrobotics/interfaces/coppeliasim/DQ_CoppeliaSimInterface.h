@@ -48,7 +48,7 @@ public:
     double get_simulation_time();
 
     void trigger_next_simulation_step();
-    [[deprecated("This method is supposed to be used in the legacy mode only.")]]
+    [[deprecated("This method is not required with ZeroMQ remote API .")]]
     int wait_for_simulation_step_to_end();
     bool get_client_flag();
 
