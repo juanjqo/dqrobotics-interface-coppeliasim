@@ -27,7 +27,7 @@ brew install pkg-config boost cppzmq eigen
 Example for coppeliasim-v4.6.0-rev18. NOTE: replace coppeliasim-v4.6.0-rev18 with the actual CoppeliaSim version you have.
 
 ```shell
-git clone https://github.com/juanjqo/cpp-interface-coppelia --recursive
+git clone https://github.com/juanjqo/cpp-interface-coppeliasim --recursive
 cd cpp-interface-coppelia/coppeliarobotics/zmqRemoteApi
 git checkout coppeliasim-v4.6.0-rev18
 cd ../.. && mkdir build && cd build
