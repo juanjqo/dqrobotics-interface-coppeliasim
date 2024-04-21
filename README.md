@@ -5,6 +5,8 @@
 
 ## Requirements
 
+- [DQ Robotics](https://github.com/dqrobotics/cpp)
+
 
 ### MacOS (Apple Silicon)
 
