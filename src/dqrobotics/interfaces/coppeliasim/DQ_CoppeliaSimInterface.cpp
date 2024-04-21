@@ -74,6 +74,14 @@ void DQ_CoppeliaSimInterface::disconnect()
 }
 
 /**
+ * @brief DQ_CoppeliaSimInterface::disconnect_all
+ */
+void DQ_CoppeliaSimInterface::disconnect_all()
+{
+
+}
+
+/**
  * @brief DQ_CoppeliaSimInterface::set_synchronous
  * @param flag
  */
@@ -100,20 +108,40 @@ double DQ_CoppeliaSimInterface::get_simulation_time()
     return client_->getObject().sim().getSimulationTime();
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::trigger_next_simulation_step
+ */
 void DQ_CoppeliaSimInterface::trigger_next_simulation_step()
 {
     client_->getObject().sim().step();
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::wait_for_simulation_step_to_end
+ * @return
+ */
 int DQ_CoppeliaSimInterface::wait_for_simulation_step_to_end()
 {
     return 0;
 }
 
-bool DQ_CoppeliaSimInterface::get_client_flag()
+bool DQ_CoppeliaSimInterface::is_simulation_running() const
 {
-    return _client_created;
+    /*
+    sim.simulation_stopped
+    sim.simulation_paused
+    sim.simulation_advancing_firstafterstop
+    sim.simulation_advancing_running
+    sim.simulation_advancing_lastbeforepause
+    sim.simulation_advancing_firstafterpause
+    sim.simulation_advancing_abouttostop
+    sim.simulation_advancing_lastbeforestop
+     */
+    return (client_->getObject().sim().getSimulationState() ==
+            client_->getObject().sim().simulation_advancing_running);
 }
+
+
 
 
 

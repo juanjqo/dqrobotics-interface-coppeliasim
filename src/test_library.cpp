@@ -13,12 +13,14 @@ int main()
 
         while (t < 4.0)
         {
+            std::cout<<"status: "<<vi.is_simulation_running()<<std::endl;
             t = vi.get_simulation_time();
             std::cout<<"Simulation time: "<<t<<std::endl;
             vi.trigger_next_simulation_step();
 
         }
         vi.stop_simulation();
+        std::cout<<"status: "<<vi.is_simulation_running()<<std::endl;
 
 
     }

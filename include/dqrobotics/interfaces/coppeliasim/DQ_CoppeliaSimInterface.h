@@ -39,7 +39,12 @@ public:
 
     void start_simulation() const;
     void stop_simulation()  const;
+
+    [[deprecated("This method is not required with ZeroMQ remote API.")]]
     void disconnect();
+
+    [[deprecated("This method is not required with ZeroMQ remote API.")]]
+    void disconnect_all();
 
     [[deprecated("The synchronous mode is now called stepping mode. Consider using set_stepping_mode(flag) instead.")]]
     void set_synchronous(const bool& flag);
@@ -50,7 +55,8 @@ public:
     void trigger_next_simulation_step();
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
     int wait_for_simulation_step_to_end();
-    bool get_client_flag();
+    bool is_simulation_running() const;
+
 
     void set_status_bar_message(const std::string& message);
 
