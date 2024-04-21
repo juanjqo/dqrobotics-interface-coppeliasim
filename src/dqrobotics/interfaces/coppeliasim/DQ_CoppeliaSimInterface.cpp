@@ -10,6 +10,14 @@ DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
 
 std::unique_ptr<RemoteAPIClient> client_;
 
+/**
+ * @brief _create_client
+ * @param host
+ * @param rpcPort
+ * @param cntPort
+ * @param verbose_
+ * @param client_flag
+ */
 void _create_client(const std::string& host = "localhost",
                                              const int& rpcPort = 23000,
                                              const int& cntPort = -1,
@@ -17,17 +25,15 @@ void _create_client(const std::string& host = "localhost",
                                              const bool& client_flag = false)
 {
     if (!client_flag)
-    {
-        client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
-    }
-
-
-};
+         client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
+}
 
 /**
- * @brief DQ_CoppeliaSimInterface::connect
- * @param host
- * @param rpcPort
+ * @brief DQ_CoppeliaSimInterface::connect establish a connection between the client (your code) and
+ *                                         the host (the CoppeliaSim scene).
+ * @param host    eg. 'localhost' if the host is running in the same
+ *                machine in which is running the client.
+ * @param rpcPort The port to establish a connection. (e.g. 23000, 23001, 23002, 23003...).
  * @param cntPort
  * @param verbose_
  */
@@ -36,20 +42,20 @@ void DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
 
     try
     {
-        //client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
         _create_client(host, rpcPort, cntPort, verbose_, _client_created);
         _client_created = true;
-        set_status_bar_message("DQ_CoppeliaSimInterface is brought to you by Juan Jose Quiroz");
+        set_status_bar_message("DQ_CoppeliaSimInterface "
+                               "is brought to you by Juan Jose Quiroz");
     }
     catch (const std::runtime_error& e)
     {
-        std::cerr << "Runtime error in DQ_CoppeliaSimInterface::connect. " << e.what() << std::endl;
-
+        std::cerr << "Runtime error in DQ_CoppeliaSimInterface::connect. "
+                  << e.what() << std::endl;
     }
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::start_simulation
+ * @brief DQ_CoppeliaSimInterface::start_simulation starts the CoppeliaSim simulation.
  */
 void DQ_CoppeliaSimInterface::start_simulation() const
 {
@@ -58,41 +64,19 @@ void DQ_CoppeliaSimInterface::start_simulation() const
 
 
 /**
- * @brief DQ_CoppeliaSimInterface::stop_simulation
+ * @brief DQ_CoppeliaSimInterface::stop_simulation stops the  CoppeliaSim simulation.
  */
 void DQ_CoppeliaSimInterface::stop_simulation() const
 {
     client_->getObject().sim().stopSimulation();
 }
 
-/**
- * @brief DQ_CoppeliaSimInterface::disconnect
- */
-void DQ_CoppeliaSimInterface::disconnect()
-{
-
-}
 
 /**
- * @brief DQ_CoppeliaSimInterface::disconnect_all
- */
-void DQ_CoppeliaSimInterface::disconnect_all()
-{
-
-}
-
-/**
- * @brief DQ_CoppeliaSimInterface::set_synchronous
- * @param flag
- */
-void DQ_CoppeliaSimInterface::set_synchronous(const bool &flag)
-{
-    client_->getObject().sim().setStepping(flag);
-}
-
-/**
- * @brief DQ_CoppeliaSimInterface::set_stepping_mode
- * @param flag
+ * @brief DQ_CoppeliaSimInterface::set_stepping_mode enables or disables the stepping mode
+ *        (formerly known as synchronous mode).
+ * @param flag. Eg: set_stepping_mode(true)  // enables the stepping mode
+ *                  set_stepping_mode(false)  // disables the stepping mode
  */
 void DQ_CoppeliaSimInterface::set_stepping_mode(const bool &flag)
 {
@@ -100,30 +84,26 @@ void DQ_CoppeliaSimInterface::set_stepping_mode(const bool &flag)
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::get_simulation_time
- * @return
+ * @brief DQ_CoppeliaSimInterface::get_simulation_time returns the simulation time.
+ *        This time does not correspond to the real-time necessarily.
+ * @return The simulation time.
  */
-double DQ_CoppeliaSimInterface::get_simulation_time()
+double DQ_CoppeliaSimInterface::get_simulation_time() const
 {
     return client_->getObject().sim().getSimulationTime();
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::trigger_next_simulation_step
+ * @brief DQ_CoppeliaSimInterface::trigger_next_simulation_step This method sends a trigger
+ *        signal to the CoppeliaSim scene, which performs a simulation step when the stepping mode is used.
  */
-void DQ_CoppeliaSimInterface::trigger_next_simulation_step()
+void DQ_CoppeliaSimInterface::trigger_next_simulation_step() const
 {
     client_->getObject().sim().step();
 }
 
-/**
- * @brief DQ_CoppeliaSimInterface::wait_for_simulation_step_to_end
- * @return
- */
-int DQ_CoppeliaSimInterface::wait_for_simulation_step_to_end()
-{
-    return 0;
-}
+
+
 
 bool DQ_CoppeliaSimInterface::is_simulation_running() const
 {
@@ -141,13 +121,17 @@ bool DQ_CoppeliaSimInterface::is_simulation_running() const
             client_->getObject().sim().simulation_advancing_running);
 }
 
-
-
-
-
-void DQ_CoppeliaSimInterface::set_status_bar_message(const std::string &message)
+void DQ_CoppeliaSimInterface::set_status_bar_message(const std::string &message) const
 {
     client_->getObject().sim().addLog(client_->getObject().sim().verbosity_undecorated, message);
 }
 
+
+//---------------Deprecated methods-----------------------------
+void DQ_CoppeliaSimInterface::disconnect(){}
+void DQ_CoppeliaSimInterface::disconnect_all(){}
+void DQ_CoppeliaSimInterface::set_synchronous(const bool &flag){set_stepping_mode(flag);}
+int DQ_CoppeliaSimInterface::wait_for_simulation_step_to_end(){return 0;}
+
+//--------------------------------------------------------------
 

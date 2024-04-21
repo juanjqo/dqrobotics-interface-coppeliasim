@@ -28,41 +28,36 @@ using namespace Eigen;
 
 class DQ_CoppeliaSimInterface
 {
+private:
+    bool _client_created = false;
 public:
     DQ_CoppeliaSimInterface();
-
-
     void connect(const std::string& host = "localhost",
                  const int& rpcPort = 23000,
                  const int& cntPort = -1,
                  const int& verbose_ = -1);
 
     void start_simulation() const;
-    void stop_simulation()  const;
+    void stop_simulation()  const;    
+    void set_stepping_mode(const bool& flag);
+    double get_simulation_time() const;
+    void trigger_next_simulation_step() const;
+    bool is_simulation_running() const;
+    void set_status_bar_message(const std::string& message) const;
 
+    //-----------Deprecated methods---------------------------//
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
     void disconnect();
-
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
     void disconnect_all();
-
     [[deprecated("The synchronous mode is now called stepping mode. Consider using set_stepping_mode(flag) instead.")]]
     void set_synchronous(const bool& flag);
-    void set_stepping_mode(const bool& flag);
-
-    double get_simulation_time();
-
-    void trigger_next_simulation_step();
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
     int wait_for_simulation_step_to_end();
-    bool is_simulation_running() const;
+    //---------------------------------------------------------//
 
 
-    void set_status_bar_message(const std::string& message);
 
-
-private:
-    bool _client_created = false;
 
 
 };
