@@ -7,6 +7,13 @@ An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ 
 ![Static Badge](https://img.shields.io/badge/warning-yellow)
 This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS (Apple Silicon) only. Ubuntu versions are expected later.
 
+
+| CoppeliaSim  | SO | Status |
+| ------------- | ------------- |------------- |
+| v4.6.0-rev18 (arm64)  | macOS Sonoma Apple Silicon | Tested |
+| v4.6.0-rev18 (x64)   | Ubuntu 22.04 LTS  |  Unsupported |
+| v4.6.0-rev18 (x64)   | Windows 11  |  Unsupported |
+
 ## Requirements
 
 - [DQ Robotics](https://github.com/dqrobotics/cpp)
