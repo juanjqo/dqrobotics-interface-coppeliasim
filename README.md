@@ -10,9 +10,10 @@ This project is under active development, incomplete, and experimental/unstable.
 
 | CoppeliaSim  | SO | Status |
 | ------------- | ------------- |------------- |
-| v4.6.0-rev18 (arm64)  | macOS Sonoma (Apple Silicon) | Tested |
-| v4.6.0-rev18 (x64)   | Ubuntu 22.04 LTS  |  Unsupported |
-| v4.6.0-rev18 (x64)   | Windows 11  |  Unsupported |
+| v4.6.0-rev18 (arm64)  | macOS Sonoma (Apple Silicon) | ![Static Badge](https://img.shields.io/badge/experimental-red)|
+| v4.6.0-rev18 (x64)   | Ubuntu 22.04 LTS  |  ![Static Badge](https://img.shields.io/badge/Unsupported-gray)|
+| v4.6.0-rev18 (x64)   | Windows 11  |  ![Static Badge](https://img.shields.io/badge/Unsupported-gray)
+
 
 ## Requirements
 
