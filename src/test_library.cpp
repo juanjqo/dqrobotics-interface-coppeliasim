@@ -11,14 +11,14 @@ int main()
         vi.start_simulation();
         double t = 0.0;
 
-        while (t < 3.0)
+        while (t < 4.0)
         {
             t = vi.get_simulation_time();
             std::cout<<"Simulation time: "<<t<<std::endl;
             vi.trigger_next_simulation_step();
 
         }
-        vi.start_simulation();
+        vi.stop_simulation();
 
 
     }

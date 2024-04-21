@@ -1,7 +1,27 @@
 #include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
+#include <RemoteAPIClient.h>
+
+DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
+    :_client_created(false)
+{
+
+}
 
 
-DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface() {}
+std::unique_ptr<RemoteAPIClient> client_;
+
+void _create_client(const std::string& host = "localhost",
+                                             const int& rpcPort = 23000,
+                                             const int& cntPort = -1,
+                                             const int& verbose_ = -1,
+                                             const bool& client_flag = false)
+{
+    if (!client_flag)
+    {
+        client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
+    }
+
+};
 
 /**
  * @brief DQ_CoppeliaSimInterface::connect
@@ -12,9 +32,12 @@ DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface() {}
  */
 void DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPort, const int &cntPort, const int &verbose_)
 {
+
     try
     {
-        client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
+        //client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
+        _create_client(host, rpcPort, cntPort, verbose_, _client_created);
+        _client_created = true;
 
     }
     catch (const std::runtime_error& e)
@@ -84,5 +107,10 @@ void DQ_CoppeliaSimInterface::trigger_next_simulation_step()
 int DQ_CoppeliaSimInterface::wait_for_simulation_step_to_end()
 {
     return 0;
+}
+
+bool DQ_CoppeliaSimInterface::get_client_flag()
+{
+    return _client_created;
 }
 

@@ -22,7 +22,6 @@ Contributors:
 
 #pragma once
 #include <dqrobotics/DQ.h>
-#include <RemoteAPIClient.h>
 
 using namespace DQ_robotics;
 using namespace Eigen;
@@ -51,10 +50,12 @@ public:
     void trigger_next_simulation_step();
     [[deprecated("This method is supposed to be used in the legacy mode only.")]]
     int wait_for_simulation_step_to_end();
-
+    bool get_client_flag();
 
 private:
-    std::unique_ptr<RemoteAPIClient> client_;
+    //std::unique_ptr<RemoteAPIClient> client_;
+    bool _client_created = false;
+
 
 };
 
