@@ -1,9 +1,10 @@
+![Static Badge](https://img.shields.io/badge/status-experimental-critical)![Static Badge](https://img.shields.io/badge/Platform-Apple_silicon-magenta)![Static Badge](https://img.shields.io/badge/Tested-Apple)![Static Badge](https://img.shields.io/badge/Platform-Ubuntu_x64-orange)![Static Badge](https://img.shields.io/badge/Untested-red)![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)
 
-![Static Badge](https://img.shields.io/badge/Platform-Apple_silicon-magenta)![Static Badge](https://img.shields.io/badge/Tested-Apple)![Static Badge](https://img.shields.io/badge/Platform-Ubuntu_x64-orange)![Static Badge](https://img.shields.io/badge/Untested-red)![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)
+# cpp-interface-coppeliasim 
 
-# cpp-interface-coppeliasim
+An unofficial DQ Robotics interface with CoppeliaSim based on ZeroMQ remote API.
 
-A DQ Robotics interface with CoppeliaSim based on ZeroMQ remote API.
+Note: This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS only. Ubuntu versions are expected later.
 
 ## Requirements
 
@@ -42,6 +43,49 @@ sudo make install
 
 ```shell
 sudo xargs rm < install_manifest.txt
+```
+
+
+#### Example
+
+```shell
+#include "dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h"
+
+
+int main()
+{
+    try
+    {
+        DQ_CoppeliaSimInterface vi;
+        vi.connect();
+        vi.set_stepping_mode(true);
+        vi.start_simulation();
+        double t = 0.0;
+
+        while (t < 4.0)
+        {
+            std::cout<<"status: "<<vi.is_simulation_running()<<std::endl;
+            t = vi.get_simulation_time();
+            std::cout<<"Simulation time: "<<t<<std::endl;
+            vi.trigger_next_simulation_step();
+
+        }
+        vi.stop_simulation();
+        std::cout<<"status: "<<vi.is_simulation_running()<<std::endl;
+    }
+    catch (const std::runtime_error& e)
+    {
+        std::cerr << "Caught a runtime error: " << e.what() << std::endl;
+    }
+
+    return 0;
+}
+```
+
+
+```cmake
+add_executable(example example.cpp)
+target_link_libraries(example dqrobotics dqrobotics-interface-coppeliasim)
 ```
 
 
