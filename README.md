@@ -4,7 +4,8 @@
 
 An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API.
 
-Note: This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS (Apple Silicon) only. Ubuntu versions are expected later.
+![Static Badge](https://img.shields.io/badge/warning-yellow)
+This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS (Apple Silicon) only. Ubuntu versions are expected later.
 
 ## Requirements
 
