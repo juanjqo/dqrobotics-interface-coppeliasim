@@ -20,4 +20,23 @@ brew install pkg-config boost cppzmq eigen
 
 
 
+#### Build and Install
+
+```shell
+git clone https://github.com/juanjqo/cpp-interface-coppelia --recursive
+cd cpp-interface-coppelia
+mkdir build && cd buid
+cmake ..
+make -j16
+sudo make install
+```
+
+#### Uninstall (optional)
+
+```shell
+sudo xargs rm < install_manifest.txt
+```
+
+
+
 
