@@ -1,8 +1,10 @@
 ![Static Badge](https://img.shields.io/badge/status-experimental-critical)![Static Badge](https://img.shields.io/badge/Platform-Apple_silicon-magenta)![Static Badge](https://img.shields.io/badge/Tested-Apple)![Static Badge](https://img.shields.io/badge/Platform-Ubuntu_x64-orange)![Static Badge](https://img.shields.io/badge/Untested-red)![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)
 
-# cpp-interface-coppeliasim
+# cpp-interface-coppeliasim 
 
-A DQ Robotics interface with CoppeliaSim based on ZeroMQ remote API.
+A DQ Robotics interface with CoppeliaSim based on ZeroMQ remote API. 
+
+### Note: This project is under active development, incomplete, and experimental/unstable.
 
 ## Requirements
 
