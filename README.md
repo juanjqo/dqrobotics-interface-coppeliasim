@@ -2,7 +2,7 @@
 
 # cpp-interface-coppeliasim 
 
-An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API.
+An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API and C++17.
 
 ![Static Badge](https://img.shields.io/badge/warning-yellow)
 This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS (Apple Silicon) only. Ubuntu versions are expected later.
