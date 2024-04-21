@@ -10,7 +10,7 @@ This project is under active development, incomplete, and experimental/unstable.
 
 | CoppeliaSim  | SO | Status |
 | ------------- | ------------- |------------- |
-| v4.6.0-rev18 (arm64)  | macOS Sonoma Apple Silicon | Tested |
+| v4.6.0-rev18 (arm64)  | macOS Sonoma (Apple Silicon) | Tested |
 | v4.6.0-rev18 (x64)   | Ubuntu 22.04 LTS  |  Unsupported |
 | v4.6.0-rev18 (x64)   | Windows 11  |  Unsupported |
 
