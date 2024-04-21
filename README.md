@@ -85,7 +85,7 @@ int main()
 
 ```cmake
 add_executable(example example.cpp)
-target_link_libraries(example dqrobotics dqrobotics-interface-coppelia)
+target_link_libraries(example dqrobotics dqrobotics-interface-coppeliasim)
 ```
 
 
