@@ -3,6 +3,8 @@
 
 # cpp-interface-coppeliasim
 
+A DQ Robotics interface with CoppeliaSim based on ZeroMQ remote API.
+
 ## Requirements
 
 - [DQ Robotics](https://github.com/dqrobotics/cpp)
