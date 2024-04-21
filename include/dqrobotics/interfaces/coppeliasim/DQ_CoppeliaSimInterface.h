@@ -32,10 +32,23 @@ class DQ_CoppeliaSimInterface
 public:
     DQ_CoppeliaSimInterface();
 
-    bool connect(const std::string& host = "localhost",
+    void connect(const std::string& host = "localhost",
                  const int& rpcPort = 23000,
                  const int& cntPort = -1,
                  const int& verbose_ = -1);
+
+    void start_simulation() const;
+    void stop_simulation()  const;
+    void disconnect();
+
+    [[deprecated]] void set_synchronous(const bool& flag);
+    void set_stepping_mode(const bool& flag);
+
+    double get_simulation_time();
+
+    void trigger_next_simulation_step();
+    [[deprecated]] int wait_for_simulation_step_to_end();
+
 
 private:
     std::unique_ptr<RemoteAPIClient> client_;

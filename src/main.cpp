@@ -15,28 +15,22 @@ int main()
     {
         RemoteAPIClient client;
         auto sim = client.getObject().sim();
-//client.registerCallback("myCallback", myFunc);
-        sim.setStepping(true);
-        sim.startSimulation();
-        double simTime = 0.0;
-        while((simTime = sim.getSimulationTime()) < 10)
-        {
-            std::cout << "Simulation time: " << std::setprecision(3) << simTime << " [s]" << std::endl;
-            // auto retVal = sim.testCB(21, "myCallback@func", 42); // sim.testCB is calling back above "myFunc"
-            sim.step();
-        }
-        // e.g. calling a child script function (make sure the child script is running!):
-        /*
-        int sceneObject = sim.getObject("/path/to/object");
-        int script = sim.getScript(sim.scripttype_childscript, sceneObject);
-        auto args = json::array();
-        args.push_back("Hello");
-        args.push_back("Paul");
-        args.push_back(21);
-        auto reply = sim.callScriptFunction("functionName", script, args);
-        */
 
+        //sim.setStepping(true);
+
+        //sim.startSimulation();
+        //double t = 0.0;
+        /*
+            do
+        {
+            t = sim.getSimulationTime();
+            printf("Simulation time: %.2f [s]\n", t);
+            sim.step();
+        } while (t < 3.0);
+*/
         sim.stopSimulation();
+
+
     }
     catch (const std::runtime_error& e)
     {

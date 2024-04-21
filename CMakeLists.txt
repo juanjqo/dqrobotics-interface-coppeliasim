@@ -26,3 +26,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies_exp.cmake)
 
 add_executable(example src/main.cpp)
 target_link_libraries(example PRIVATE ${PROJECT_NAME})
+
+add_executable(example2 src/test_library.cpp)
+target_link_libraries(example2 PRIVATE ${PROJECT_NAME})
