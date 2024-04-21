@@ -30,8 +30,7 @@ Example for coppeliasim-v4.6.0-rev18. NOTE: replace coppeliasim-v4.6.0-rev18 wit
 git clone https://github.com/juanjqo/cpp-interface-coppelia --recursive
 cd cpp-interface-coppelia/coppeliarobotics/zmqRemoteApi
 git checkout coppeliasim-v4.6.0-rev18
-cd ../..
-mkdir build && cd buid
+cd ../.. && mkdir build && cd build
 cmake ..
 make -j16
 sudo make install
