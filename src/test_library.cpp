@@ -21,8 +21,6 @@ int main()
         }
         vi.stop_simulation();
         std::cout<<"status: "<<vi.is_simulation_running()<<std::endl;
-
-
     }
     catch (const std::runtime_error& e)
     {

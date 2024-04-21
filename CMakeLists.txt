@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(dqrobotics-interface-coppelia LANGUAGES CXX)
+project(dqrobotics-interface-coppeliasim LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -81,4 +81,4 @@ add_executable(example src/main.cpp)
 target_link_libraries(example PRIVATE ${PROJECT_NAME})
 
 add_executable(example2 src/test_library.cpp)
-target_link_libraries(example2 PRIVATE ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppelia)
+target_link_libraries(example2 PRIVATE ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
