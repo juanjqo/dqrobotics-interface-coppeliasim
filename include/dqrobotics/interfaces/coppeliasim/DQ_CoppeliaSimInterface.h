@@ -22,6 +22,7 @@ Contributors:
 
 #pragma once
 #include <dqrobotics/DQ.h>
+#include<map>
 
 using namespace DQ_robotics;
 using namespace Eigen;
@@ -29,9 +30,15 @@ using namespace Eigen;
 class DQ_CoppeliaSimInterface
 {
 private:
-    bool _client_created = false;
+    bool client_created_ = false;
     std::string _map_simulation_state(const int& state) const;
-    //void _set_status_bar_message(const std::string& message) const;
+    std::map<std::string, int> set_states_map_; //try_emplace
+    void _update_map(const std::string& objectname, const int& handle);
+    int _get_object_handle(const std::string& objectname);
+    std::tuple<bool, int> _get_handle_from_map(const std::string& objectname);
+
+
+
 public:
     DQ_CoppeliaSimInterface();
     void connect(const std::string& host = "localhost",
@@ -48,6 +55,18 @@ public:
     bool is_simulation_running() const;
     int get_simulation_state() const;
     void set_status_bar_message(const std::string& message) const;
+
+    int get_object_handle(const std::string& objectname);
+    std::vector<int> get_object_handles(const std::vector<std::string>& objectnames);
+
+
+    DQ   get_object_translation(const int& handle);
+    DQ   get_object_translation(const int& handle, const int& with_respect_to_handle);
+    DQ   get_object_translation(const std::string& objectname);
+    DQ   get_object_translation(const std::string& objectname,
+                                const std::string& with_respect_to_objectname);
+
+    std::map<std::string, int> get_map();
 
     //-----------Deprecated methods---------------------------//
     [[deprecated("This method is not required with ZeroMQ remote API.")]]

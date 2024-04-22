@@ -38,8 +38,9 @@ std::string DQ_CoppeliaSimInterface::_map_simulation_state(const int &state) con
 
 
 
+
 DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
-    :_client_created(false)
+    :client_created_(false)
 {
 
 }
@@ -87,8 +88,8 @@ void DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
 
     try
     {
-        _create_client(host, rpcPort, cntPort, verbose_, _client_created);
-        _client_created = true;
+        _create_client(host, rpcPort, cntPort, verbose_, client_created_);
+        client_created_ = true;
         set_status_bar_message("       ");
         _set_status_bar_message("DQ_CoppeliaSimInterface "
                                 "is brought to you by Juan Jose Quiroz Omana",
@@ -202,6 +203,147 @@ void DQ_CoppeliaSimInterface::set_status_bar_message(const std::string &message)
 {
     _set_status_bar_message(message, client_->getObject().sim().verbosity_undecorated);
 }
+
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_handle gets the object handle from
+ *        CoppeliaSim. If the handle is not included in the map, then the map is
+ *        updated.
+ * @param objectname
+ * @return the object handle.
+ */
+int DQ_CoppeliaSimInterface::get_object_handle(const std::string &objectname)
+{
+    int handle;
+    try
+    {
+        handle = client_->getObject().sim().getObject(objectname);
+    }
+    catch(const std::runtime_error& e)
+    {
+        throw std::runtime_error(
+            std::string(e.what())
+            + " "
+            + std::string("The object ")
+            + objectname
+            + std::string(" does not exist in the current scene in CoppeliaSim.")
+            );
+    }
+    _update_map(objectname, handle);
+    return handle;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_handles
+ * @param objectnames
+ * @return
+ */
+std::vector<int> DQ_CoppeliaSimInterface::get_object_handles(const std::vector<std::string> &objectnames)
+{
+    int n = objectnames.size();
+    std::vector<int> handles(n);
+    for(int i=0;i<n;i++)
+    {
+        handles[i]=get_object_handle(objectnames[i]);
+    }
+    return handles;
+}
+
+std::map<std::string, int> DQ_CoppeliaSimInterface::get_map()
+{
+    return set_states_map_;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_translation returns the position
+ *        of a handle in the CoppeliaSim scene with respect to the absolute frame.
+ * @param handle The handle of the object.
+ * @return the absolute position of the handle.
+ */
+DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle)
+{
+    auto position = client_->getObject().sim().getObjectPosition(handle,
+                                                 client_->getObject().sim().handle_world);
+    const DQ t = DQ(0, position.at(0),position.at(1),position.at(2));
+    return t;
+}
+
+DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle, const int &with_respect_to_handle)
+{
+    DQ handle_position1 = get_object_translation(handle);
+    DQ handle_position2 = get_object_translation(with_respect_to_handle);
+    DQ x = (1 + 0.5*E_*handle_position2).conj()*(1 + 0.5*E_*handle_position1);
+    return x.translation();
+}
+
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_translation returns the position
+ *        of an object in the CoppeliaSim scene with respect to the absolute frame.
+ * @param objectname The name of the object.
+ * @return the absolute position of the object.
+ */
+DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname)
+{
+    return get_object_translation(_get_object_handle(objectname));
+}
+
+DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname, const std::string &with_respect_to_objectname)
+{
+    return get_object_translation(_get_object_handle(objectname), _get_object_handle(with_respect_to_objectname));
+}
+
+
+/**
+ * @brief DQ_CoppeliaSimInterface::_update_map updates the map if and only if
+ *        the objectname is not in the map.
+ * @param objectname
+ * @param handle
+ */
+void DQ_CoppeliaSimInterface::_update_map(const std::string &objectname,
+                                                    const int &handle)
+{
+    set_states_map_.try_emplace(objectname, handle);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::_get_object_handle gets the object handle from the map.
+ *        If the object is not included in the map, the method gets the handle from
+ *        CoppeliaSim, in which the map will be updated.
+ * @param objectname
+ * @return the handle.
+ */
+int DQ_CoppeliaSimInterface::_get_object_handle(const std::string &objectname)
+{
+    int handle;
+    bool found;
+    std::tie(found, handle) = _get_handle_from_map(objectname);
+    if (found)
+        return handle;
+    else
+        return get_object_handle(objectname); // the map is updated here.
+}
+
+
+/**
+ * @brief DQ_CoppeliaSimInterface::_get_handle_from_map searchs a handle in the map.
+ *
+ * @param objectname
+ * @return a tuple <bool, int>. If the handle is found in the map, returns <true, handle>.
+ *                              Otherwise, returns <false, 0>
+ */
+std::tuple<bool, int> DQ_CoppeliaSimInterface::_get_handle_from_map(const std::string &objectname)
+{
+
+    set_states_map_.find(objectname);
+    if (auto search = set_states_map_.find(objectname); search != set_states_map_.end())
+        //std::cout << "Found " << search->first << ' ' << search->second << '\n';
+        return {true, search->second};
+    else
+        //std::cout << "Not found\n";
+        return {false, 0};
+}
+
 
 
 //---------------Deprecated methods-----------------------------
