@@ -22,7 +22,7 @@ Contributors:
 
 #pragma once
 #include <dqrobotics/DQ.h>
-#include<map>
+#include <map>
 
 using namespace DQ_robotics;
 using namespace Eigen;
