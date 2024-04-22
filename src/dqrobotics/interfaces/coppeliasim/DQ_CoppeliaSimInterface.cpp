@@ -634,6 +634,52 @@ void DQ_CoppeliaSimInterface::set_joint_modes(const std::vector<std::string> &jo
 }
 
 /**
+ * @brief DQ_CoppeliaSimInterface::set_joint_control_mode
+ * @param jointname
+ * @param joint_control_mode
+ */
+void DQ_CoppeliaSimInterface::set_joint_control_mode(const std::string &jointname, const JOINT_CONTROL_MODE &joint_control_mode)
+{
+    int64_t control_mode;
+    switch (joint_control_mode)
+    {
+
+    case FREE:
+        control_mode = sim_->jointdynctrl_free;
+        break;
+    case FORCE:
+        control_mode = sim_->jointdynctrl_force;
+        break;
+    case VELOCITY:
+        control_mode = sim_->jointdynctrl_velocity;
+        break;
+    case POSITION:
+        control_mode = sim_->jointdynctrl_position;
+        break;
+    case SPRING:
+        control_mode = sim_->jointdynctrl_spring;
+        break;
+    case CUSTOM:
+        control_mode = sim_->jointdynctrl_callback;
+        break;
+    }
+    sim_->setObjectInt32Param(_get_object_handle(jointname),
+                              sim_->jointintparam_dynctrlmode,
+                              control_mode);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_joint_control_modes
+ * @param jointnames
+ * @param joint_control_mode
+ */
+void DQ_CoppeliaSimInterface::set_joint_control_modes(const std::vector<std::string> &jointnames, const JOINT_CONTROL_MODE &joint_control_mode)
+{
+    for(std::size_t i=0;i<jointnames.size();i++)
+        set_joint_control_mode(jointnames.at(i), joint_control_mode);
+}
+
+/**
  * @brief DQ_CoppeliaSimInterface::enable_dynamics_engine
  * @param flag
  */

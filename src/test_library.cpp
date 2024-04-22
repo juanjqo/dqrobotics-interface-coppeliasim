@@ -37,13 +37,14 @@ int main()
         u << M_PI/2, 0, 0, -1.57156, 0, 1.57075, 0;
 
         vi.set_joint_modes(jointnames, DQ_CoppeliaSimInterface::DYNAMIC);
+        vi.set_joint_control_modes(jointnames, DQ_CoppeliaSimInterface::VELOCITY);
         vi.enable_dynamics(true);
 
         //for(int i=0; i<100;i++)
             //vi.set_joint_positions(jointnames, u);
         //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-        //vi.pause_simulation();
+        vi.pause_simulation();
 
 
         while (t < 5.0)

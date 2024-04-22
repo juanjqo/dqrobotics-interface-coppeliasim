@@ -32,6 +32,7 @@ class DQ_CoppeliaSimInterface
 public:
     enum JOINT_MODE{KINEMATIC, DYNAMIC, DEPENDENT};
     enum ENGINE{BULLET, ODE, VORTEX, NEWTON, MUJOCO};
+    enum JOINT_CONTROL_MODE{FREE, FORCE, VELOCITY, POSITION, SPRING, CUSTOM};
 
     DQ_CoppeliaSimInterface();
     void connect(const std::string& host = "localhost",
@@ -96,6 +97,8 @@ public:
     //------------------settings features-----------------------------------------------------
     void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
     void   set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
+    void   set_joint_control_mode(const std::string& jointname, const JOINT_CONTROL_MODE& joint_control_mode);
+    void   set_joint_control_modes(const std::vector<std::string>& jointnames, const JOINT_CONTROL_MODE& joint_control_mode);
     void   enable_dynamics(const bool& flag);
     double get_simulation_time_step() const;
     void   set_simulation_time_step(const double& time_step);
