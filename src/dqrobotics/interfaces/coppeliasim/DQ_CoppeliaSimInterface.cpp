@@ -268,10 +268,18 @@ DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle)
     return t;
 }
 
-DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle, const int &with_respect_to_handle)
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_translation returns the position
+ *        of a handle in the CoppeliaSim scene with respect to 'reference_handle'
+ * @param handle
+ * @param reference_handle
+ * @return the relative position of the handle.
+ */
+DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle, const int &reference_handle)
 {
     DQ handle_position1 = get_object_translation(handle);
-    DQ handle_position2 = get_object_translation(with_respect_to_handle);
+    DQ handle_position2 = get_object_translation(reference_handle);
     DQ x = (1 + 0.5*E_*handle_position2).conj()*(1 + 0.5*E_*handle_position1);
     return x.translation();
 }
@@ -288,9 +296,18 @@ DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname
     return get_object_translation(_get_object_handle(objectname));
 }
 
-DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname, const std::string &with_respect_to_objectname)
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_translation returns the position of
+ *        an object in the CoppeliaSim scene with respect to the reference_objectname.
+ * @param objectname
+ * @param reference_objectname
+ * @return the relative position of the objectname.
+ */
+DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname,
+                                                   const std::string &reference_objectname)
 {
-    return get_object_translation(_get_object_handle(objectname), _get_object_handle(with_respect_to_objectname));
+    return get_object_translation(_get_object_handle(objectname), _get_object_handle(reference_objectname));
 }
 
 
@@ -334,8 +351,6 @@ int DQ_CoppeliaSimInterface::_get_object_handle(const std::string &objectname)
  */
 std::tuple<bool, int> DQ_CoppeliaSimInterface::_get_handle_from_map(const std::string &objectname)
 {
-
-    set_states_map_.find(objectname);
     if (auto search = set_states_map_.find(objectname); search != set_states_map_.end())
         //std::cout << "Found " << search->first << ' ' << search->second << '\n';
         return {true, search->second};
