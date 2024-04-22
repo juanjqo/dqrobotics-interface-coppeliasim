@@ -84,6 +84,11 @@ public:
     void     set_joint_positions(const std::vector<int>& handles, const VectorXd& angles_rad) const;
     void     set_joint_positions(const std::vector<std::string>& jointnames, const VectorXd& angles_rad);
 
+    void     set_joint_target_position(const int& handle, const double& angle_rad) const;
+    void     set_joint_target_position(const std::string& jointname, const double& angle_rad);
+    void     set_joint_target_positions(const std::vector<int>& handles, const VectorXd& angles_rad) const;
+    void     set_joint_target_positions(const std::vector<std::string>& jointnames, const VectorXd& angles_rad);
+
 
     std::string get_object_name(const int& handle);
     std::vector<std::string> get_jointnames_from_base_objectname(const std::string& base_objectname);
@@ -92,13 +97,14 @@ public:
     void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
     void   set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
     void   enable_dynamics(const bool& flag);
-    double get_simulation_time_step();
+    double get_simulation_time_step() const;
     void   set_simulation_time_step(const double& time_step);
-    double get_physics_time_step();
-    void   set_physics_time_step(const double& time_step);
+    double get_physics_time_step() const;
+    void   set_physics_time_step(const double& time_step) const;
     void   set_dynamic_engine(const ENGINE& engine);
     void   set_gravity(const DQ& gravity=-9.81*k_);
-
+    DQ     get_gravity() const;
+    //----------------------------------------------------------------------------------------
 
     std::map<std::string, int> get_map();
     void show_map();

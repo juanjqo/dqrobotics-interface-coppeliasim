@@ -8,14 +8,16 @@ int main()
     {
         DQ_CoppeliaSimInterface vi;
         vi.connect();
-        vi.set_stepping_mode(false);
-        vi.set_dynamic_engine(DQ_CoppeliaSimInterface::NEWTON);
+        vi.set_stepping_mode(true);
+        vi.set_dynamic_engine(DQ_CoppeliaSimInterface::MUJOCO);
         std::cout<<"Simulation time step: "<<vi.get_simulation_time_step()
                  <<" Physics time step: "<<vi.get_physics_time_step()<<std::endl;
         vi.set_simulation_time_step(0.05);
         vi.set_physics_time_step(0.005);
         std::cout<<"Simulation time step: "<<vi.get_simulation_time_step()
                   <<" Physics time step: "<<vi.get_physics_time_step()<<std::endl;
+
+        std::cout<<"gravity: "<<vi.get_gravity()<<std::endl;
         vi.start_simulation();
 
         std::vector<std::string> jointnames =
@@ -34,23 +36,25 @@ int main()
         VectorXd u = VectorXd::Zero(7);
         u << M_PI/2, 0, 0, -1.57156, 0, 1.57075, 0;
 
-        vi.set_joint_modes(jointnames, DQ_CoppeliaSimInterface::KINEMATIC);
-        vi.enable_dynamics(false);
+        vi.set_joint_modes(jointnames, DQ_CoppeliaSimInterface::DYNAMIC);
+        vi.enable_dynamics(true);
 
-        for(int i=0; i<100;i++)
-            vi.set_joint_positions(jointnames, u);
+        //for(int i=0; i<100;i++)
+            //vi.set_joint_positions(jointnames, u);
         //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-        vi.pause_simulation();
+        //vi.pause_simulation();
 
 
-        while (t < 1.0)
+        while (t < 5.0)
         {
             //std::cout<<"status: "<<vi.is_simulation_running()<<" "
             //          <<vi.get_simulation_state()<<std::endl;
             t = vi.get_simulation_time();
             std::cout<<"Simulation time: "<<t<<std::endl;
+            vi.set_joint_target_positions(jointnames, u);
             vi.trigger_next_simulation_step();
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
         }
         vi.stop_simulation();

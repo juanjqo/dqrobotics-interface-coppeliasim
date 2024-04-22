@@ -519,7 +519,49 @@ void DQ_CoppeliaSimInterface::set_joint_positions(const std::vector<std::string>
      _check_sizes(jointnames, angles_rad, "Error in DQ_CoppeliaSimInterface::set_joint_positions: "
                                           "jointnames and angles_rad have incompatible sizes");
     for(std::size_t i=0;i<jointnames.size();i++)
-        set_joint_position(jointnames.at(i), angles_rad(i));
+         set_joint_position(jointnames.at(i), angles_rad(i));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_joint_target_position
+ * @param handle
+ * @param angle_rad
+ */
+void DQ_CoppeliaSimInterface::set_joint_target_position(const int &handle, const double &angle_rad) const
+{
+    sim_->setJointTargetPosition(handle, angle_rad);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_joint_target_position
+ * @param jointname
+ * @param angle_rad
+ */
+void DQ_CoppeliaSimInterface::set_joint_target_position(const std::string &jointname, const double &angle_rad)
+{
+    set_joint_target_position(_get_object_handle(jointname), angle_rad);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_joint_target_positions
+ * @param handles
+ * @param angles_rad
+ */
+void DQ_CoppeliaSimInterface::set_joint_target_positions(const std::vector<int> &handles, const VectorXd &angles_rad) const
+{
+    for(std::size_t i=0;i<handles.size();i++)
+        set_joint_target_position(handles.at(i), angles_rad(i));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_joint_target_positions
+ * @param jointnames
+ * @param angles_rad
+ */
+void DQ_CoppeliaSimInterface::set_joint_target_positions(const std::vector<std::string> &jointnames, const VectorXd &angles_rad)
+{
+    for(std::size_t i=0;i<jointnames.size();i++)
+        set_joint_target_position(jointnames.at(i), angles_rad(i));
 }
 
 /**
@@ -604,7 +646,7 @@ void DQ_CoppeliaSimInterface::enable_dynamics(const bool &flag)
  * @brief DQ_CoppeliaSimInterface::get_simulation_time_step
  * @return
  */
-double DQ_CoppeliaSimInterface::get_simulation_time_step()
+double DQ_CoppeliaSimInterface::get_simulation_time_step() const
 {
     return sim_->getFloatParam(sim_->floatparam_simulation_time_step);
 }
@@ -622,7 +664,7 @@ void DQ_CoppeliaSimInterface::set_simulation_time_step(const double &time_step)
  * @brief DQ_CoppeliaSimInterface::get_physics_time_step
  * @return
  */
-double DQ_CoppeliaSimInterface::get_physics_time_step()
+double DQ_CoppeliaSimInterface::get_physics_time_step() const
 {
     return sim_->getFloatParam(sim_->floatparam_physicstimestep);
 }
@@ -631,21 +673,39 @@ double DQ_CoppeliaSimInterface::get_physics_time_step()
  * @brief DQ_CoppeliaSimInterface::set_physics_time_step
  * @param time_step
  */
-void DQ_CoppeliaSimInterface::set_physics_time_step(const double &time_step)
+void DQ_CoppeliaSimInterface::set_physics_time_step(const double &time_step) const
 {
     sim_->setFloatParam(sim_->floatparam_physicstimestep, time_step);
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::set_dynamic_engine
+ * @param engine
+ */
 void DQ_CoppeliaSimInterface::set_dynamic_engine(const ENGINE &engine)
 {
     sim_->setInt32Param(sim_->intparam_dynamic_engine, engine);
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::set_gravity
+ * @param gravity
+ */
 void DQ_CoppeliaSimInterface::set_gravity(const DQ &gravity)
 {
     VectorXd gravity_vec = gravity.vec3();
     std::vector<double> g = {gravity_vec(0),gravity_vec(1), gravity_vec(2)};
     sim_->setArrayParam(sim_->arrayparam_gravity, g);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_gravity
+ * @return
+ */
+DQ DQ_CoppeliaSimInterface::get_gravity() const
+{
+    std::vector<double> g = sim_->getArrayParam(sim_->arrayparam_gravity);
+    return DQ(0, g.at(0), g.at(1), g.at(2));
 }
 
 
