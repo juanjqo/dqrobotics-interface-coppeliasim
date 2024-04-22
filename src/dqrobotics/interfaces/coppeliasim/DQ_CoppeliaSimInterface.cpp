@@ -560,8 +560,105 @@ void DQ_CoppeliaSimInterface::set_joint_target_positions(const std::vector<int> 
  */
 void DQ_CoppeliaSimInterface::set_joint_target_positions(const std::vector<std::string> &jointnames, const VectorXd &angles_rad)
 {
+    _check_sizes(jointnames, angles_rad, "Error in DQ_CoppeliaSimInterface::set_joint_target_positions: "
+                                         "jointnames and angles_rad have incompatible sizes");
     for(std::size_t i=0;i<jointnames.size();i++)
         set_joint_target_position(jointnames.at(i), angles_rad(i));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_joint_velocity
+ * @param handle
+ * @return
+ */
+double DQ_CoppeliaSimInterface::get_joint_velocity(const int &handle) const
+{
+    return sim_->getObjectFloatParam(handle, sim_->jointfloatparam_velocity);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_joint_velocity
+ * @param jointname
+ * @return
+ */
+double DQ_CoppeliaSimInterface::get_joint_velocity(const std::string &jointname)
+{
+    return get_joint_velocity(_get_object_handle(jointname));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_joint_velocties
+ * @param handles
+ * @return
+ */
+VectorXd DQ_CoppeliaSimInterface::get_joint_velocities(const std::vector<int> &handles) const
+{
+    std::size_t n = handles.size();
+    VectorXd joint_velocities(n);
+    for(std::size_t i=0;i<n;i++)
+        joint_velocities(i)=get_joint_velocity(handles.at(i));
+
+    return joint_velocities;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_joint_velocities
+ * @param jointnames
+ * @return
+ */
+VectorXd DQ_CoppeliaSimInterface::get_joint_velocities(const std::vector<std::string> &jointnames)
+{
+    std::size_t n = jointnames.size();
+    VectorXd joint_velocities(n);
+    for(std::size_t i=0;i<n;i++)
+    {
+        joint_velocities(i)=get_joint_velocity(jointnames[i]);
+    }
+    return joint_velocities;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_joint_target_velocity
+ * @param handle
+ * @param angle_rad_dot
+ */
+void DQ_CoppeliaSimInterface::set_joint_target_velocity(const int &handle, const double &angle_rad_dot) const
+{
+    sim_->setJointTargetVelocity(handle, angle_rad_dot);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_joint_target_velocity
+ * @param jointname
+ * @param angle_rad_dot
+ */
+void DQ_CoppeliaSimInterface::set_joint_target_velocity(const std::string &jointname, const double &angle_rad_dot)
+{
+    set_joint_target_velocity(_get_object_handle(jointname), angle_rad_dot);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_joint_target_velocities
+ * @param handles
+ * @param angles_rad_dot
+ */
+void DQ_CoppeliaSimInterface::set_joint_target_velocities(const std::vector<int> &handles, const VectorXd &angles_rad_dot) const
+{
+    for(std::size_t i=0;i<handles.size();i++)
+        set_joint_target_velocity(handles.at(i), angles_rad_dot(i));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_joint_target_velocities
+ * @param jointnames
+ * @param angles_rad_dot
+ */
+void DQ_CoppeliaSimInterface::set_joint_target_velocities(const std::vector<std::string> &jointnames, const VectorXd &angles_rad_dot)
+{
+    _check_sizes(jointnames, angles_rad_dot, "Error in DQ_CoppeliaSimInterface::set_joint_target_velocities: "
+                                             "jointnames and angles_rad_Dot have incompatible sizes");
+    for(std::size_t i=0;i<jointnames.size();i++)
+        set_joint_target_velocity(jointnames.at(i), angles_rad_dot(i));
 }
 
 /**

@@ -109,6 +109,17 @@ public:
     void     set_joint_target_positions(const std::vector<int>& handles, const VectorXd& angles_rad) const;
     void     set_joint_target_positions(const std::vector<std::string>& jointnames, const VectorXd& angles_rad);
 
+    double   get_joint_velocity(const int& handle) const;
+    double   get_joint_velocity(const std::string& jointname);
+    VectorXd get_joint_velocities(const std::vector<int>& handles) const;
+    VectorXd get_joint_velocities(const std::vector<std::string>& jointnames);
+
+    void     set_joint_target_velocity(const int& handle, const double& angle_rad_dot) const;
+    void     set_joint_target_velocity(const std::string& jointname, const double& angle_rad_dot);
+    void     set_joint_target_velocities(const std::vector<int>& handles, const VectorXd& angles_rad_dot) const;
+    void     set_joint_target_velocities(const std::vector<std::string>& jointnames, const VectorXd& angles_rad_dot);
+
+
 
     std::string get_object_name(const int& handle);
     std::vector<std::string> get_jointnames_from_base_objectname(const std::string& base_objectname);

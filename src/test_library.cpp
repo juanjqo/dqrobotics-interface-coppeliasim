@@ -34,7 +34,7 @@ int main()
         std::cout<<"q: "<<q.transpose()<<std::endl;
 
         VectorXd u = VectorXd::Zero(7);
-        u << M_PI/2, 0, 0, -1.57156, 0, 1.57075, 0;
+        u << 0.1, 0, 0, 0, 0, 0, 0;
 
         vi.set_joint_modes(jointnames, DQ_CoppeliaSimInterface::DYNAMIC);
         vi.set_joint_control_modes(jointnames, DQ_CoppeliaSimInterface::VELOCITY);
@@ -44,7 +44,7 @@ int main()
             //vi.set_joint_positions(jointnames, u);
         //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-        vi.pause_simulation();
+        //vi.pause_simulation();
 
 
         while (t < 5.0)
@@ -53,7 +53,8 @@ int main()
             //          <<vi.get_simulation_state()<<std::endl;
             t = vi.get_simulation_time();
             std::cout<<"Simulation time: "<<t<<std::endl;
-            vi.set_joint_target_positions(jointnames, u);
+            vi.set_joint_target_velocities(jointnames, u);
+            std::cout<<"joint vel: "<<vi.get_joint_velocities(jointnames).transpose()<<std::endl;
             vi.trigger_next_simulation_step();
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
