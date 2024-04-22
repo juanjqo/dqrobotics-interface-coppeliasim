@@ -9,8 +9,8 @@ An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ 
 
 # Overall advice: Don't use this interface for your project! :warning:
 
-**Please be careful** when you install the 365 billion libraries and components of Boost. You could destroy your computer's memory or experience high stress when removing all Boost elements (in case you could).
-I highly recommend the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability, support, and not installing Boost.
+**Please be careful** when you install the 365 billion Boost libraries. You could destroy your computer's memory or experience high stress when removing all components of Boost (in case you could).
+**I highly recommend** the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability, support, and not installing Boost.
 
 
 
