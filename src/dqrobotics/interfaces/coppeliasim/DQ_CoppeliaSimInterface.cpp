@@ -256,6 +256,14 @@ std::map<std::string, int> DQ_CoppeliaSimInterface::get_map()
     return set_states_map_;
 }
 
+void DQ_CoppeliaSimInterface::show_map()
+{
+    for (const auto& p : set_states_map_)
+    {
+        std::cout << '[' << p.first << "] = " << p.second << '\n';
+    }
+}
+
 /**
  * @brief DQ_CoppeliaSimInterface::get_object_translation returns the position
  *        of a handle in the CoppeliaSim scene with respect to the absolute frame.
@@ -312,6 +320,13 @@ DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname
     return get_object_translation(_get_object_handle(objectname), _get_object_handle(relative_to_objectname));
 }
 
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_object_translation sets the translation of a handle
+ *        in the CoppeliaSim scene.
+ * @param handle
+ * @param t desired position.
+ */
 void DQ_CoppeliaSimInterface::set_object_translation(const int &handle, const DQ &t)
 {
     VectorXd vec_t = t.vec3();
@@ -320,9 +335,85 @@ void DQ_CoppeliaSimInterface::set_object_translation(const int &handle, const DQ
                                                  client_->getObject().sim().handle_world);
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::set_object_translation
+ * @param objectname
+ * @param t
+ */
 void DQ_CoppeliaSimInterface::set_object_translation(const std::string &objectname, const DQ &t)
 {
     set_object_translation(_get_object_handle(objectname), t);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_rotation
+ * @param handle
+ * @return the object rotation
+ */
+DQ DQ_CoppeliaSimInterface::get_object_rotation(const int &handle)
+{
+    auto rotation = client_->getObject().sim().getObjectQuaternion(handle +
+                                                   client_->getObject().sim().handleflag_wxyzquat,
+                                                   client_->getObject().sim().handle_world);
+
+    return DQ(rotation.at(0), rotation.at(1), rotation.at(2), rotation.at(3));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_rotation
+ * @param objectname
+ * @return
+ */
+DQ DQ_CoppeliaSimInterface::get_object_rotation(const std::string &objectname)
+{
+    return get_object_rotation(_get_object_handle(objectname));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_object_rotation
+ * @param handle
+ * @param r
+ */
+void DQ_CoppeliaSimInterface::set_object_rotation(const int &handle, const DQ &r)
+{
+    VectorXd vec_r = r.vec4();
+    std::vector<double> rotation= {vec_r[0], vec_r[1],vec_r[2], vec_r[3]};
+    client_->getObject().sim().setObjectQuaternion(handle +
+                                                   client_->getObject().sim().handleflag_wxyzquat,
+                                                   rotation,
+                                                   client_->getObject().sim().handle_world);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_object_rotation
+ * @param objectname
+ * @param r
+ */
+void DQ_CoppeliaSimInterface::set_object_rotation(const std::string &objectname, const DQ &r)
+{
+    set_object_rotation(_get_object_handle(objectname), r);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_pose
+ * @param handle
+ * @return
+ */
+DQ DQ_CoppeliaSimInterface::get_object_pose(const int &handle)
+{
+    DQ t = get_object_translation(handle);
+    DQ r = get_object_rotation(handle);
+    return r + 0.5*E_*t*r;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_pose
+ * @param objectname
+ * @return
+ */
+DQ DQ_CoppeliaSimInterface::get_object_pose(const std::string &objectname)
+{
+    return get_object_pose(_get_object_handle(objectname));
 }
 
 

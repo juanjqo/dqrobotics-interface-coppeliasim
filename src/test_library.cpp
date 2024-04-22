@@ -20,11 +20,7 @@ int main()
         std::cout<<"Position: "<<position<<std::endl;
 
 
-        auto m = vi.get_map();
-        for (const auto& p : m)
-        {
-            std::cout << '[' << p.first << "] = " << p.second << '\n';
-        }
+
         double t = 0.0;
 
 
@@ -44,6 +40,14 @@ int main()
         //          <<vi.get_simulation_state()<<std::endl;
 
         vi.set_object_translation("/ReferenceFrame[0]", DQ(0, 0,0,0));
+        double phi = -M_PI/2;
+        DQ rr = cos(phi/2) + k_*sin(phi/2);
+        vi.set_object_rotation("/ReferenceFrame[0]", rr);
+        DQ x = vi.get_object_pose("/ReferenceFrame[0]");
+        std::cout<<"r: "<<x.P()<<" angle: "<<x.P().rotation_angle()
+                  <<"  axis:"<<x.P().rotation_axis()<<std::endl;
+
+        vi.show_map();
     }
     catch (const std::runtime_error& e)
     {

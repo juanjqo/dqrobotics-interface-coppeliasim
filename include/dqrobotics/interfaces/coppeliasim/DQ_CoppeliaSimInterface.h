@@ -69,8 +69,17 @@ public:
     void set_object_translation(const int& handle, const DQ& t);
     void set_object_translation(const std::string& objectname, const DQ& t);
 
+    DQ   get_object_rotation(const int& handle);
+    DQ   get_object_rotation(const std::string& objectname);
+
+    void set_object_rotation(const int& handle, const DQ& r);
+    void set_object_rotation(const std::string& objectname, const DQ& r);
+
+    DQ get_object_pose(const int& handle);
+    DQ get_object_pose(const std::string& objectname);
 
     std::map<std::string, int> get_map();
+    void show_map();
 
     //-----------Deprecated methods---------------------------//
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
