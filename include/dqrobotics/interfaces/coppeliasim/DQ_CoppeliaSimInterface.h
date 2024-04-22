@@ -30,9 +30,28 @@ using namespace Eigen;
 class DQ_CoppeliaSimInterface
 {
 public:
-    enum JOINT_MODE{KINEMATIC, DYNAMIC, DEPENDENT};
-    enum ENGINE{BULLET, ODE, VORTEX, NEWTON, MUJOCO};
-    enum JOINT_CONTROL_MODE{FREE, FORCE, VELOCITY, POSITION, SPRING, CUSTOM};
+    enum JOINT_MODE
+    {
+        KINEMATIC,
+        DYNAMIC,
+        DEPENDENT
+    };
+    enum ENGINE
+    {
+        BULLET,
+        ODE,
+        VORTEX,
+        NEWTON,
+        MUJOCO
+    };
+    enum JOINT_CONTROL_MODE
+    {
+        FREE,
+        FORCE,
+        VELOCITY,
+        POSITION,
+        SPRING,
+        CUSTOM};
 
     DQ_CoppeliaSimInterface();
     void connect(const std::string& host = "localhost",
