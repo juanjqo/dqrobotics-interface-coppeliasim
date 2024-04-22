@@ -60,23 +60,36 @@ public:
     std::vector<int> get_object_handles(const std::vector<std::string>& objectnames);
 
 
-    DQ   get_object_translation(const int& handle);
-    DQ   get_object_translation(const int& handle, const int& relative_to_handle);
+    DQ   get_object_translation(const int& handle) const;
     DQ   get_object_translation(const std::string& objectname);
-    DQ   get_object_translation(const std::string& objectname,
-                                const std::string& relative_to_objectname);
 
     void set_object_translation(const int& handle, const DQ& t);
     void set_object_translation(const std::string& objectname, const DQ& t);
 
-    DQ   get_object_rotation(const int& handle);
+    DQ   get_object_rotation(const int& handle) const;
     DQ   get_object_rotation(const std::string& objectname);
 
     void set_object_rotation(const int& handle, const DQ& r);
     void set_object_rotation(const std::string& objectname, const DQ& r);
 
-    DQ get_object_pose(const int& handle);
+    DQ get_object_pose(const int& handle) const;
+    DQ get_object_pose(const int& handle, const int& relative_to_handle) const;
     DQ get_object_pose(const std::string& objectname);
+    DQ get_object_pose(const std::string& objectname,
+                       const std::string& relative_to_objectname);
+
+    void set_object_pose(const int& handle, const DQ& h);
+    void set_object_pose(const std::string& objectname, const DQ& h);
+
+    double get_joint_position(const int& handle) const;
+    double get_joint_position(const std::string& jointname);
+    VectorXd get_joint_positions(const std::vector<int>& handles) const;
+    VectorXd get_joint_positions(const std::vector<std::string>& jointnames);
+
+
+
+    std::string get_object_name(const int& handle);
+    std::vector<std::string> get_jointnames_from_base_objectname(const std::string& base_objectname);
 
     std::map<std::string, int> get_map();
     void show_map();

@@ -270,28 +270,12 @@ void DQ_CoppeliaSimInterface::show_map()
  * @param handle The handle of the object.
  * @return the absolute position of the handle.
  */
-DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle)
+DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle) const
 {
     auto position = client_->getObject().sim().getObjectPosition(handle,
                                                  client_->getObject().sim().handle_world);
     const DQ t = DQ(0, position.at(0),position.at(1),position.at(2));
     return t;
-}
-
-
-/**
- * @brief DQ_CoppeliaSimInterface::get_object_translation returns the position
- *        of a handle in the CoppeliaSim scene with respect to 'relative_to_handle'
- * @param handle
- * @param relative_to_handle
- * @return the relative position of the handle.
- */
-DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle, const int &relative_to_handle)
-{
-    DQ handle_position1 = get_object_translation(handle);
-    DQ handle_position2 = get_object_translation(relative_to_handle);
-    DQ x = (1 + 0.5*E_*handle_position2).conj()*(1 + 0.5*E_*handle_position1);
-    return x.translation();
 }
 
 
@@ -304,20 +288,6 @@ DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle, const int 
 DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname)
 {
     return get_object_translation(_get_object_handle(objectname));
-}
-
-
-/**
- * @brief DQ_CoppeliaSimInterface::get_object_translation returns the position of
- *        an object in the CoppeliaSim scene with respect to relative_to_objectname.
- * @param objectname
- * @param relative_to_objectname
- * @return the relative position of the objectname.
- */
-DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname,
-                                                   const std::string &relative_to_objectname)
-{
-    return get_object_translation(_get_object_handle(objectname), _get_object_handle(relative_to_objectname));
 }
 
 
@@ -350,7 +320,7 @@ void DQ_CoppeliaSimInterface::set_object_translation(const std::string &objectna
  * @param handle
  * @return the object rotation
  */
-DQ DQ_CoppeliaSimInterface::get_object_rotation(const int &handle)
+DQ DQ_CoppeliaSimInterface::get_object_rotation(const int &handle) const
 {
     auto rotation = client_->getObject().sim().getObjectQuaternion(handle +
                                                    client_->getObject().sim().handleflag_wxyzquat,
@@ -399,11 +369,18 @@ void DQ_CoppeliaSimInterface::set_object_rotation(const std::string &objectname,
  * @param handle
  * @return
  */
-DQ DQ_CoppeliaSimInterface::get_object_pose(const int &handle)
+DQ DQ_CoppeliaSimInterface::get_object_pose(const int &handle) const
 {
     DQ t = get_object_translation(handle);
     DQ r = get_object_rotation(handle);
     return r + 0.5*E_*t*r;
+}
+
+DQ DQ_CoppeliaSimInterface::get_object_pose(const int &handle, const int &relative_to_handle) const
+{
+    DQ x1 = get_object_pose(handle);
+    DQ x2 = get_object_pose(relative_to_handle);
+    return x2.conj()*x1;
 }
 
 /**
@@ -415,6 +392,125 @@ DQ DQ_CoppeliaSimInterface::get_object_pose(const std::string &objectname)
 {
     return get_object_pose(_get_object_handle(objectname));
 }
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_pose
+ * @param objectname
+ * @param relative_to_objectname
+ * @return
+ */
+DQ DQ_CoppeliaSimInterface::get_object_pose(const std::string &objectname, const std::string &relative_to_objectname)
+{
+    return get_object_pose(_get_object_handle(objectname), _get_object_handle(relative_to_objectname));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_object_pose
+ * @param handle
+ * @param h
+ */
+void DQ_CoppeliaSimInterface::set_object_pose(const int &handle, const DQ &h)
+{
+    VectorXd vec_r = h.P().vec4();
+    VectorXd vec_p = h.translation().vec3();
+    std::vector<double> pose = {vec_p[0], vec_p[1],vec_p[2],vec_r[0], vec_r[1],vec_r[2], vec_r[3]};
+    client_->getObject().sim().setObjectPose(handle +
+                                             client_->getObject().sim().handleflag_wxyzquat,
+                                             pose,
+                                             client_->getObject().sim().handle_world);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_object_pose
+ * @param objectname
+ * @param h
+ */
+void DQ_CoppeliaSimInterface::set_object_pose(const std::string &objectname, const DQ &h)
+{
+    set_object_pose(_get_object_handle(objectname), h);
+}
+
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_joint_position
+ * @param handle
+ * @return
+ */
+double DQ_CoppeliaSimInterface::get_joint_position(const int &handle) const
+{
+    return double(client_->getObject().sim().getJointPosition(handle));
+}
+
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_joint_position
+ * @param jointname
+ * @return
+ */
+double DQ_CoppeliaSimInterface::get_joint_position(const std::string &jointname)
+{
+    return get_joint_position(_get_object_handle(jointname));
+}
+
+VectorXd DQ_CoppeliaSimInterface::get_joint_positions(const std::vector<int> &handles) const
+{
+    std::size_t n = handles.size();
+    VectorXd joint_positions(n);
+    for(std::size_t i=0;i<n;i++)
+    {
+        joint_positions(i)=get_joint_position(handles.at(i));
+    }
+    return joint_positions;
+}
+
+VectorXd DQ_CoppeliaSimInterface::get_joint_positions(const std::vector<std::string> &jointnames)
+{
+    std::size_t n = jointnames.size();
+    VectorXd joint_positions(n);
+    for(std::size_t i=0;i<n;i++)
+    {
+        joint_positions(i)=get_joint_position(jointnames[i]);
+    }
+    return joint_positions;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_name
+ * @param handle
+ * @return
+ */
+std::string DQ_CoppeliaSimInterface::get_object_name(const int &handle)
+{
+    std::string objectname = client_->getObject().sim().getObjectAlias(handle, 1);
+    _update_map(objectname, handle);
+    return objectname;
+}
+
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_jointnames_from_base_objectname
+ * @param base_objectname
+ * @return
+ */
+std::vector<std::string> DQ_CoppeliaSimInterface::get_jointnames_from_base_objectname(const std::string &base_objectname)
+{
+    int base_handle = _get_object_handle(base_objectname);
+    std::vector<int64_t> jointhandles = client_->getObject().sim().
+                                        getObjectsInTree(base_handle,
+                                        client_->getObject().sim().object_joint_type,
+                                        0);
+    std::size_t n = jointhandles.size();
+    std::vector<std::string> jointnames(n);
+    for(std::size_t i=0;i<n;i++)
+    {
+        jointnames.at(i)=get_object_name(jointhandles.at(i));
+    }
+    return jointnames;
+
+}
+
+
+
 
 
 /**

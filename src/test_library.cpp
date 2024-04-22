@@ -11,17 +11,18 @@ int main()
         vi.set_stepping_mode(true);
         vi.start_simulation();
 
-        std::vector<std::string> jointnames = {"/Franka/joint", "/Franka/link2_resp/joint"};
-        std::cout<<"Handle: "<<vi.get_object_handle("/Franka/joint")<<std::endl;
-        std::vector<int> handles = vi.get_object_handles(jointnames);
-        std::cout<<"Handle: "<<vi.get_object_handle("/Franka/joint")<<std::endl;
+        std::vector<std::string> jointnames =
+            vi.get_jointnames_from_base_objectname(std::string("/Franka"));
 
-        DQ position = vi.get_object_translation("/ReferenceFrame[1]", "/ReferenceFrame[0]");
-        std::cout<<"Position: "<<position<<std::endl;
-
-
+        for (auto &p:  jointnames)
+        {
+            std::cout<<p<<std::endl;
+        }
 
         double t = 0.0;
+
+        VectorXd q = vi.get_joint_positions(jointnames);
+        std::cout<<"q: "<<q.transpose()<<std::endl;
 
 
 
@@ -40,12 +41,7 @@ int main()
         //          <<vi.get_simulation_state()<<std::endl;
 
         vi.set_object_translation("/ReferenceFrame[0]", DQ(0, 0,0,0));
-        double phi = -M_PI/2;
-        DQ rr = cos(phi/2) + k_*sin(phi/2);
-        vi.set_object_rotation("/ReferenceFrame[0]", rr);
-        DQ x = vi.get_object_pose("/ReferenceFrame[0]");
-        std::cout<<"r: "<<x.P()<<" angle: "<<x.P().rotation_angle()
-                  <<"  axis:"<<x.P().rotation_axis()<<std::endl;
+        vi.set_object_pose("/ReferenceFrame[0]", vi.get_object_pose("/Franka/connection"));
 
         vi.show_map();
     }
