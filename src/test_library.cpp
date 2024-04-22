@@ -42,6 +42,8 @@ int main()
         vi.get_simulation_state();
         //std::cout<<"status: "<<vi.is_simulation_running()<<" "
         //          <<vi.get_simulation_state()<<std::endl;
+
+        vi.set_object_translation("/ReferenceFrame[0]", DQ(0, 0,0,0));
     }
     catch (const std::runtime_error& e)
     {

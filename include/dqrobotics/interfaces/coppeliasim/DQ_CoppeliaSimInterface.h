@@ -61,10 +61,14 @@ public:
 
 
     DQ   get_object_translation(const int& handle);
-    DQ   get_object_translation(const int& handle, const int& reference_handle);
+    DQ   get_object_translation(const int& handle, const int& relative_to_handle);
     DQ   get_object_translation(const std::string& objectname);
     DQ   get_object_translation(const std::string& objectname,
-                                const std::string& reference_objectname);
+                                const std::string& relative_to_objectname);
+
+    void set_object_translation(const int& handle, const DQ& t);
+    void set_object_translation(const std::string& objectname, const DQ& t);
+
 
     std::map<std::string, int> get_map();
 

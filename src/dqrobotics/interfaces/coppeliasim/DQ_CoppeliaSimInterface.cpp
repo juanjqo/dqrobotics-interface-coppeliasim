@@ -54,6 +54,8 @@ void _set_status_bar_message(const std::string &message, const int& verbosity_ty
     client_->getObject().sim().addLog(verbosity_type, message);
 }
 
+
+
 //-------------------------------------------------------------//
 
 /**
@@ -271,15 +273,15 @@ DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle)
 
 /**
  * @brief DQ_CoppeliaSimInterface::get_object_translation returns the position
- *        of a handle in the CoppeliaSim scene with respect to 'reference_handle'
+ *        of a handle in the CoppeliaSim scene with respect to 'relative_to_handle'
  * @param handle
- * @param reference_handle
+ * @param relative_to_handle
  * @return the relative position of the handle.
  */
-DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle, const int &reference_handle)
+DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle, const int &relative_to_handle)
 {
     DQ handle_position1 = get_object_translation(handle);
-    DQ handle_position2 = get_object_translation(reference_handle);
+    DQ handle_position2 = get_object_translation(relative_to_handle);
     DQ x = (1 + 0.5*E_*handle_position2).conj()*(1 + 0.5*E_*handle_position1);
     return x.translation();
 }
@@ -299,15 +301,28 @@ DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname
 
 /**
  * @brief DQ_CoppeliaSimInterface::get_object_translation returns the position of
- *        an object in the CoppeliaSim scene with respect to the reference_objectname.
+ *        an object in the CoppeliaSim scene with respect to relative_to_objectname.
  * @param objectname
- * @param reference_objectname
+ * @param relative_to_objectname
  * @return the relative position of the objectname.
  */
 DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname,
-                                                   const std::string &reference_objectname)
+                                                   const std::string &relative_to_objectname)
 {
-    return get_object_translation(_get_object_handle(objectname), _get_object_handle(reference_objectname));
+    return get_object_translation(_get_object_handle(objectname), _get_object_handle(relative_to_objectname));
+}
+
+void DQ_CoppeliaSimInterface::set_object_translation(const int &handle, const DQ &t)
+{
+    VectorXd vec_t = t.vec3();
+    std::vector<double> position = {vec_t[0], vec_t[1],vec_t[2]};
+    client_->getObject().sim().setObjectPosition(handle, position,
+                                                 client_->getObject().sim().handle_world);
+}
+
+void DQ_CoppeliaSimInterface::set_object_translation(const std::string &objectname, const DQ &t)
+{
+    set_object_translation(_get_object_handle(objectname), t);
 }
 
 
