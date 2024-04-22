@@ -1,8 +1,10 @@
 ![Static Badge](https://img.shields.io/badge/status-experimental-critical)![Static Badge](https://img.shields.io/badge/Platform-Apple_silicon-magenta)![Static Badge](https://img.shields.io/badge/Tested-Apple)![Static Badge](https://img.shields.io/badge/Platform-Ubuntu_x64-orange)![Static Badge](https://img.shields.io/badge/Untested-red)![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/Written_in-C%2B%2B17-blue)![GitHub License](https://img.shields.io/github/license/juanjqo/capybara_toolkit)
 
+# Don't use this interface for your project! :warning:
+
 # cpp-interface-coppeliasim 
 
-An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API and C++17. This API provides more functionalities when compared to the legacy remote API used by the official DQ Robotics interface (cpp-interface-vrep). However, there is a high price to pay, the ZeroMQ remote API requires Boost :confused:
+An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API and C++17. This API provides more functionalities when compared to the legacy remote API used by the official DQ Robotics interface (cpp-interface-vrep). However, **there is a high price to pay**, the ZeroMQ remote API requires **Boost** :confused:. **Please be careful** when you install the 365 billion libraries and components of Boost. You could destroy your computer's memory or experience high stress when removing all Boost elements (in case you could).
 
 
 ![Static Badge](https://img.shields.io/badge/warning-yellow)
