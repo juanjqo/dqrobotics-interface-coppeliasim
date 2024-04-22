@@ -16,7 +16,7 @@ I highly recommend the [official DQ Robotics interface](https://github.com/dqrob
 
 
 ![Static Badge](https://img.shields.io/badge/warning-yellow)
-This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS (Apple Silicon) only. Ubuntu versions are expected later.
+This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS (Apple Silicon) only. Ubuntu versions are expected later, though.
 
 
 | CoppeliaSim  | SO | Status |
