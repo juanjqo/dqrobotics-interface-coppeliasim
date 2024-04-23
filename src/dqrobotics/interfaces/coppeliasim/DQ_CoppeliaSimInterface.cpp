@@ -288,7 +288,7 @@ DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle) const
  */
 DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname)
 {
-    return get_object_translation(_get_object_handle(objectname));
+    return get_object_translation(_get_handle_from_map(objectname));
 }
 
 
@@ -312,7 +312,7 @@ void DQ_CoppeliaSimInterface::set_object_translation(const int &handle, const DQ
  */
 void DQ_CoppeliaSimInterface::set_object_translation(const std::string &objectname, const DQ &t)
 {
-    set_object_translation(_get_object_handle(objectname), t);
+    set_object_translation(_get_handle_from_map(objectname), t);
 }
 
 /**
@@ -336,7 +336,7 @@ DQ DQ_CoppeliaSimInterface::get_object_rotation(const int &handle) const
  */
 DQ DQ_CoppeliaSimInterface::get_object_rotation(const std::string &objectname)
 {
-    return get_object_rotation(_get_object_handle(objectname));
+    return get_object_rotation(_get_handle_from_map(objectname));
 }
 
 /**
@@ -358,7 +358,7 @@ void DQ_CoppeliaSimInterface::set_object_rotation(const int &handle, const DQ &r
  */
 void DQ_CoppeliaSimInterface::set_object_rotation(const std::string &objectname, const DQ &r)
 {
-    set_object_rotation(_get_object_handle(objectname), r);
+    set_object_rotation(_get_handle_from_map(objectname), r);
 }
 
 /**
@@ -387,7 +387,7 @@ DQ DQ_CoppeliaSimInterface::get_object_pose(const int &handle, const int &relati
  */
 DQ DQ_CoppeliaSimInterface::get_object_pose(const std::string &objectname)
 {
-    return get_object_pose(_get_object_handle(objectname));
+    return get_object_pose(_get_handle_from_map(objectname));
 }
 
 /**
@@ -398,7 +398,7 @@ DQ DQ_CoppeliaSimInterface::get_object_pose(const std::string &objectname)
  */
 DQ DQ_CoppeliaSimInterface::get_object_pose(const std::string &objectname, const std::string &relative_to_objectname)
 {
-    return get_object_pose(_get_object_handle(objectname), _get_object_handle(relative_to_objectname));
+    return get_object_pose(_get_handle_from_map(objectname), _get_handle_from_map(relative_to_objectname));
 }
 
 /**
@@ -421,7 +421,7 @@ void DQ_CoppeliaSimInterface::set_object_pose(const int &handle, const DQ &h)
  */
 void DQ_CoppeliaSimInterface::set_object_pose(const std::string &objectname, const DQ &h)
 {
-    set_object_pose(_get_object_handle(objectname), h);
+    set_object_pose(_get_handle_from_map(objectname), h);
 }
 
 
@@ -443,7 +443,7 @@ double DQ_CoppeliaSimInterface::get_joint_position(const int &handle) const
  */
 double DQ_CoppeliaSimInterface::get_joint_position(const std::string &jointname)
 {
-    return get_joint_position(_get_object_handle(jointname));
+    return get_joint_position(_get_handle_from_map(jointname));
 }
 
 /**
@@ -495,7 +495,7 @@ void DQ_CoppeliaSimInterface::set_joint_position(const int &handle, const double
  */
 void DQ_CoppeliaSimInterface::set_joint_position(const std::string &jointname, const double &angle_rad)
 {
-    set_joint_position(_get_object_handle(jointname), angle_rad);
+    set_joint_position(_get_handle_from_map(jointname), angle_rad);
 }
 
 /**
@@ -539,7 +539,7 @@ void DQ_CoppeliaSimInterface::set_joint_target_position(const int &handle, const
  */
 void DQ_CoppeliaSimInterface::set_joint_target_position(const std::string &jointname, const double &angle_rad)
 {
-    set_joint_target_position(_get_object_handle(jointname), angle_rad);
+    set_joint_target_position(_get_handle_from_map(jointname), angle_rad);
 }
 
 /**
@@ -583,7 +583,7 @@ double DQ_CoppeliaSimInterface::get_joint_velocity(const int &handle) const
  */
 double DQ_CoppeliaSimInterface::get_joint_velocity(const std::string &jointname)
 {
-    return get_joint_velocity(_get_object_handle(jointname));
+    return get_joint_velocity(_get_handle_from_map(jointname));
 }
 
 /**
@@ -634,7 +634,7 @@ void DQ_CoppeliaSimInterface::set_joint_target_velocity(const int &handle, const
  */
 void DQ_CoppeliaSimInterface::set_joint_target_velocity(const std::string &jointname, const double &angle_rad_dot)
 {
-    set_joint_target_velocity(_get_object_handle(jointname), angle_rad_dot);
+    set_joint_target_velocity(_get_handle_from_map(jointname), angle_rad_dot);
 }
 
 /**
@@ -662,6 +662,61 @@ void DQ_CoppeliaSimInterface::set_joint_target_velocities(const std::vector<std:
 }
 
 /**
+ * @brief DQ_CoppeliaSimInterface::set_joint_torque
+ * @param handle
+ * @param torque
+ */
+void DQ_CoppeliaSimInterface::set_joint_torque(const int &handle, const double &torque) const
+{
+    double angle_dot_rad_max = 10000.0;
+    if (torque==0)
+    {
+        angle_dot_rad_max = 0.0;
+    }else if (torque<0)
+    {
+        angle_dot_rad_max = -10000.0;
+    }
+    //simxSetJointTargetVelocity(clientid_,handle,angle_dot_rad_max,_remap_op_mode(opmode));
+    //simxSetJointForce(clientid_,handle,abs(torque_f),_remap_op_mode(opmode));
+    sim_->setJointTargetVelocity(handle, angle_dot_rad_max);
+    sim_->setJointTargetForce(handle, abs(torque));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_joint_torque
+ * @param jointname
+ * @param torque
+ */
+void DQ_CoppeliaSimInterface::set_joint_torque(const std::string &jointname, const double &torque)
+{
+    set_joint_torque(_get_handle_from_map(jointname), torque);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_joint_torques
+ * @param handles
+ * @param torques
+ */
+void DQ_CoppeliaSimInterface::set_joint_torques(const std::vector<int> &handles, const VectorXd &torques) const
+{
+    for(std::size_t i=0;i<handles.size();i++)
+        set_joint_torque(handles.at(i), torques(i));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_joint_torques
+ * @param jointnames
+ * @param torques
+ */
+void DQ_CoppeliaSimInterface::set_joint_torques(const std::vector<std::string> &jointnames, const VectorXd &torques)
+{
+    _check_sizes(jointnames, torques, "Error in DQ_CoppeliaSimInterface::set_joint_torques: "
+                                             "jointnames and torques have incompatible sizes");
+    for(std::size_t i=0;i<jointnames.size();i++)
+        set_joint_torque(jointnames.at(i), torques(i));
+}
+
+/**
  * @brief DQ_CoppeliaSimInterface::get_object_name
  * @param handle
  * @return
@@ -681,7 +736,7 @@ std::string DQ_CoppeliaSimInterface::get_object_name(const int &handle)
  */
 std::vector<std::string> DQ_CoppeliaSimInterface::get_jointnames_from_base_objectname(const std::string &base_objectname)
 {
-    int base_handle = _get_object_handle(base_objectname);
+    int base_handle = _get_handle_from_map(base_objectname);
     std::vector<int64_t> jointhandles = sim_->getObjectsInTree(base_handle,
                                         sim_->object_joint_type,
                                         0);
@@ -716,7 +771,7 @@ void DQ_CoppeliaSimInterface::set_joint_mode(const std::string &jointname, const
                 jointMode = sim_->jointmode_dependent;
                 break;
         }
-        sim_->setJointMode(_get_object_handle(jointname), jointMode, 0);
+        sim_->setJointMode(_get_handle_from_map(jointname), jointMode, 0);
 }
 
 /**
@@ -760,7 +815,7 @@ void DQ_CoppeliaSimInterface::set_joint_control_mode(const std::string &jointnam
         control_mode = sim_->jointdynctrl_callback;
         break;
     }
-    sim_->setObjectInt32Param(_get_object_handle(jointname),
+    sim_->setObjectInt32Param(_get_handle_from_map(jointname),
                               sim_->jointintparam_dynctrlmode,
                               control_mode);
 }
@@ -867,13 +922,7 @@ void DQ_CoppeliaSimInterface::_update_map(const std::string &objectname,
     set_states_map_.try_emplace(objectname, handle);
 }
 
-/**
- * @brief DQ_CoppeliaSimInterface::_get_object_handle gets the object handle from the map.
- *        If the object is not included in the map, the method gets the handle from
- *        CoppeliaSim, in which the map will be updated.
- * @param objectname
- * @return the handle.
- */
+/*
 int DQ_CoppeliaSimInterface::_get_object_handle(const std::string &objectname)
 {
     int handle;
@@ -883,7 +932,7 @@ int DQ_CoppeliaSimInterface::_get_object_handle(const std::string &objectname)
         return handle;
     else
         return get_object_handle(objectname); // the map is updated here.
-}
+}*/
 
 
 /**
@@ -893,14 +942,18 @@ int DQ_CoppeliaSimInterface::_get_object_handle(const std::string &objectname)
  * @return a tuple <bool, int>. If the handle is found in the map, returns <true, handle>.
  *                              Otherwise, returns <false, 0>
  */
-std::tuple<bool, int> DQ_CoppeliaSimInterface::_get_handle_from_map(const std::string &objectname)
+int DQ_CoppeliaSimInterface::_get_handle_from_map(const std::string &objectname)
 {
-    if (auto search = set_states_map_.find(objectname); search != set_states_map_.end())
-        //std::cout << "Found " << search->first << ' ' << search->second << '\n';
-        return {true, search->second};
+    auto search = set_states_map_.find(objectname);
+    if (search != set_states_map_.end())
+    { // handle found in map
+        return search->second;
+    }
     else
-        //std::cout << "Not found\n";
-        return {false, 0};
+    {   // handle not found in map. Therefore is taken from CoppeliaSim and the map
+        // is updated;
+        return get_object_handle(objectname);
+    }
 }
 
 

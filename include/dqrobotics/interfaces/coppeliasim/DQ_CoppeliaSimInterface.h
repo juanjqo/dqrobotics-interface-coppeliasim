@@ -119,6 +119,10 @@ public:
     void     set_joint_target_velocities(const std::vector<int>& handles, const VectorXd& angles_rad_dot) const;
     void     set_joint_target_velocities(const std::vector<std::string>& jointnames, const VectorXd& angles_rad_dot);
 
+    void     set_joint_torque(const int& handle, const double& torque) const;
+    void     set_joint_torque(const std::string& jointname, const double& torque);
+    void     set_joint_torques(const std::vector<int>& handles, const VectorXd& torques) const;
+    void     set_joint_torques(const std::vector<std::string>& jointnames, const VectorXd& torques);
 
 
     std::string get_object_name(const int& handle);
@@ -163,8 +167,7 @@ private:
     std::string _map_simulation_state(const int& state) const;
     std::map<std::string, int> set_states_map_;
     void _update_map(const std::string& objectname, const int& handle);
-    int _get_object_handle(const std::string& objectname);
-    std::tuple<bool, int> _get_handle_from_map(const std::string& objectname);
+    int _get_handle_from_map(const std::string& objectname);
     //------------------------------------------------------------------------
 
     template<typename T, typename U>
