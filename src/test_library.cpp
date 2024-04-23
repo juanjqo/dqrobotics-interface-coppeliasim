@@ -7,7 +7,7 @@ int main()
     try
     {
         DQ_CoppeliaSimInterface vi;
-        vi.connect();
+        vi.connect("localhost", 23000);
         vi.set_stepping_mode(true);
         vi.set_dynamic_engine(DQ_CoppeliaSimInterface::MUJOCO);
         std::cout<<"Simulation time step: "<<vi.get_simulation_time_step()
