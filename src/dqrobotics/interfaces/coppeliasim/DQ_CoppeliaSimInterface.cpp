@@ -75,7 +75,7 @@ void _create_client(const std::string& host = "localhost",
     if (!client_flag)
     {
          client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
-         sim_   = std::make_unique<RemoteAPIObject::sim >(client_->getObject().sim());
+         sim_    = std::make_unique<RemoteAPIObject::sim >(client_->getObject().sim());
     }
 }
 
@@ -87,14 +87,16 @@ void _create_client(const std::string& host = "localhost",
  * @param rpcPort The port to establish a connection. (e.g. 23000, 23001, 23002, 23003...).
  * @param cntPort
  * @param verbose_
+ * @return
  */
-void DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPort, const int &cntPort, const int &verbose_)
+bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPort, const int &cntPort, const int &verbose_)
 {
-
+    bool rtn = false;
     try
     {
         _create_client(host, rpcPort, cntPort, verbose_, client_created_);
         client_created_ = true;
+        rtn = true;
         set_status_bar_message("       ");
         _set_status_bar_message("DQ_CoppeliaSimInterface "
                                 "is brought to you by Juan Jose Quiroz Omana",
@@ -105,6 +107,7 @@ void DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
         std::cerr << "Runtime error in DQ_CoppeliaSimInterface::connect. "
                   << e.what() << std::endl;
     }
+    return rtn;
 }
 
 /**
@@ -714,6 +717,57 @@ void DQ_CoppeliaSimInterface::set_joint_torques(const std::vector<std::string> &
                                              "jointnames and torques have incompatible sizes");
     for(std::size_t i=0;i<jointnames.size();i++)
         set_joint_torque(jointnames.at(i), torques(i));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_joint_torque
+ * @param handle
+ * @return
+ */
+double DQ_CoppeliaSimInterface::get_joint_torque(const int &handle) const
+{
+    return sim_->getJointForce(handle);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_joint_torque
+ * @param jointname
+ * @return
+ */
+double DQ_CoppeliaSimInterface::get_joint_torque(const std::string &jointname)
+{
+    return get_joint_torque(_get_handle_from_map(jointname));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_joint_torques
+ * @param handles
+ * @return
+ */
+VectorXd DQ_CoppeliaSimInterface::get_joint_torques(const std::vector<int> &handles) const
+{
+    std::size_t n = handles.size();
+    VectorXd joint_torques(n);
+    for(std::size_t i=0;i<n;i++)
+        joint_torques(i)=get_joint_torque(handles.at(i));
+
+    return joint_torques;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_joint_torques
+ * @param jointnames
+ * @return
+ */
+VectorXd DQ_CoppeliaSimInterface::get_joint_torques(const std::vector<std::string> &jointnames)
+{
+    std::size_t n = jointnames.size();
+    VectorXd joint_torques(n);
+    for(std::size_t i=0;i<n;i++)
+    {
+        joint_torques(i)=get_joint_torque(jointnames[i]);
+    }
+    return joint_torques;
 }
 
 /**

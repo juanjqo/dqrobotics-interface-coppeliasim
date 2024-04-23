@@ -54,7 +54,7 @@ public:
         CUSTOM};
 
     DQ_CoppeliaSimInterface();
-    void connect(const std::string& host = "localhost",
+    bool connect(const std::string& host = "localhost",
                  const int& rpcPort = 23000,
                  const int& cntPort = -1,
                  const int& verbose_ = -1);
@@ -124,6 +124,10 @@ public:
     void     set_joint_torques(const std::vector<int>& handles, const VectorXd& torques) const;
     void     set_joint_torques(const std::vector<std::string>& jointnames, const VectorXd& torques);
 
+    double   get_joint_torque(const int& handle) const;
+    double   get_joint_torque(const std::string& jointname);
+    VectorXd get_joint_torques(const std::vector<int>& handles) const;
+    VectorXd get_joint_torques(const std::vector<std::string>& jointnames);
 
     std::string get_object_name(const int& handle);
     std::vector<std::string> get_jointnames_from_base_objectname(const std::string& base_objectname);
