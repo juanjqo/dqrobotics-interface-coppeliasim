@@ -10,10 +10,9 @@ An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ 
 
 # Overall advice: Don't use this interface for your project! :warning:
 
-**I highly recommend** the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability, and outstanding technical support.
-
 ![Static Badge](https://img.shields.io/badge/warning-yellow)
-This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS (Apple Silicon) only. Ubuntu versions are expected later, though.
+This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS (Apple Silicon) only. Ubuntu versions are expected later, though. Therefore, **I highly recommend** the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability, and outstanding technical support.
+
 
 
 | CoppeliaSim  | SO | Status |
