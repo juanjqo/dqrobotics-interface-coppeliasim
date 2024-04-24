@@ -18,6 +18,10 @@ This file is based on DQ Robotics.
 
 Contributors:
 - Juan Jose Quiroz Omana
+       - Responsible for the original implementation.
+         The DQ_CoppeliaSimInterface class is partially based on the DQ_VrepInterface class
+         (https://github.com/dqrobotics/cpp-interface-vrep/blob/master/include/dqrobotics/interfaces/vrep/DQ_VrepInterface.h)
+
 */
 
 #pragma once
