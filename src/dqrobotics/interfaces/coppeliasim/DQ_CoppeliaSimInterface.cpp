@@ -258,12 +258,12 @@ std::vector<int> DQ_CoppeliaSimInterface::get_object_handles(const std::vector<s
 
 std::map<std::string, int> DQ_CoppeliaSimInterface::get_map()
 {
-    return set_states_map_;
+    return handles_map_;
 }
 
 void DQ_CoppeliaSimInterface::show_map()
 {
-    for (const auto& p : set_states_map_)
+    for (const auto& p : handles_map_)
     {
         std::cout << '[' << p.first << "] = " << p.second << '\n';
     }
@@ -973,20 +973,8 @@ DQ DQ_CoppeliaSimInterface::get_gravity() const
 void DQ_CoppeliaSimInterface::_update_map(const std::string &objectname,
                                                     const int &handle)
 {
-    set_states_map_.try_emplace(objectname, handle);
+    handles_map_.try_emplace(objectname, handle);
 }
-
-/*
-int DQ_CoppeliaSimInterface::_get_object_handle(const std::string &objectname)
-{
-    int handle;
-    bool found;
-    std::tie(found, handle) = _get_handle_from_map(objectname);
-    if (found)
-        return handle;
-    else
-        return get_object_handle(objectname); // the map is updated here.
-}*/
 
 
 /**
@@ -998,8 +986,8 @@ int DQ_CoppeliaSimInterface::_get_object_handle(const std::string &objectname)
  */
 int DQ_CoppeliaSimInterface::_get_handle_from_map(const std::string &objectname)
 {
-    auto search = set_states_map_.find(objectname);
-    if (search != set_states_map_.end())
+    auto search = handles_map_.find(objectname);
+    if (search != handles_map_.end())
     { // handle found in map
         return search->second;
     }

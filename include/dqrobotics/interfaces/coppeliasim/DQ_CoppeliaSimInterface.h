@@ -173,7 +173,7 @@ private:
 
     //-------------------map zone--------------------------------------------
     std::string _map_simulation_state(const int& state) const;
-    std::map<std::string, int> set_states_map_;
+    std::map<std::string, int> handles_map_;
     void _update_map(const std::string& objectname, const int& handle);
     int _get_handle_from_map(const std::string& objectname);
     //------------------------------------------------------------------------
