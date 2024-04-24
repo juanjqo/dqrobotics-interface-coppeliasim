@@ -6,7 +6,7 @@
 
 # cpp-interface-coppeliasim 
 
-An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API and C++17. This API provides more functionalities when compared to the legacy remote API (the one used by the [DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep)). However, **there is a high price to pay**, the ZeroMQ remote API requires **Boost** :confused:.
+An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API and C++17. This API provides more functionalities when compared to the legacy remote API (the one used by the [DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep)). However, **there is a high price to pay**, the ZeroMQ remote API requires **Boost** (yeah, I know :confused:).
 
 # Overall advice: Don't use this interface for your project! :warning:
 
