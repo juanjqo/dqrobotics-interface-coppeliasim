@@ -6,15 +6,11 @@
 
 # cpp-interface-coppeliasim 
 
-An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API and C++17. This API provides more functionalities when compared to the legacy remote API (the one used by the [DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep)). However, **there is a high price to pay**, the ZeroMQ remote API requires **Boost** (yeah, I know :confused:).
+An unofficial DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API and C++17. This API provides more functionalities when compared to the legacy remote API (the one used by the [DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep)). However, unlike DQ Robotics, cpp-interface-coppeliasim is experimental and lacks official support.
 
 # Overall advice: Don't use this interface for your project! :warning:
 
-**Please be careful** when you install the 365 billion Boost libraries. You could destroy your computer's memory or experience high stress when removing all components of Boost (in case you could).
-**I highly recommend** the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability, support, and not installing Boost.
-
-
-
+**I highly recommend** the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability, and outstanding technical support.
 
 ![Static Badge](https://img.shields.io/badge/warning-yellow)
 This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS (Apple Silicon) only. Ubuntu versions are expected later, though.
@@ -37,7 +33,7 @@ This project is under active development, incomplete, and experimental/unstable.
 #### Install some brew packages
 
 ```shell
-brew install pkg-config boost cppzmq eigen
+brew install pkg-config cppzmq eigen
 ```
 
 #### Download and install CoppeliaSim for MacOS arm64
