@@ -256,7 +256,7 @@ std::vector<int> DQ_CoppeliaSimInterface::get_object_handles(const std::vector<s
     return handles;
 }
 
-std::map<std::string, int> DQ_CoppeliaSimInterface::get_map()
+std::unordered_map<std::string, int> DQ_CoppeliaSimInterface::get_map()
 {
     return handles_map_;
 }

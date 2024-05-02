@@ -9,7 +9,7 @@ int main()
         DQ_CoppeliaSimInterface vi;
         vi.connect("localhost", 23000);
         vi.set_stepping_mode(true);
-        vi.set_dynamic_engine(DQ_CoppeliaSimInterface::MUJOCO);
+        vi.set_dynamic_engine(DQ_CoppeliaSimInterface::NEWTON);
         std::cout<<"Simulation time step: "<<vi.get_simulation_time_step()
                  <<" Physics time step: "<<vi.get_physics_time_step()<<std::endl;
         vi.set_simulation_time_step(0.05);
@@ -53,7 +53,8 @@ int main()
             //          <<vi.get_simulation_state()<<std::endl;
             t = vi.get_simulation_time();
             std::cout<<"Simulation time: "<<t<<std::endl;
-            vi.set_joint_target_velocities(jointnames, u);
+            vi.set_joint_target_velocities(jointnames, 100000*VectorXd::Ones(7));
+            //vi.set_joint_torques(jointnames, 10000*VectorXd::Ones(7));
             std::cout<<"joint vel: "<<vi.get_joint_velocities(jointnames).transpose()<<std::endl;
             vi.trigger_next_simulation_step();
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -64,8 +65,8 @@ int main()
         //std::cout<<"status: "<<vi.is_simulation_running()<<" "
         //          <<vi.get_simulation_state()<<std::endl;
 
-        vi.set_object_translation("/ReferenceFrame[0]", DQ(0, 0,0,0));
-        vi.set_object_pose("/ReferenceFrame[0]", vi.get_object_pose("/Franka/connection"));
+        //vi.set_object_translation("/ReferenceFrame[0]", DQ(0, 0,0,0));
+        //vi.set_object_pose("/ReferenceFrame[0]", vi.get_object_pose("/Franka/connection"));
 
         vi.show_map();
     }

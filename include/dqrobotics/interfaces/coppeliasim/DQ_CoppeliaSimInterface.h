@@ -26,7 +26,8 @@ Contributors:
 
 #pragma once
 #include <dqrobotics/DQ.h>
-#include <map>
+//#include <map>
+#include <unordered_map>
 
 using namespace DQ_robotics;
 using namespace Eigen;
@@ -151,7 +152,7 @@ public:
     DQ     get_gravity() const;
     //----------------------------------------------------------------------------------------
 
-    std::map<std::string, int> get_map();
+    std::unordered_map<std::string, int> get_map();
     void show_map();
 
     //-----------Deprecated methods---------------------------//
@@ -173,7 +174,7 @@ private:
 
     //-------------------map zone--------------------------------------------
     std::string _map_simulation_state(const int& state) const;
-    std::map<std::string, int> handles_map_;
+    std::unordered_map<std::string, int> handles_map_;
     void _update_map(const std::string& objectname, const int& handle);
     int _get_handle_from_map(const std::string& objectname);
     //------------------------------------------------------------------------
