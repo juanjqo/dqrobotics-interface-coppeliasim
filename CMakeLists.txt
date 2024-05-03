@@ -19,6 +19,7 @@ add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimRobot.cpp
     coppeliarobotics/zmqRemoteApi/clients/cpp/RemoteAPIClient.cpp
     )
 
@@ -65,6 +66,7 @@ INSTALL(FILES
 # Robots
 INSTALL(FILES
     include/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimRobot.h
+    include/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimRobot.h
     DESTINATION "include/dqrobotics/interfaces/coppeliasim/robots")
 
 ################################################################
@@ -81,6 +83,7 @@ INSTALL(FILES
 # robots folder
 INSTALL(FILES
     src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/coppeliasim/robots")
 
 
