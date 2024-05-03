@@ -56,7 +56,8 @@ public:
         VELOCITY,
         POSITION,
         SPRING,
-        CUSTOM
+        CUSTOM,
+        TORQUE
     };
 
     DQ_CoppeliaSimInterface();

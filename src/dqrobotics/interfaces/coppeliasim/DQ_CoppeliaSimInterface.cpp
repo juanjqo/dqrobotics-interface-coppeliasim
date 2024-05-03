@@ -933,6 +933,9 @@ void DQ_CoppeliaSimInterface::set_joint_control_mode(const std::string &jointnam
     case CUSTOM:
         control_mode = sim_->jointdynctrl_callback;
         break;
+    case TORQUE:
+        control_mode = sim_->jointdynctrl_velocity;
+        break;
     }
     sim_->setObjectInt32Param(_get_handle_from_map(jointname),
                               sim_->jointintparam_dynctrlmode,

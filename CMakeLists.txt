@@ -96,3 +96,8 @@ add_executable(example3 src/test_new_methods.cpp)
 target_link_libraries(example3 PRIVATE
                       dqrobotics
                       ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
+
+add_executable(example4 src/test_panda.cpp)
+target_link_libraries(example4 PRIVATE
+                    dqrobotics
+                    ${PROJECT_NAME})

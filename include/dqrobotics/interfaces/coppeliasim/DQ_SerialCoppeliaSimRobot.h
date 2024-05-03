@@ -35,6 +35,8 @@ class DQ_SerialCoppeliaSimRobot: public DQ_CoppeliaSimRobot
 protected:
     std::vector<std::string> jointnames_;
     std::string base_frame_name_;
+    DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE joint_control_mode_;
+    bool robot_is_used_as_visualization_tool_;
 
     void _initialize_jointnames_from_coppeliasim();
 
@@ -46,6 +48,7 @@ public:
                                      const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE& joint_control_mode);
     virtual void set_robot_as_visualization_tool();
     virtual void set_joint_control_type(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    virtual void set_control_inputs(const VectorXd& u);
 
     virtual std::vector<std::string> get_joint_names();
 
