@@ -16,7 +16,9 @@ INCLUDE_DIRECTORIES(${PROJECT_NAME} /coppeliarobotics/zmqRemoteApi/clients/cpp)
 
 add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.cpp
-    coppeliarobotics/zmqRemoteApi/clients/cpp/RemoteAPIClient.cpp)
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
+    coppeliarobotics/zmqRemoteApi/clients/cpp/RemoteAPIClient.cpp
+    )
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC -DSIM_REMOTEAPICLIENT_OBJECTS)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/jsoncons/include)
@@ -48,8 +50,24 @@ if(APPLE)
 endif()
 
 
+################################################################
+# INSTALL HEADERS IN SUBFOLDERS
+################################################################
+
+# Other Headers
+INSTALL(FILES
+    include/dqrobotics/interfaces/vrep/DQ_CoppeliaSimRobot.h
+    DESTINATION "src/dqrobotics/interfaces/coppeliasim")
+
+
+################################################################
+# INSTALL SOURCE FILES (So that the debugger can find them)
+################################################################
+
+# base folder
 INSTALL(FILES
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/coppeliasim")
 
 
