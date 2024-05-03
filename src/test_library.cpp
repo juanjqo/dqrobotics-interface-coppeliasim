@@ -69,6 +69,8 @@ int main()
         //vi.set_object_pose("/ReferenceFrame[0]", vi.get_object_pose("/Franka/connection"));
 
         vi.show_map();
+        const std::vector colors = {"yellow", "blue", "green", "magenta"};
+
     }
     catch (const std::runtime_error& e)
     {

@@ -56,7 +56,8 @@ public:
         VELOCITY,
         POSITION,
         SPRING,
-        CUSTOM};
+        CUSTOM
+    };
 
     DQ_CoppeliaSimInterface();
     bool connect(const std::string& host = "localhost",
@@ -136,6 +137,10 @@ public:
 
     std::string get_object_name(const int& handle);
     std::vector<std::string> get_jointnames_from_base_objectname(const std::string& base_objectname);
+
+
+    void set_object_twist(const int& handle, const DQ& twist_wrt_absolute_frame) const;
+    void set_object_twist(const std::string& objectname, const DQ& twist_wrt_absolute_frame);
 
     //------------------settings features-----------------------------------------------------
     void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);

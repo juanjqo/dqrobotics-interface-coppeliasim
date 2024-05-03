@@ -804,6 +804,45 @@ std::vector<std::string> DQ_CoppeliaSimInterface::get_jointnames_from_base_objec
 
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::set_object_twist
+ * @param handle
+ * @param twist_wrt_absolute_frame
+ */
+void DQ_CoppeliaSimInterface::set_object_twist(const int &handle, const DQ& twist_wrt_absolute_frame) const
+{
+    if (!is_pure(twist_wrt_absolute_frame))
+    {
+        throw(std::range_error("Bad set_object_twist() call: Not a pure dual quaternion"));
+    }
+    const DQ& twist = twist_wrt_absolute_frame;
+    VectorXd vec_twist = twist.vec6();
+    std::vector<int> params = {sim_->shapefloatparam_init_velocity_a,
+                               sim_->shapefloatparam_init_velocity_b,
+                               sim_->shapefloatparam_init_velocity_g,
+                               sim_->shapefloatparam_init_velocity_x,
+                               sim_->shapefloatparam_init_velocity_y,
+                               sim_->shapefloatparam_init_velocity_z
+                               };
+    sim_->resetDynamicObject(handle);
+
+    for (size_t i=0; i < params.size(); i++)
+    {
+        sim_->setObjectFloatParam(handle, params.at(i), vec_twist(i));
+    }
+
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_object_twist
+ * @param objectname
+ * @param twist_wrt_absolute_frame
+ */
+void DQ_CoppeliaSimInterface::set_object_twist(const std::string &objectname, const DQ &twist_wrt_absolute_frame)
+{
+    set_object_twist(_get_handle_from_map(objectname), twist_wrt_absolute_frame);
+}
+
 
 /**
  * @brief DQ_CoppeliaSimInterface::set_joint_mode
