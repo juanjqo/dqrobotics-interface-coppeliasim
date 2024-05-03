@@ -50,6 +50,8 @@ DQ_SerialCoppeliaSimRobot::DQ_SerialCoppeliaSimRobot(const std::string &robot_na
     :DQ_CoppeliaSimRobot(robot_name, coppeliasim_interface_sptr)
 {
     _initialize_jointnames_from_coppeliasim();
+    // By Default, the robot is controlled by joint positions with both the dynamic engine
+    // and the stepping mode enabled.
     joint_control_mode_ = DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::POSITION;
     robot_is_used_as_visualization_tool_ = false;
 }
