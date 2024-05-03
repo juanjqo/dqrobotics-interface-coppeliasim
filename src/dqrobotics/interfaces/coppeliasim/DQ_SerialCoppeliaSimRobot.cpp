@@ -52,6 +52,38 @@ DQ_SerialCoppeliaSimRobot::DQ_SerialCoppeliaSimRobot(const std::string &robot_na
     _initialize_jointnames_from_coppeliasim();
 }
 
+/**
+ * @brief DQ_SerialCoppeliaSimRobot::set_operation_modes
+ * @param joint_mode
+ * @param joint_control_mode
+ */
+void DQ_SerialCoppeliaSimRobot::set_operation_modes(const DQ_CoppeliaSimInterface::JOINT_MODE &joint_mode, const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE &joint_control_mode)
+{
+    _get_interface_sptr()->set_joint_modes(jointnames_, joint_mode);
+    _get_interface_sptr()->set_joint_control_modes(jointnames_, joint_control_mode);
+}
+
+/**
+ * @brief DQ_SerialCoppeliaSimRobot::set_robot_as_visualization_tool
+ */
+void DQ_SerialCoppeliaSimRobot::set_robot_as_visualization_tool()
+{
+    _get_interface_sptr()->enable_dynamics(false);
+    _get_interface_sptr()->set_joint_modes(jointnames_,
+                                           DQ_CoppeliaSimInterface::JOINT_MODE::KINEMATIC);
+}
+
+/**
+ * @brief DQ_SerialCoppeliaSimRobot::set_joint_control_type
+ * @param joint_control_mode
+ */
+void DQ_SerialCoppeliaSimRobot::set_joint_control_type(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE &joint_control_mode)
+{
+    _get_interface_sptr()->enable_dynamics(true);
+    set_operation_modes(DQ_CoppeliaSimInterface::JOINT_MODE::DYNAMIC,
+                        joint_control_mode);
+}
+
 
 /**
  * @brief DQ_SerialCoppeliaSimRobot::get_joint_names

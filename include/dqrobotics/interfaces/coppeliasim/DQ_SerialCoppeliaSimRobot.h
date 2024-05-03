@@ -41,6 +41,12 @@ protected:
     DQ_SerialCoppeliaSimRobot(const std::string& robot_name,
                               const std::shared_ptr<DQ_CoppeliaSimInterface>& coppeliasim_interface_sptr);
 public:
+
+    virtual void set_operation_modes(const DQ_CoppeliaSimInterface::JOINT_MODE& joint_mode,
+                                     const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    virtual void set_robot_as_visualization_tool();
+    virtual void set_joint_control_type(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE& joint_control_mode);
+
     virtual std::vector<std::string> get_joint_names();
 
     virtual void set_configuration_space_positions(const VectorXd& q);
