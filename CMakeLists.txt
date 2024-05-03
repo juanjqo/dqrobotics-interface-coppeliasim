@@ -18,6 +18,7 @@ add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimRobot.cpp
     coppeliarobotics/zmqRemoteApi/clients/cpp/RemoteAPIClient.cpp
     )
 
@@ -61,6 +62,10 @@ INSTALL(FILES
     include/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.h
     DESTINATION "src/dqrobotics/interfaces/coppeliasim")
 
+# Robots
+INSTALL(FILES
+    include/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimRobot.h
+    DESTINATION "include/dqrobotics/interfaces/coppeliasim/robots")
 
 ################################################################
 # INSTALL SOURCE FILES (So that the debugger can find them)
@@ -73,8 +78,13 @@ INSTALL(FILES
     src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/coppeliasim")
 
+# robots folder
+INSTALL(FILES
+    src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimRobot.cpp
+    DESTINATION "src/dqrobotics/interfaces/coppeliasim/robots")
 
 
+# Temporal Only for Test
 add_executable(example src/main.cpp)
 target_link_libraries(example PRIVATE ${PROJECT_NAME})
 
