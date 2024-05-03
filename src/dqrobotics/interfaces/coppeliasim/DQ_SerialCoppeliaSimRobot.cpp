@@ -66,7 +66,11 @@ void DQ_SerialCoppeliaSimRobot::set_operation_modes(const DQ_CoppeliaSimInterfac
 }
 
 /**
- * @brief DQ_SerialCoppeliaSimRobot::set_robot_as_visualization_tool
+ * @brief DQ_SerialCoppeliaSimRobot::set_robot_as_visualization_tool enables the joint
+ *        kinematic mode in the robot. Furthermore, both the stepping mode and the
+ *        dynamic engine are disabled. Use this mode if you want to control the robot
+ *        by joint position commands without taking into account the dynamics.
+ *        In other words, the CoppeliaSim scene is used as a visualization tool.
  */
 void DQ_SerialCoppeliaSimRobot::set_robot_as_visualization_tool()
 {
@@ -77,8 +81,9 @@ void DQ_SerialCoppeliaSimRobot::set_robot_as_visualization_tool()
 }
 
 /**
- * @brief DQ_SerialCoppeliaSimRobot::set_joint_control_type
- * @param joint_control_mode
+ * @brief DQ_SerialCoppeliaSimRobot::set_joint_control_type sets the joint control mode
+ *        of the robot. Furthermore, both the dynamic engine and the stepping mode are enabled.
+ * @param joint_control_mode Use POSITION, VELOCITY or TORQUE.
  */
 void DQ_SerialCoppeliaSimRobot::set_joint_control_type(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE &joint_control_mode)
 {
@@ -90,8 +95,9 @@ void DQ_SerialCoppeliaSimRobot::set_joint_control_type(const DQ_CoppeliaSimInter
 }
 
 /**
- * @brief DQ_SerialCoppeliaSimRobot::set_control_inputs
- * @param u
+ * @brief DQ_SerialCoppeliaSimRobot::set_control_inputs sends the commands to CoppeliaSim.
+ *
+ * @param u joint positions, velocities or torques.
  */
 void DQ_SerialCoppeliaSimRobot::set_control_inputs(const VectorXd &u)
 {

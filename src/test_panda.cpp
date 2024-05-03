@@ -15,8 +15,8 @@ int main()
     vi->set_gravity(DQ(0));
 
     auto robot = FrankaEmikaPandaCoppeliaSimRobot("/Franka", vi);
-    //robot.set_robot_as_visualization_tool();
-    robot.set_joint_control_type(DQ_CoppeliaSimInterface::TORQUE);
+    robot.set_robot_as_visualization_tool();
+    //robot.set_joint_control_type(DQ_CoppeliaSimInterface::TORQUE);
     vi->start_simulation();
 
     VectorXd u = VectorXd::Zero(7);
