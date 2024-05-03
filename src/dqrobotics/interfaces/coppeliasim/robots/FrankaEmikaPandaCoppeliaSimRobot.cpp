@@ -30,6 +30,8 @@ Contributors:
 namespace DQ_robotics
 {
 
+
+
 /**
  * @brief FrankaEmikaPandaCoppeliaSimRobot::FrankaEmikaPandaCoppeliaSimRobot
  * @param robot_name

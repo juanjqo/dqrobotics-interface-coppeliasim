@@ -24,16 +24,16 @@ Contributors:
 #pragma once
 #include <dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.h>
 #include <dqrobotics/robot_modeling/DQ_SerialManipulatorDH.h>
-namespace dqrobotics{
+
+namespace DQ_robotics
+{
 
 
 class URXCoppeliaSimRobot: public DQ_SerialCoppeliaSimRobot
 {
 public:
     enum class MODEL{
-        UR3,
-        UR5,
-        UR10
+        UR5
     };
 protected:
     URXCoppeliaSimRobot::MODEL model_;
@@ -41,8 +41,8 @@ protected:
 public:
     URXCoppeliaSimRobot(const std::string& robot_name,
                         const std::shared_ptr<DQ_CoppeliaSimInterface>& coppeliasim_interface_sptr,
-                        const MODEL& model);
-    //DQ_SerialManipulatorDH kinematics();
+                        const MODEL& model = MODEL::UR5);
+    DQ_SerialManipulatorDH kinematics();
 };
 
 }

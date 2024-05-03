@@ -24,7 +24,45 @@ Contributors:
 #include <dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimRobot.h>
 
 
-namespace dqrobotics{
+namespace DQ_robotics
+{
+
+/**
+ * @brief _get_dh_matrix returns a matrix related to the D-H parameters of the
+ *                        Universal Robot {}, which is
+ *                        defined as
+ *
+ *                        Matrix<Xd raw_dh_matrix;
+ *                        raw_franka_mdh << theta,
+ *                                              d,
+ *                                              a,
+ *                                           alpha,
+ *                                            type_of_joints;
+ * Source: https://www.universal-robots.com/articles/ur/application-installation/dh-parameters-for-calculations-of-kinematics-and-dynamics/
+ * @param model  ex: UR3,UR5, UR10
+ *
+ * @return MatrixXd raw_dh_matrix a matrix related to the D-H parameters
+ */
+MatrixXd _get_dh_matrix(const URXCoppeliaSimRobot::MODEL& model)
+{
+    const double pi = M_PI;
+    switch (model){
+    case URXCoppeliaSimRobot::MODEL::UR5:
+    {
+        Matrix<double,5,6> raw_dh_matrix(5,6);
+        raw_dh_matrix <<  -pi/2, -pi/2, 0, -pi/2, 0, 0,
+            0.089159-0.02315, 0, 0, 0.10915, 0.09465, 0.0823,
+            0, -0.425, -0.39225, 0, 0, 0,
+            pi/2,0,0,pi/2,-pi/2,0,
+            0,      0,       0,         0,         0,      0;
+
+        return raw_dh_matrix;
+        break;
+    }
+    break;
+    }
+}
+
 URXCoppeliaSimRobot::URXCoppeliaSimRobot(const std::string &robot_name,
                                          const std::shared_ptr<DQ_CoppeliaSimInterface> &coppeliasim_interface_sptr,
                                          const MODEL &model)
@@ -33,41 +71,18 @@ URXCoppeliaSimRobot::URXCoppeliaSimRobot(const std::string &robot_name,
 
 }
 
-//DQ_SerialManipulatorDH URXCoppeliaSimRobot::kinematics()
-//{
 
-//}
-
-MatrixXd get_raw_kinematics(const URXCoppeliaSimRobot::MODEL& model)
+DQ_SerialManipulatorDH URXCoppeliaSimRobot::kinematics()
 {
-    const double pi2 = M_PI/2.0;
-    Matrix<double,5,7> raw_franka_mdh(5,7);
-    raw_franka_mdh <<  0,    0,       0,         0,         0,      0,      0,
-        0.333,  0, 3.16e-1,         0,   3.84e-1,      0,      0,
-        0,     0,       0,   8.25e-2,  -8.25e-2,      0, 8.8e-2,
-        0,  -pi2,     pi2,       pi2,      -pi2,    pi2,    pi2,
-        0,     0,       0,         0,         0,      0,      0;
-
-    return raw_franka_mdh;
-    switch (model){
-
-    case URXCoppeliaSimRobot::MODEL::UR3:
-    case URXCoppeliaSimRobot::MODEL::UR5:
-    case URXCoppeliaSimRobot::MODEL::UR10:
-        break;
-    }
+    auto kin = DQ_SerialManipulatorDH(_get_dh_matrix(model_));
+    kin.set_reference_frame(_get_interface_sptr()->get_object_pose(base_frame_name_));
+    kin.set_base_frame(_get_interface_sptr()->get_object_pose(base_frame_name_));
+    return kin;
 }
+
+
 
 }
 
 
 
-/*
- *  theta [rad]     a [m]       d [m]       alpha [rad]
-Joint 1	0              0       0.089159     π/2
-Joint 2	0           -0.425          0       0
-Joint 3	0           -0.39225        0       0
-Joint 4	0              0       0.10915     π/2
-Joint 5	0              0       0.09465     -π/2
-Joint 6	0              0       0.0823      0
- * */

@@ -80,6 +80,7 @@ void DQ_SerialCoppeliaSimRobot::set_robot_as_visualization_tool()
     _get_interface_sptr()->enable_dynamics(false);
     _get_interface_sptr()->set_joint_modes(jointnames_,
                                            DQ_CoppeliaSimInterface::JOINT_MODE::KINEMATIC);
+    robot_is_used_as_visualization_tool_ = true;
 }
 
 /**

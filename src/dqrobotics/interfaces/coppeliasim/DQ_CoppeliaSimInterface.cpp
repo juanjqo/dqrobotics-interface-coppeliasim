@@ -1042,12 +1042,38 @@ bool DQ_CoppeliaSimInterface::load_model(const std::string &path_to_filename)
 /**
  * @brief DQ_CoppeliaSimInterface::load_model_from_model_browser
  * @param path_to_filename
+ * @param remove_child_script
  * @return
  */
 bool DQ_CoppeliaSimInterface::load_model_from_model_browser(const std::string &path_to_filename)
 {
     std::string resources_path = sim_->getStringParam(sim_->stringparam_resourcesdir);
     return load_model(resources_path + std::string("/models") + path_to_filename);
+}
+
+
+/**
+ * @brief DQ_CoppeliaSimInterface::load_model_from_model_browser_if_missing
+ * @param path_to_filename
+ * @param robot_name
+ * @param remove_child_script
+ * @return
+ */
+bool DQ_CoppeliaSimInterface::load_model_from_model_browser_if_missing(const std::string &path_to_filename,
+                                                                       const std::string &robot_name,
+                                                                       const bool &remove_child_script)
+{
+    if (!check_if_object_exist_on_scene(robot_name))
+    {
+        auto rtn = load_model_from_model_browser(path_to_filename);
+        if (remove_child_script)
+        {
+            remove_child_script_from_object(robot_name);
+        }
+        return rtn;
+    }
+    else
+        return true;
 }
 
 /**
@@ -1058,7 +1084,25 @@ void DQ_CoppeliaSimInterface::remove_child_script_from_object(const std::string 
 {
     auto script_handle = sim_->getScript(sim_->scripttype_childscript,
                                          _get_handle_from_map(objectname));
-    sim_->removeScript(script_handle);
+    if (script_handle != -1)
+        sim_->removeScript(script_handle);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::check_if_object_exist_on_scene
+ * @param objectname
+ * @return
+ */
+bool DQ_CoppeliaSimInterface::check_if_object_exist_on_scene(const std::string &objectname)
+{
+    std::optional<json> options = {{"noError", false}};
+    try {
+        auto rtn = sim_->getObject(objectname, options);
+        return (rtn != -1) ? true : false;
+    } catch (...) {
+        return false;
+    }
+
 }
 
 
