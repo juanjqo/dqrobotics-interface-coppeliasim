@@ -17,6 +17,7 @@ INCLUDE_DIRECTORIES(${PROJECT_NAME} /coppeliarobotics/zmqRemoteApi/clients/cpp)
 add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
     coppeliarobotics/zmqRemoteApi/clients/cpp/RemoteAPIClient.cpp
     )
 
@@ -56,7 +57,8 @@ endif()
 
 # Other Headers
 INSTALL(FILES
-    include/dqrobotics/interfaces/vrep/DQ_CoppeliaSimRobot.h
+    include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.h
+    include/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.h
     DESTINATION "src/dqrobotics/interfaces/coppeliasim")
 
 
@@ -68,6 +70,7 @@ INSTALL(FILES
 INSTALL(FILES
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/coppeliasim")
 
 
