@@ -26,7 +26,6 @@ Contributors:
 
 #pragma once
 #include <dqrobotics/DQ.h>
-//#include <map>
 #include <unordered_map>
 
 using namespace DQ_robotics;
@@ -143,7 +142,7 @@ public:
     void set_object_twist(const int& handle, const DQ& twist_wrt_absolute_frame) const;
     void set_object_twist(const std::string& objectname, const DQ& twist_wrt_absolute_frame);
 
-    //------------------settings features-----------------------------------------------------
+    //------------------setting features-----------------------------------------------------
     void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
     void   set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
     void   set_joint_control_mode(const std::string& jointname, const JOINT_CONTROL_MODE& joint_control_mode);
@@ -156,6 +155,10 @@ public:
     void   set_dynamic_engine(const ENGINE& engine);
     void   set_gravity(const DQ& gravity=-9.81*k_);
     DQ     get_gravity() const;
+
+    bool load_model(const std::string& path_to_filename);
+    bool load_model_from_model_browser(const std::string& path_to_filename);
+    void remove_child_script_from_object(const std::string& objectname);
     //----------------------------------------------------------------------------------------
 
     std::unordered_map<std::string, int> get_map();

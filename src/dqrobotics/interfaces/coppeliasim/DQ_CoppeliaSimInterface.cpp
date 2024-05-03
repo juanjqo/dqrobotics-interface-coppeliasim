@@ -1028,8 +1028,38 @@ DQ DQ_CoppeliaSimInterface::get_gravity() const
     return DQ(0, g.at(0), g.at(1), g.at(2));
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::load_model
+ * @param path_to_filename
+ * @return
+ */
+bool DQ_CoppeliaSimInterface::load_model(const std::string &path_to_filename)
+{
+    auto rtn = sim_->loadModel(path_to_filename);
+    return (rtn!= -1)? true:false;
+}
 
+/**
+ * @brief DQ_CoppeliaSimInterface::load_model_from_model_browser
+ * @param path_to_filename
+ * @return
+ */
+bool DQ_CoppeliaSimInterface::load_model_from_model_browser(const std::string &path_to_filename)
+{
+    std::string resources_path = sim_->getStringParam(sim_->stringparam_resourcesdir);
+    return load_model(resources_path + std::string("/models") + path_to_filename);
+}
 
+/**
+ * @brief DQ_CoppeliaSimInterface::remove_child_script_from_object
+ * @param objectname
+ */
+void DQ_CoppeliaSimInterface::remove_child_script_from_object(const std::string &objectname)
+{
+    auto script_handle = sim_->getScript(sim_->scripttype_childscript,
+                                         _get_handle_from_map(objectname));
+    sim_->removeScript(script_handle);
+}
 
 
 /**

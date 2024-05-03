@@ -13,6 +13,13 @@ int main()
     vi->connect();
     vi->set_dynamic_engine(DQ_CoppeliaSimInterface::MUJOCO);
     vi->set_gravity(DQ(0));
+    bool rtn = vi->load_model_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm");
+    vi->remove_child_script_from_object("/Franka");
+    if (rtn ==  true)
+        std::cout<<"Model loaded!"<<std::endl;
+    else
+        std::cout<<"Model not found!"<<std::endl;
+/*
 
     auto robot = FrankaEmikaPandaCoppeliaSimRobot("/Franka", vi);
     robot.set_robot_as_visualization_tool();
@@ -26,7 +33,7 @@ int main()
     {
         robot.set_control_inputs(u);
     }
-
+*/
     vi->stop_simulation();
 
 
