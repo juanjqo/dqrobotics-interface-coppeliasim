@@ -61,7 +61,7 @@ endif()
 INSTALL(FILES
     include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.h
     include/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.h
-    DESTINATION "src/dqrobotics/interfaces/coppeliasim")
+    DESTINATION "include/dqrobotics/interfaces/coppeliasim")
 
 # Robots
 INSTALL(FILES
