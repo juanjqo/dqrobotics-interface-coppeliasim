@@ -1,4 +1,4 @@
-![Static Badge](https://img.shields.io/badge/status-experimental-critical)![Static Badge](https://img.shields.io/badge/Platform-Apple_silicon-magenta)![Static Badge](https://img.shields.io/badge/Tested-Apple)![Static Badge](https://img.shields.io/badge/Platform-Ubuntu_x64-orange)![Static Badge](https://img.shields.io/badge/Untested-red)![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/Written_in-C%2B%2B17-blue)![GitHub License](https://img.shields.io/github/license/juanjqo/cpp-interface-coppeliasim)![Static Badge](https://img.shields.io/badge/based_on-ZeroMQ_remote_API-blue)
+![Static Badge](https://img.shields.io/badge/status-experimental-critical)![Static Badge](https://img.shields.io/badge/Platform-Apple_silicon-magenta)![Static Badge](https://img.shields.io/badge/Tested-Apple)![Static Badge](https://img.shields.io/badge/Platform-Ubuntu_x64-orange)![Static Badge](https://img.shields.io/badge/tested-green)![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/Written_in-C%2B%2B17-blue)![GitHub License](https://img.shields.io/github/license/juanjqo/cpp-interface-coppeliasim)![Static Badge](https://img.shields.io/badge/based_on-ZeroMQ_remote_API-blue)
 
 
 
@@ -18,7 +18,7 @@ This project is under active development, incomplete, and experimental/unstable.
 | CoppeliaSim  | SO | Status |
 | ------------- | ------------- |------------- |
 | ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/arm64-blue)| macOS Sonoma (Apple Silicon) | ![Static Badge](https://img.shields.io/badge/experimental-red)|
-| ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/x64-blue)   | Ubuntu 22.04 LTS  |  ![Static Badge](https://img.shields.io/badge/Unsupported-gray)|
+| ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/x64-blue)   | Ubuntu 22.04 LTS  |  ![Static Badge](https://img.shields.io/badge/experimental-red)|
 | ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/x64-blue)   | Windows 11  |  ![Static Badge](https://img.shields.io/badge/Unsupported-gray)
 
 
@@ -39,7 +39,7 @@ brew install pkg-config cppzmq eigen
 sudo apt install libzmq3-dev
 ```
 
-#### Download and install CoppeliaSim for MacOS arm64
+#### Download and install CoppeliaSim (for Apple Silicon Macs use CoppeliaSim arm64)
 
 <img width="200" alt="Screenshot 2024-04-20 at 14 15 13" src="https://github.com/juanjqo/cpp-interface-coppelia/assets/23158313/24ffcd38-d24e-447c-a7d3-aaaadf8f85a1">
 
