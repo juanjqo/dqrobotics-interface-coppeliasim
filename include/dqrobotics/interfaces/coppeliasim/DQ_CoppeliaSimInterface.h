@@ -156,13 +156,20 @@ public:
     void   set_gravity(const DQ& gravity=-9.81*k_);
     DQ     get_gravity() const;
 
-    bool load_model(const std::string& path_to_filename);
-    bool load_model_from_model_browser(const std::string& path_to_filename);
+    bool load_model(const std::string& path_to_filename,
+                    const std::string& desired_model_name);
+    bool load_model_from_model_browser(const std::string& path_to_filename,
+                                       const std::string& desired_model_name);
     bool load_model_from_model_browser_if_missing(const std::string& path_to_filename,
-                                                  const std::string& robot_name,
+                                                  const std::string& desired_model_name,
                                                   const bool& remove_child_script = true);
     void remove_child_script_from_object(const std::string& objectname);
     bool check_if_object_exist_on_scene(const std::string& objectname);
+
+    void set_object_name(const int& handle,
+                         const std::string& new_object_name);
+    void set_object_name(const std::string& old_object_name,
+                         const std::string& new_object_name);
     //----------------------------------------------------------------------------------------
 
     std::unordered_map<std::string, int> get_map();

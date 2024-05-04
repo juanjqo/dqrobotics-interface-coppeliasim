@@ -1033,10 +1033,17 @@ DQ DQ_CoppeliaSimInterface::get_gravity() const
  * @param path_to_filename
  * @return
  */
-bool DQ_CoppeliaSimInterface::load_model(const std::string &path_to_filename)
+bool DQ_CoppeliaSimInterface::load_model(const std::string &path_to_filename,
+                                         const std::string &desired_model_name)
 {
-    auto rtn = sim_->loadModel(path_to_filename);
-    return (rtn!= -1)? true:false;
+    int rtn = sim_->loadModel(path_to_filename);
+    if (rtn != -1)
+    {
+        set_object_name(rtn, desired_model_name);
+        return true;
+    }else{
+        return false;
+    }
 }
 
 /**
@@ -1045,30 +1052,31 @@ bool DQ_CoppeliaSimInterface::load_model(const std::string &path_to_filename)
  * @param remove_child_script
  * @return
  */
-bool DQ_CoppeliaSimInterface::load_model_from_model_browser(const std::string &path_to_filename)
+bool DQ_CoppeliaSimInterface::load_model_from_model_browser(const std::string &path_to_filename,
+                                                            const std::string &desired_model_name)
 {
     std::string resources_path = sim_->getStringParam(sim_->stringparam_resourcesdir);
-    return load_model(resources_path + std::string("/models") + path_to_filename);
+    return load_model(resources_path + std::string("/models") + path_to_filename, desired_model_name);
 }
 
 
 /**
  * @brief DQ_CoppeliaSimInterface::load_model_from_model_browser_if_missing
  * @param path_to_filename
- * @param robot_name
+ * @param desired_model_name
  * @param remove_child_script
  * @return
  */
 bool DQ_CoppeliaSimInterface::load_model_from_model_browser_if_missing(const std::string &path_to_filename,
-                                                                       const std::string &robot_name,
+                                                                       const std::string &desired_model_name,
                                                                        const bool &remove_child_script)
 {
-    if (!check_if_object_exist_on_scene(robot_name))
+    if (!check_if_object_exist_on_scene(std::string("/") + desired_model_name))
     {
-        auto rtn = load_model_from_model_browser(path_to_filename);
+        auto rtn = load_model_from_model_browser(path_to_filename, desired_model_name);
         if (remove_child_script)
         {
-            remove_child_script_from_object(robot_name);
+            remove_child_script_from_object(std::string("/") +desired_model_name);
         }
         return rtn;
     }
@@ -1103,6 +1111,21 @@ bool DQ_CoppeliaSimInterface::check_if_object_exist_on_scene(const std::string &
         return false;
     }
 
+}
+
+void DQ_CoppeliaSimInterface::set_object_name(const int &handle, const std::string &new_object_name)
+{
+    sim_->setObjectAlias(handle, new_object_name);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_object_name
+ * @param old_object_name
+ * @param new_object_name
+ */
+void DQ_CoppeliaSimInterface::set_object_name(const std::string &old_object_name, const std::string &new_object_name)
+{
+    set_object_name(_get_handle_from_map(old_object_name), new_object_name);
 }
 
 

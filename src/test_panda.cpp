@@ -16,9 +16,10 @@ int main()
     vi->set_gravity(DQ(0));
 
 
-    vi->load_model_from_model_browser_if_missing("/robots/non-mobile/UR5.ttm", "/UR5", true);
-    vi->load_model_from_model_browser_if_missing("/other/reference frame.ttm", "/ReferenceFrame");
-
+    vi->load_model_from_model_browser_if_missing("/robots/non-mobile/UR5.ttm", "UR5", true);
+    vi->load_model_from_model_browser_if_missing("/other/reference frame.ttm","x");
+    vi->load_model_from_model_browser_if_missing("/other/reference frame.ttm","desired");
+    /*
     auto robot = URXCoppeliaSimRobot("/UR5", vi, URXCoppeliaSimRobot::MODEL::UR5);
     auto robot_model = robot.kinematics();
     robot.set_robot_as_visualization_tool();
@@ -32,25 +33,13 @@ int main()
     for (int i=0; i<200; i++)
     {
         DQ x = robot_model.fkm(robot.get_configuration_space_positions());
-        vi->set_object_pose("/ReferenceFrame", x);
+        vi->set_object_pose("/ReferenceFrame1", x);
         robot.set_control_inputs(u);
     }
 
 
-/*
-    auto robot = FrankaEmikaPandaCoppeliaSimRobot("/Franka", vi);
-    robot.set_robot_as_visualization_tool();
-    //robot.set_joint_control_type(DQ_CoppeliaSimInterface::TORQUE);
-    vi->start_simulation();
 
-    VectorXd u = VectorXd::Zero(7);
-    u << 0.1, 0, 0, 0, 0, 0, 0;
-
-    for (int i=0; i<200; i++)
-    {
-        robot.set_control_inputs(u);
-    }
-*/
+    */
     vi->stop_simulation();
 
 
