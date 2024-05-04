@@ -34,6 +34,10 @@ This project is under active development, incomplete, and experimental/unstable.
 ```shell
 brew install pkg-config cppzmq eigen
 ```
+### Ubuntu 
+```shell
+sudo apt install libzmq3-dev
+```
 
 #### Download and install CoppeliaSim for MacOS arm64
 
