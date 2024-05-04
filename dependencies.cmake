@@ -1,7 +1,21 @@
 if(UNIX AND NOT APPLE)
     FIND_PACKAGE(Eigen3 REQUIRED)
     INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+    #find_package(cppzmq REQUIRED)
+    #find_package(ZeroMQ REQUIRED)
     ADD_COMPILE_OPTIONS(-Werror=return-type -Wall -Wextra -Wmissing-declarations -Wredundant-decls -Woverloaded-virtual)
+
+    include(FetchContent)
+    set(CPPZMQ_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    FetchContent_Declare(cppzmq
+        GIT_REPOSITORY https://github.com/zeromq/cppzmq
+        SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/cppzmq
+    )
+    FetchContent_GetProperties(cppzmq)
+    if(NOT cppzmq_POPULATED)
+        FetchContent_Populate(cppzmq)
+        add_subdirectory(${cppzmq_SOURCE_DIR} ${cppzmq_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif()
 endif()
 
 if(APPLE) #APPLE

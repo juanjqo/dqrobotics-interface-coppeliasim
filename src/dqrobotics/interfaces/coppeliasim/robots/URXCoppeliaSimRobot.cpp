@@ -59,7 +59,8 @@ MatrixXd _get_dh_matrix(const URXCoppeliaSimRobot::MODEL& model)
         return raw_dh_matrix;
         break;
     }
-    break;
+    default:
+        return MatrixXd::Zero(0,0);
     }
 }
 

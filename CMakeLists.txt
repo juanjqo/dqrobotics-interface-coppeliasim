@@ -28,7 +28,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/js
 target_link_libraries(${PROJECT_NAME}
                         Boost::filesystem
                         Boost::format
-                        Boost::program_options)
+                        Boost::program_options
+                        cppzmq
+                        dqrobotics
+                        )
 
 
 include_directories(${SOURCE_DIR})
