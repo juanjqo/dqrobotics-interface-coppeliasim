@@ -1,4 +1,8 @@
-
+if(UNIX AND NOT APPLE)
+    FIND_PACKAGE(Eigen3 REQUIRED)
+    INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+    ADD_COMPILE_OPTIONS(-Werror=return-type -Wall -Wextra -Wmissing-declarations -Wredundant-decls -Woverloaded-virtual)
+endif()
 
 if(APPLE) #APPLE
     INCLUDE_DIRECTORIES(
