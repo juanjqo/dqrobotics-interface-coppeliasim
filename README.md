@@ -59,6 +59,11 @@ make -j16
 sudo make install
 ```
 
+Additional step for Ubuntu users:
+```shell
+sudo ldconfig
+```
+
 #### Uninstall (optional)
 
 ```shell
