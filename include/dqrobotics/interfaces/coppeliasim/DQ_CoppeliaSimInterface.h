@@ -172,8 +172,8 @@ public:
                          const std::string& new_object_name);
     //----------------------------------------------------------------------------------------
 
-    std::unordered_map<std::string, int> get_map();
-    void show_map();
+    std::unordered_map<std::string, int> get_map(); //For debug
+    void show_map();  // For debug
 
     //-----------Deprecated methods---------------------------//
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
@@ -186,7 +186,7 @@ public:
     int wait_for_simulation_step_to_end();
     //---------------------------------------------------------//
 
-    std::string _remove_first_slash_from_string(const std::string& str);
+
 
 
 private:
@@ -198,7 +198,7 @@ private:
     void _update_map(const std::string& objectname, const int& handle);
     int _get_handle_from_map(const std::string& objectname);
     //------------------------------------------------------------------------
-
+    std::string _remove_first_slash_from_string(const std::string& str);
 
 
     template<typename T, typename U>
