@@ -1039,7 +1039,7 @@ bool DQ_CoppeliaSimInterface::load_model(const std::string &path_to_filename,
     int rtn = sim_->loadModel(path_to_filename);
     if (rtn != -1)
     {
-        set_object_name(rtn, desired_model_name);
+        set_object_name(rtn, _remove_first_slash_from_string(desired_model_name));
         return true;
     }else{
         return false;
@@ -1063,7 +1063,7 @@ bool DQ_CoppeliaSimInterface::load_model_from_model_browser(const std::string &p
 /**
  * @brief DQ_CoppeliaSimInterface::load_model_from_model_browser_if_missing
  * @param path_to_filename
- * @param desired_model_name
+ * @param desired_model_name The desired name for the model. You can use "/name" or "name"
  * @param remove_child_script
  * @return
  */
@@ -1071,12 +1071,13 @@ bool DQ_CoppeliaSimInterface::load_model_from_model_browser_if_missing(const std
                                                                        const std::string &desired_model_name,
                                                                        const bool &remove_child_script)
 {
-    if (!check_if_object_exist_on_scene(std::string("/") + desired_model_name))
+    if (!check_if_object_exist_on_scene(std::string("/") +
+                                        _remove_first_slash_from_string(desired_model_name)))
     {
-        auto rtn = load_model_from_model_browser(path_to_filename, desired_model_name);
+        auto rtn = load_model_from_model_browser(path_to_filename, _remove_first_slash_from_string(desired_model_name));
         if (remove_child_script)
         {
-            remove_child_script_from_object(std::string("/") +desired_model_name);
+            remove_child_script_from_object(std::string("/") + _remove_first_slash_from_string(desired_model_name));
         }
         return rtn;
     }
@@ -1170,6 +1171,20 @@ void DQ_CoppeliaSimInterface::disconnect(){}
 void DQ_CoppeliaSimInterface::disconnect_all(){}
 void DQ_CoppeliaSimInterface::set_synchronous(const bool &flag){set_stepping_mode(flag);}
 int DQ_CoppeliaSimInterface::wait_for_simulation_step_to_end(){return 0;}
+
+std::string DQ_CoppeliaSimInterface::_remove_first_slash_from_string(const std::string &str)
+{
+    std::string new_str = str;
+    size_t found = str.find('/');
+    if (found != std::string::npos)
+    {
+        if(found == 0) // The string containt the '/'
+        {
+            new_str.erase(0,1); // remove the '/'
+        }
+    }
+    return new_str;
+}
 
 //--------------------------------------------------------------
 

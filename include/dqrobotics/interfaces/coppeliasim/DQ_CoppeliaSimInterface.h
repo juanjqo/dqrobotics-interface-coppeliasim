@@ -186,7 +186,7 @@ public:
     int wait_for_simulation_step_to_end();
     //---------------------------------------------------------//
 
-
+    std::string _remove_first_slash_from_string(const std::string& str);
 
 
 private:
@@ -198,6 +198,8 @@ private:
     void _update_map(const std::string& objectname, const int& handle);
     int _get_handle_from_map(const std::string& objectname);
     //------------------------------------------------------------------------
+
+
 
     template<typename T, typename U>
     void _check_sizes(const T &v1,
