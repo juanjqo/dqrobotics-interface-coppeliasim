@@ -831,43 +831,155 @@ std::vector<std::string> DQ_CoppeliaSimInterface::get_jointnames_from_base_objec
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::set_object_twist
+ * @brief DQ_CoppeliaSimInterface::get_angular_and_linear_velocities
  * @param handle
- * @param twist_wrt_absolute_frame
+ * @param reference
+ * @return
  */
-void DQ_CoppeliaSimInterface::set_object_twist(const int &handle, const DQ& twist_wrt_absolute_frame) const
+VectorXd DQ_CoppeliaSimInterface::get_angular_and_linear_velocities(const int &handle, const REFERENCE &reference) const
 {
-    if (!is_pure(twist_wrt_absolute_frame))
-    {
-        throw(std::range_error("Bad set_object_twist() call: Not a pure dual quaternion"));
-    }
-    const DQ& twist = twist_wrt_absolute_frame;
-    VectorXd vec_twist = twist.vec6();
-    std::vector<int> params = {sim_->shapefloatparam_init_velocity_a,
-                               sim_->shapefloatparam_init_velocity_b,
-                               sim_->shapefloatparam_init_velocity_g,
-                               sim_->shapefloatparam_init_velocity_x,
-                               sim_->shapefloatparam_init_velocity_y,
-                               sim_->shapefloatparam_init_velocity_z
-                               };
-    sim_->resetDynamicObject(handle);
-
+    std::vector<int> params = _get_velocity_const_params();
+    VectorXd v = VectorXd::Zero(params.size());
     for (size_t i=0; i < params.size(); i++)
     {
-        sim_->setObjectFloatParam(handle, params.at(i), vec_twist(i));
+        v(i) = sim_->getObjectFloatParam(handle, params.at(i));
     }
-
+    if (reference == REFERENCE::BODY_FRAME)
+    {
+        DQ x = get_object_pose(handle);
+        DQ r = x.P();
+        DQ w_b = r.conj()*DQ(v.head(3))*r;
+        DQ p_dot_b = r.conj()*DQ(v.tail(3))*r;
+        v.head(3) = w_b.vec3();
+        v.tail(3) = p_dot_b.vec3();
+    }
+    return v;
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::set_object_twist
+ * @brief DQ_CoppeliaSimInterface::get_angular_and_linear_velocities
  * @param objectname
- * @param twist_wrt_absolute_frame
+ * @param reference
+ * @return
  */
-void DQ_CoppeliaSimInterface::set_object_twist(const std::string &objectname, const DQ &twist_wrt_absolute_frame)
+VectorXd DQ_CoppeliaSimInterface::get_angular_and_linear_velocities(std::string &objectname, const REFERENCE &reference)
 {
-    set_object_twist(_get_handle_from_map(objectname), twist_wrt_absolute_frame);
+    return get_angular_and_linear_velocities(_get_handle_from_map(objectname), reference);
 }
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_angular_and_linear_velocities
+ * @param handle
+ * @param w
+ * @param p_dot
+ * @param reference
+ */
+void DQ_CoppeliaSimInterface::set_angular_and_linear_velocities(const int &handle, const DQ &w, const DQ &p_dot, const REFERENCE &reference) const
+{
+    std::vector<int> params = _get_velocity_const_params();
+    VectorXd v = VectorXd::Zero(params.size());
+
+    if (reference == REFERENCE::ABSOLUTE_FRAME)
+    {
+        const DQ& w_a = w;
+        const DQ& p_dot_a = p_dot;
+        v.head(3) = w_a.vec3();
+        v.tail(3) = p_dot_a.vec3();
+    }else
+    {
+        DQ x = get_object_pose(handle);
+        DQ r = x.P();
+        DQ w_a = r*w*r.conj();
+        DQ p_dot_a = r*p_dot*r.conj();
+        v.head(3) = w_a.vec3();
+        v.tail(3) = p_dot_a.vec3();
+    }
+    sim_->resetDynamicObject(handle);
+    for (size_t i=0; i < params.size(); i++)
+    {
+        sim_->setObjectFloatParam(handle, params.at(i), v(i));
+    }
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_angular_and_linear_velocities
+ * @param objectname
+ * @param w
+ * @param p_dot
+ * @param reference
+ */
+void DQ_CoppeliaSimInterface::set_angular_and_linear_velocities(std::string &objectname, const DQ &w, const DQ &p_dot, const REFERENCE &reference)
+{
+    set_angular_and_linear_velocities(_get_handle_from_map(objectname), w, p_dot, reference);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_twist
+ * @param handle
+ * @param reference
+ * @return
+ */
+DQ DQ_CoppeliaSimInterface::get_twist(const int &handle, const REFERENCE &reference) const
+{
+    VectorXd v = get_angular_and_linear_velocities(handle);
+    DQ w = DQ(v.head(3));
+    DQ p_dot = DQ(v.tail(3));
+    DQ x = get_object_pose(handle);
+    DQ twist =  w + E_*(p_dot + cross(x.translation(), w));;
+    if (reference == REFERENCE::BODY_FRAME)
+    {
+       twist =  x.conj()*twist*x;
+    }
+    return twist;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_twist
+ * @param objectname
+ * @param reference
+ * @return
+ */
+DQ DQ_CoppeliaSimInterface::get_twist(const std::string &objectname, const REFERENCE &reference)
+{
+    return get_twist(_get_handle_from_map(objectname), reference);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_twist
+ * @param handle
+ * @param twist
+ * @param reference
+ */
+void DQ_CoppeliaSimInterface::set_twist(const int &handle, const DQ& twist, const REFERENCE &reference) const
+{
+    if (!is_pure(twist))
+    {
+        throw(std::range_error("Bad set_object_twist() call: Not a pure dual quaternion"));
+    }
+    if (reference == REFERENCE::BODY_FRAME)
+    {
+        set_angular_and_linear_velocities(handle, twist.P(), twist.D(),
+                                          REFERENCE::BODY_FRAME);
+    }
+    else{
+        DQ x = get_object_pose(handle);
+        set_angular_and_linear_velocities(handle, twist.P(), twist.D()-cross(x.translation(), twist.P()),
+                                          REFERENCE::ABSOLUTE_FRAME);
+    }
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_twist
+ * @param objectname
+ * @param twist
+ * @param reference
+ */
+void DQ_CoppeliaSimInterface::set_twist(const std::string &objectname, const DQ &twist, const REFERENCE &reference)
+{
+    set_twist(_get_handle_from_map(objectname), twist, reference);
+}
+
+
 
 
 /**
@@ -1184,6 +1296,22 @@ std::string DQ_CoppeliaSimInterface::_remove_first_slash_from_string(const std::
         }
     }
     return new_str;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::_get_velocity_const_params
+ * @return
+ */
+std::vector<int> DQ_CoppeliaSimInterface::_get_velocity_const_params() const
+{
+    std::vector<int> params = {sim_->shapefloatparam_init_velocity_a,
+        sim_->shapefloatparam_init_velocity_b,
+        sim_->shapefloatparam_init_velocity_g,
+        sim_->shapefloatparam_init_velocity_x,
+        sim_->shapefloatparam_init_velocity_y,
+        sim_->shapefloatparam_init_velocity_z
+    };
+    return params;
 }
 
 //--------------------------------------------------------------

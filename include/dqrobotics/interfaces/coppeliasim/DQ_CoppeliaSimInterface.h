@@ -58,6 +58,11 @@ public:
         CUSTOM,
         TORQUE
     };
+    enum REFERENCE
+    {
+        BODY_FRAME,
+        ABSOLUTE_FRAME
+    };
 
     DQ_CoppeliaSimInterface();
     bool connect(const std::string& host = "localhost",
@@ -138,9 +143,29 @@ public:
     std::string get_object_name(const int& handle);
     std::vector<std::string> get_jointnames_from_base_objectname(const std::string& base_objectname);
 
+    VectorXd get_angular_and_linear_velocities(const int& handle,
+                                           const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
 
-    void set_object_twist(const int& handle, const DQ& twist_wrt_absolute_frame) const;
-    void set_object_twist(const std::string& objectname, const DQ& twist_wrt_absolute_frame);
+    VectorXd get_angular_and_linear_velocities(std::string& objectname,
+                                           const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+
+    void set_angular_and_linear_velocities(const int& handle,
+                                           const DQ& w,
+                                           const DQ& p_dot,
+                                           const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
+    void set_angular_and_linear_velocities(std::string& objectname,
+                                           const DQ& w,
+                                           const DQ& p_dot,
+                                           const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+    void set_twist(const int& handle,
+                   const DQ& twist,
+                   const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
+    void set_twist(const std::string& objectname,
+                   const DQ& twist, const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+    DQ   get_twist(const int& handle,
+                   const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
+    DQ   get_twist(const std::string& objectname,
+                   const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
 
     //------------------setting features-----------------------------------------------------
     void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
@@ -187,8 +212,6 @@ public:
     //---------------------------------------------------------//
 
 
-
-
 private:
     bool client_created_ = false;
 
@@ -199,6 +222,8 @@ private:
     int _get_handle_from_map(const std::string& objectname);
     //------------------------------------------------------------------------
     std::string _remove_first_slash_from_string(const std::string& str);
+
+    std::vector<int> _get_velocity_const_params() const;
 
 
     template<typename T, typename U>
