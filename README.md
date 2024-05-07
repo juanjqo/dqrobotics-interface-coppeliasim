@@ -41,7 +41,7 @@ sudo apt install libzmq3-dev
 
 #### Build and Install 
 
-Example for coppeliasim-v4.6.0-rev18. NOTE: replace coppeliasim-v4.6.0-rev18 with the actual CoppeliaSim version you have.
+Example for coppeliasim-v4.6.0-rev18. Note: :warning: replace coppeliasim-v4.6.0-rev18 with the actual CoppeliaSim version you have.
 
 ```shell
 git clone https://github.com/juanjqo/cpp-interface-coppeliasim --recursive
