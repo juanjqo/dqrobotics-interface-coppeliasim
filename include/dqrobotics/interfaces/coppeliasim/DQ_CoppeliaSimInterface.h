@@ -182,14 +182,16 @@ public:
     DQ     get_gravity() const;
 
     bool load_model(const std::string& path_to_filename,
-                    const std::string& desired_model_name);
-    bool load_model_from_model_browser(const std::string& path_to_filename,
-                                       const std::string& desired_model_name);
-    bool load_model_from_model_browser_if_missing(const std::string& path_to_filename,
-                                                  const std::string& desired_model_name,
-                                                  const bool& remove_child_script = true);
+                    const std::string& desired_model_name,
+                    const bool& load_model_only_if_missing = true,
+                    const bool& remove_child_script = true);
+    bool load_from_model_browser(const std::string& path_to_filename,
+                                       const std::string& desired_model_name,
+                                       const bool& load_model_only_if_missing = true,
+                                       const bool& remove_child_script = true);
+
     void remove_child_script_from_object(const std::string& objectname);
-    bool check_if_object_exist_on_scene(const std::string& objectname);
+    bool object_exist_on_scene(const std::string& objectname);
 
     void set_object_name(const int& handle,
                          const std::string& new_object_name);
@@ -224,6 +226,9 @@ private:
     std::string _remove_first_slash_from_string(const std::string& str);
 
     std::vector<int> _get_velocity_const_params() const;
+    bool _load_model(const std::string& path_to_filename,
+                     const std::string& desired_model_name,
+                     const bool& remove_child_script);
 
 
     template<typename T, typename U>

@@ -1141,60 +1141,59 @@ DQ DQ_CoppeliaSimInterface::get_gravity() const
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::load_model
- * @param path_to_filename
- * @return
+ * @brief DQ_CoppeliaSimInterface::load_model loads a model to
+ *        the scene.
+ *
+ * @param path_to_filename The path to the model.
+ * @param desired_model_name The name you want for the loaded model.
+ * @param load_model_only_if_missing If the model exists (with the same alias)
+ *                                   the model is not loaded. (Default)
+ * @param remove_child_script Remove the associated child script of the model
+ *                            (Default)
+ * @return A boolean flag. True if the model was loaded. False otherwise.
  */
 bool DQ_CoppeliaSimInterface::load_model(const std::string &path_to_filename,
-                                         const std::string &desired_model_name)
+                                         const std::string &desired_model_name,
+                                         const bool &load_model_only_if_missing,
+                                         const bool &remove_child_script)
 {
-    int rtn = sim_->loadModel(path_to_filename);
-    if (rtn != -1)
+    if (load_model_only_if_missing == true)
     {
-        set_object_name(rtn, _remove_first_slash_from_string(desired_model_name));
-        return true;
-    }else{
-        return false;
+        if (!object_exist_on_scene(std::string("/") +
+            _remove_first_slash_from_string(desired_model_name)))
+        {
+            return _load_model(path_to_filename, desired_model_name, remove_child_script);
+        }else
+            return true;
+    }else
+    {// Load the model even if the model is already on the scene
+        return _load_model(path_to_filename, desired_model_name, remove_child_script);
     }
+
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::load_model_from_model_browser
- * @param path_to_filename
- * @param remove_child_script
- * @return
+ * @brief DQ_CoppeliaSimInterface::load_from_model_browser loads a model from
+ *        the CoppeliaSim model browser.
+ *
+ *      Ex: load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm",
+                                    "/Franka");
+ * @param path_to_filename The path to the model relative to the model browser.
+ * @param desired_model_name The name you want for the loaded model.
+ * @param load_model_only_if_missing If the model exists (with the same alias)
+ *                                   the model is not loaded. (Default)
+ * @param remove_child_script Remove the associated child script of the model
+ *                            (Default)
+ * @return A boolean flag. True if the model was loaded. False otherwise.
  */
-bool DQ_CoppeliaSimInterface::load_model_from_model_browser(const std::string &path_to_filename,
-                                                            const std::string &desired_model_name)
+bool DQ_CoppeliaSimInterface::load_from_model_browser(const std::string &path_to_filename,
+                                                            const std::string &desired_model_name,
+                                                            const bool &load_model_only_if_missing,
+                                                            const bool &remove_child_script)
 {
     std::string resources_path = sim_->getStringParam(sim_->stringparam_resourcesdir);
-    return load_model(resources_path + std::string("/models") + path_to_filename, desired_model_name);
-}
-
-
-/**
- * @brief DQ_CoppeliaSimInterface::load_model_from_model_browser_if_missing
- * @param path_to_filename
- * @param desired_model_name The desired name for the model. You can use "/name" or "name"
- * @param remove_child_script
- * @return
- */
-bool DQ_CoppeliaSimInterface::load_model_from_model_browser_if_missing(const std::string &path_to_filename,
-                                                                       const std::string &desired_model_name,
-                                                                       const bool &remove_child_script)
-{
-    if (!check_if_object_exist_on_scene(std::string("/") +
-                                        _remove_first_slash_from_string(desired_model_name)))
-    {
-        auto rtn = load_model_from_model_browser(path_to_filename, _remove_first_slash_from_string(desired_model_name));
-        if (remove_child_script)
-        {
-            remove_child_script_from_object(std::string("/") + _remove_first_slash_from_string(desired_model_name));
-        }
-        return rtn;
-    }
-    else
-        return true;
+    return load_model(resources_path + std::string("/models") + path_to_filename,
+                      desired_model_name, load_model_only_if_missing, remove_child_script);
 }
 
 /**
@@ -1210,11 +1209,11 @@ void DQ_CoppeliaSimInterface::remove_child_script_from_object(const std::string 
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::check_if_object_exist_on_scene
+ * @brief DQ_CoppeliaSimInterface::object_exist_on_scene
  * @param objectname
  * @return
  */
-bool DQ_CoppeliaSimInterface::check_if_object_exist_on_scene(const std::string &objectname)
+bool DQ_CoppeliaSimInterface::object_exist_on_scene(const std::string &objectname)
 {
     std::optional<json> options = {{"noError", false}};
     try {
@@ -1312,6 +1311,31 @@ std::vector<int> DQ_CoppeliaSimInterface::_get_velocity_const_params() const
         sim_->shapefloatparam_init_velocity_z
     };
     return params;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::_load_model
+ * @param path_to_filename
+ * @param desired_model_name
+ * @return
+ */
+bool DQ_CoppeliaSimInterface::_load_model(const std::string &path_to_filename,
+                                          const std::string &desired_model_name,
+                                          const bool &remove_child_script)
+{
+    int rtn = sim_->loadModel(path_to_filename);
+    if (rtn != -1)
+    {
+        set_object_name(rtn, _remove_first_slash_from_string(desired_model_name));
+        if (remove_child_script)
+        {
+            remove_child_script_from_object(std::string("/")
+                                        + _remove_first_slash_from_string(desired_model_name));
+        }
+        return true;
+    }else{
+        return false;
+    }
 }
 
 //--------------------------------------------------------------

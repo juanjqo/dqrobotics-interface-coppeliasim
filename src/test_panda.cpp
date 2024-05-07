@@ -16,13 +16,14 @@ int main()
     vi->set_gravity(DQ(0));
 
 
-    vi->load_model_from_model_browser_if_missing("/robots/non-mobile/UR5.ttm", "/UR5", true);
-    vi->load_model_from_model_browser_if_missing("/other/reference frame.ttm","x");
-    vi->load_model_from_model_browser_if_missing("/other/reference frame.ttm","desired");
-    vi->load_model_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm", "/Franka");
+    vi->load_from_model_browser("/robots/non-mobile/UR5.ttm", "/UR5", true);
+    vi->load_from_model_browser("/other/reference frame.ttm","x");
+    vi->load_from_model_browser("/other/reference frame.ttm","desired");
+    vi->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm",
+                                      "/Franka");
 
 
-    std::cout<<vi->_remove_first_slash_from_string("UR5")<<std::endl;
+    //std::cout<<vi->_remove_first_slash_from_string("UR5")<<std::endl;
     /*
     auto robot = URXCoppeliaSimRobot("/UR5", vi, URXCoppeliaSimRobot::MODEL::UR5);
     auto robot_model = robot.kinematics();
