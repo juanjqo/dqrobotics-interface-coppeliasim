@@ -103,7 +103,7 @@ int main()
     auto robot_model = robot.kinematics();
     robot.set_robot_as_visualization_tool();
 
-    VectorXd q = robot.get_configuration_space_positions();
+    auto q = robot.get_configuration_space_positions();
     double gain = 10;
     double T = 0.001;
     double damping = 0.01;
