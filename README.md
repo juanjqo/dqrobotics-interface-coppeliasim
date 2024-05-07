@@ -29,10 +29,8 @@ This project is under active development, incomplete, and experimental/unstable.
 
 ### MacOS (Apple Silicon)
 
-#### Install some brew packages
-
 ```shell
-brew install pkg-config cppzmq eigen
+brew install pkg-config cppzmq
 ```
 ### Ubuntu 
 ```shell
