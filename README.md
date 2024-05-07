@@ -67,7 +67,7 @@ sudo xargs rm < install_manifest.txt
 ```
 
 
-#### Example
+#### Example (Find more examples [here](https://github.com/juanjqo/cpp-interface-coppeliasim-examples/tree/main))
 
 ![ezgif com-video-to-gif-converter (1)](https://github.com/juanjqo/cpp-interface-coppeliasim/assets/23158313/c916025a-de3d-4058-8edf-14976d23584a)
 
@@ -145,6 +145,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
                       dqrobotics
                       dqrobotics-interface-coppeliasim)
 ```
+
+
 
 
 
