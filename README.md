@@ -11,7 +11,7 @@ An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on Zer
 # Overall advice: Don't use this interface for your project! :warning:
 
 ![Static Badge](https://img.shields.io/badge/warning-yellow)
-This project is under active development, incomplete, and experimental/unstable. Furthermore, it is compatible with macOS (Apple Silicon) only. Ubuntu versions are expected later, though. Therefore, **I highly recommend** the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability, and outstanding technical support.
+This project is under active development, incomplete, and experimental/unstable. Therefore, **I highly recommend** the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability, and outstanding technical support.
 
 
 
