@@ -103,25 +103,22 @@ int main()
     auto robot_model = robot.kinematics();
     robot.set_robot_as_visualization_tool();
 
-    VectorXd u = VectorXd::Zero(6);
     VectorXd q = robot.get_configuration_space_positions();
     double gain = 10;
     double T = 0.001;
     double damping = 0.01;
 
-    VectorXd qd = ((VectorXd(6) <<  0.5, 0, 1.5, 0, 0, 0).finished());
-
-    DQ xd = robot_model.fkm(qd);
+    auto xd = robot_model.fkm(((VectorXd(6) <<  0.5, 0, 1.5, 0, 0, 0).finished()));
     vi->set_object_pose("/Desired_pose", xd);
 
     for (int i=0; i<300; i++)
     {
-        DQ x = robot_model.fkm(robot.get_configuration_space_positions());
+        auto x = robot_model.fkm(q);
         vi->set_object_pose("/Current_pose", x);
-        MatrixXd J =  robot_model.pose_jacobian(q);
-        MatrixXd Jt = robot_model.translation_jacobian(J, x);
-        VectorXd task_error = (x.translation()-xd.translation()).vec4();
-        u = compute_control_signal(Jt, q, damping, gain, task_error);
+        auto J =  robot_model.pose_jacobian(q);
+        auto Jt = robot_model.translation_jacobian(J, x);
+        auto task_error = (x.translation()-xd.translation()).vec4();
+        auto u = compute_control_signal(Jt, q, damping, gain, task_error);
         q = q + T*u;
         robot.set_control_inputs(q);
         std::cout<<"error: "<<task_error.norm()<<std::endl;
