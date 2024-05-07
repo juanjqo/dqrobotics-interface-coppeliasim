@@ -41,10 +41,6 @@ sudo apt install libzmq3-dev
 
 #### Download and install CoppeliaSim (for Apple Silicon Macs use CoppeliaSim arm64)
 
-<img width="200" alt="Screenshot 2024-04-20 at 14 15 13" src="https://github.com/juanjqo/cpp-interface-coppelia/assets/23158313/24ffcd38-d24e-447c-a7d3-aaaadf8f85a1">
-
-
-
 #### Build and Install 
 
 Example for coppeliasim-v4.6.0-rev18. NOTE: replace coppeliasim-v4.6.0-rev18 with the actual CoppeliaSim version you have.
@@ -64,7 +60,7 @@ Additional step for Ubuntu users:
 sudo ldconfig
 ```
 
-#### Uninstall (optional)
+#### To Uninstall 
 
 ```shell
 sudo xargs rm < install_manifest.txt
@@ -74,45 +70,81 @@ sudo xargs rm < install_manifest.txt
 #### Example
 
 ```shell
-#include "dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h"
+#include <dqrobotics/DQ.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
+#include <dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimRobot.h>
 
+using namespace DQ_robotics;
+using namespace Eigen;
+
+VectorXd compute_control_signal(const MatrixXd J,
+                                const VectorXd& q,
+                                const double& damping,
+                                const double& gain,
+                                const VectorXd task_error);
 
 int main()
 {
-    try
+    auto vi = std::make_shared<DQ_CoppeliaSimInterface>();
+    vi->connect();
+
+    // Load the models only if they are not already on the scene.
+    vi->load_from_model_browser("/robots/non-mobile/UR5.ttm", "/UR5");
+    vi->load_from_model_browser("/other/reference frame.ttm", "/Current_pose");
+    vi->load_from_model_browser("/other/reference frame.ttm", "/Desired_pose");
+    vi->start_simulation();
+
+    auto robot = URXCoppeliaSimRobot("/UR5", vi, URXCoppeliaSimRobot::MODEL::UR5);
+    auto robot_model = robot.kinematics();
+    robot.set_robot_as_visualization_tool();
+
+    VectorXd u = VectorXd::Zero(6);
+    VectorXd q = robot.get_configuration_space_positions();
+    double gain = 10;
+    double T = 0.001;
+    double damping = 0.01;
+
+    VectorXd qd = ((VectorXd(6) <<  0.5, 0, 1.5, 0, 0, 0).finished());
+
+    DQ xd = robot_model.fkm(qd);
+    vi->set_object_pose("/Desired_pose", xd);
+
+    for (int i=0; i<300; i++)
     {
-        DQ_CoppeliaSimInterface vi;
-        vi.connect();
-        vi.set_stepping_mode(true);
-        vi.start_simulation();
-        double t = 0.0;
-
-        while (t < 4.0)
-        {
-            std::cout<<"status: "<<vi.is_simulation_running()<<std::endl;
-            t = vi.get_simulation_time();
-            std::cout<<"Simulation time: "<<t<<std::endl;
-            vi.trigger_next_simulation_step();
-
-        }
-        vi.stop_simulation();
-        std::cout<<"status: "<<vi.is_simulation_running()<<std::endl;
+        DQ x = robot_model.fkm(robot.get_configuration_space_positions());
+        vi->set_object_pose("/Current_pose", x);
+        MatrixXd J =  robot_model.pose_jacobian(q);
+        MatrixXd Jt = robot_model.translation_jacobian(J, x);
+        VectorXd task_error = (x.translation()-xd.translation()).vec4();
+        u = compute_control_signal(Jt, q, damping, gain, task_error);
+        q = q + T*u;
+        robot.set_control_inputs(q);
+        std::cout<<"error: "<<task_error.norm()<<std::endl;
     }
-    catch (const std::runtime_error& e)
-    {
-        std::cerr << "Caught a runtime error: " << e.what() << std::endl;
-    }
+    vi->stop_simulation();
+}
 
-    return 0;
+VectorXd compute_control_signal(const MatrixXd J,
+                                const VectorXd& q,
+                                const double& damping,
+                                const double& gain,
+                                const VectorXd task_error)
+{
+    VectorXd u = (J.transpose()*J + damping*damping*MatrixXd::Identity(q.size(), q.size())).inverse()*
+        J.transpose()*(-gain*task_error);
+    return u;
 }
 ```
 
 
 ```cmake
-add_executable(example example.cpp)
-target_link_libraries(example dqrobotics dqrobotics-interface-coppeliasim)
+add_executable(${CMAKE_PROJECT_NAME} main.cpp)
+target_link_libraries(${CMAKE_PROJECT_NAME}
+                      dqrobotics
+                      dqrobotics-interface-coppeliasim)
 ```
 
 
+![ezgif com-video-to-gif-converter (1)](https://github.com/juanjqo/cpp-interface-coppeliasim/assets/23158313/c916025a-de3d-4058-8edf-14976d23584a)
 
 
