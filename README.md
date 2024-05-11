@@ -22,9 +22,11 @@ This project is under active development, incomplete, and experimental/unstable.
 | ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/x64-blue)   | Windows 11  |  ![Static Badge](https://img.shields.io/badge/experimental-red)
 
 
-## Requirements
+## Basic requirements
 
-- [DQ Robotics](https://github.com/dqrobotics/cpp)
+- [DQ Robotics](https://github.com/dqrobotics/cpp) for C++
+- MacOS users require brew
+- Windows users require vcpkg (C:\vcpkg)
 
 
 ### MacOS (Apple Silicon)
