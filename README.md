@@ -37,9 +37,26 @@ brew install pkg-config cppzmq
 sudo apt install libzmq3-dev
 ```
 
+### Windows 
+
+If you do not have vcpkg:
+
+```shell
+cd C:/
+git clone https://github.com/microsoft/vcpkg.git
+cd vcpkg; .\bootstrap-vcpkg.bat
+.\vcpkg.exe integrate install
+```
+Required vcpkg packages:
+
+```shell
+.\vcpkg install cppzmq
+```
+
+
 #### Download and install CoppeliaSim (for Apple Silicon Macs use CoppeliaSim arm64)
 
-#### Build and Install 
+#### Build and Install (UNIX)
 
 Example for coppeliasim-v4.6.0-rev18. Note: :warning: replace coppeliasim-v4.6.0-rev18 with the actual CoppeliaSim version you have.
 
@@ -56,6 +73,18 @@ sudo make install
 Additional step for Ubuntu users:
 ```shell
 sudo ldconfig
+```
+
+#### Build and Install (Windows)
+
+Run powershell as administrator:
+
+```shell
+mkdir build
+cd build
+cmake -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+cmake --build . --config Release
+cmake --install .
 ```
 
 #### To Uninstall 
