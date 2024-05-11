@@ -4,7 +4,6 @@ project(dqrobotics-interface-coppeliasim LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
 
 set(SUBMODULES ${CMAKE_CURRENT_SOURCE_DIR}/submodules)
@@ -54,6 +53,14 @@ if(APPLE)
         cppzmq
         -ldqrobotics)
 endif()
+
+INSTALL(TARGETS ${PROJECT_NAME}
+# https://stackoverflow.com/questions/21592361/cmake-install-is-not-installing-libraries-on-windows
+    RUNTIME DESTINATION "bin"
+    LIBRARY DESTINATION "lib"
+    ARCHIVE DESTINATION "lib"
+    PUBLIC_HEADER DESTINATION "include/dqrobotics"
+    PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
 
 
 ################################################################

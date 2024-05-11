@@ -1,3 +1,4 @@
+
 if(UNIX AND NOT APPLE)
     FIND_PACKAGE(Eigen3 REQUIRED)
     INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
@@ -36,6 +37,24 @@ if(APPLE) #APPLE
     find_package(cppzmq REQUIRED)
     find_package(ZeroMQ REQUIRED)
 
+endif()
+
+
+if(WIN32)
+    include(C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
+    set(CMAKE_TOOLCHAIN_FILE C:/vcpkg/scripts/buildsystems/vcpkg.cmake)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
+    FIND_PACKAGE(Eigen3 CONFIG REQUIRED)
+    INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+    find_package(cppzmq CONFIG REQUIRED)
+
+    set(DQROBOTICS_PATH "C:/Program Files (x86)/dqrobotics")
+    add_library(dqrobotics SHARED IMPORTED)
+    set_target_properties(dqrobotics PROPERTIES
+        IMPORTED_LOCATION ${DQROBOTICS_PATH}/bin/dqrobotics.dll
+        IMPORTED_IMPLIB   ${DQROBOTICS_PATH}/lib/dqrobotics.lib
+        INTERFACE_INCLUDE_DIRECTORIES ${DQROBOTICS_PATH}/include)
 endif()
 
 
