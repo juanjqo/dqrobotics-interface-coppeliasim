@@ -25,8 +25,8 @@ This project is under active development, incomplete, and experimental/unstable.
 ## Basic requirements
 
 - [DQ Robotics](https://github.com/dqrobotics/cpp) for C++
-- MacOS users require brew
-- Windows users require vcpkg (C:\vcpkg)
+- MacOS users require [Homebrew](https://brew.sh/)
+- Windows users require [vcpkg](https://vcpkg.io/en/index.html) (C:\vcpkg)
 
 
 ### MacOS (Apple Silicon)
