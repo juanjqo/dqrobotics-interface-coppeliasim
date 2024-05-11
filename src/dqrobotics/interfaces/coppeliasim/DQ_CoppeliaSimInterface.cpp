@@ -1240,6 +1240,58 @@ void DQ_CoppeliaSimInterface::set_object_name(const std::string &old_object_name
     set_object_name(_get_handle_from_map(old_object_name), new_object_name);
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::get_mass
+ * @param handle
+ * @return
+ */
+double DQ_CoppeliaSimInterface::get_mass(const int &handle) const
+{
+   return sim_->getShapeMassAndInertia(handle);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_mass
+ * @param object_name
+ * @return
+ */
+double DQ_CoppeliaSimInterface::get_mass(const std::string &object_name)
+{
+    return get_mass(_get_handle_from_map(object_name));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_center_of_mass
+ * @param handle
+ * @param reference_frame
+ * @return
+ */
+DQ DQ_CoppeliaSimInterface::get_center_of_mass(const int &handle, const REFERENCE &reference_frame) const
+{
+    DQ COM_body_frame;
+    MatrixXd Inertia_maxtrix_body_frame;
+    std::tie(COM_body_frame, Inertia_maxtrix_body_frame) =_get_center_of_mass_and_inertia_matrix(handle);
+    if (reference_frame == BODY_FRAME)
+        return COM_body_frame;
+    else
+    {
+        DQ x_0_bodyFrame = get_object_pose(handle);
+        DQ x_bodyFrame_com = 1 + 0.5*E_*COM_body_frame;
+        return (x_0_bodyFrame*x_bodyFrame_com).translation();
+    }
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_center_of_mass
+ * @param object_name
+ * @param reference_frame
+ * @return
+ */
+DQ DQ_CoppeliaSimInterface::get_center_of_mass(const std::string &object_name, const REFERENCE &reference_frame)
+{
+    return get_center_of_mass(_get_handle_from_map(object_name), reference_frame);
+}
+
 
 /**
  * @brief DQ_CoppeliaSimInterface::_update_map updates the map if and only if
@@ -1337,6 +1389,59 @@ bool DQ_CoppeliaSimInterface::_load_model(const std::string &path_to_filename,
         return false;
     }
 }
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_transformation_matrix
+ * @param coeff_vector
+ * @return
+ */
+MatrixXd DQ_CoppeliaSimInterface::_get_transformation_matrix(const std::vector<double> &coeff_vector) const
+{
+    std::vector<double> coeff = coeff_vector;
+    MatrixXd TM = Map<VectorXd>(coeff.data(),
+                                coeff.size()).reshaped(4,3).transpose();
+    return TM;
+}
+
+/**
+ * @brief This function returns a rotation matrix given a rotation unit quaternion.
+ * @param r unit quaternion.
+ * @returns The rotation matrix.
+ */
+MatrixXd DQ_CoppeliaSimInterface::_get_rotation_matrix(const DQ& r) const{
+    Matrix<double, 3, 3> R;
+    VectorXd vecr = r.vec4();
+    double w = vecr(0);
+    double a = vecr(1);
+    double b = vecr(2);
+    double c = vecr(3);
+    R << 1-2*(b*b +c*c), 2*(a*b-w*c), 2*(a*c+w*b),
+        2*(a*b+w*c), 1-2*(a*a+c*c),  2*(b*c-w*a),
+        2*(a*c-w*b), 2*(b*c+w*a),   1-2*(a*a+b*b);
+
+    return R;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_center_of_mass_and_inertia_matrix
+ * @param handle
+ * @return
+ */
+std::tuple<DQ, MatrixXd> DQ_CoppeliaSimInterface::_get_center_of_mass_and_inertia_matrix(const int &handle) const
+{
+    std::vector<double> inertia_matrix_coeff;
+    std::vector<double> center_of_mass_coeff;
+    std::tie(inertia_matrix_coeff, center_of_mass_coeff) = sim_->getShapeInertia(handle);
+
+    MatrixXd Inertia_maxtrix_body_frame = Map<VectorXd>(inertia_matrix_coeff.data(),
+                                                        inertia_matrix_coeff.size()).reshaped(3,3);
+    MatrixXd COM_body_frame_matrix =  _get_transformation_matrix(center_of_mass_coeff);
+    DQ COM_body_frame = DQ(COM_body_frame_matrix.col(3));
+    double mass = get_mass(handle);
+
+    return {COM_body_frame, Inertia_maxtrix_body_frame/mass};
+}
+
 
 //--------------------------------------------------------------
 

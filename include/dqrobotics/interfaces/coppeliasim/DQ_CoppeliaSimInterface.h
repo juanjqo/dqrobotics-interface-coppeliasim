@@ -197,6 +197,16 @@ public:
                          const std::string& new_object_name);
     void set_object_name(const std::string& old_object_name,
                          const std::string& new_object_name);
+
+
+    double get_mass(const int& handle) const;
+    double get_mass(const std::string& object_name);
+
+    DQ     get_center_of_mass(const int& handle, const REFERENCE& reference_frame=ABSOLUTE_FRAME) const;
+    DQ     get_center_of_mass(const std::string& object_name, const REFERENCE& reference_frame=ABSOLUTE_FRAME);
+
+
+    //----------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------
 
     std::unordered_map<std::string, int> get_map(); //For debug
@@ -230,6 +240,10 @@ private:
                      const std::string& desired_model_name,
                      const bool& remove_child_script);
 
+    MatrixXd _get_transformation_matrix(const std::vector<double>& coeff_vector) const;
+    MatrixXd _get_rotation_matrix(const DQ& r) const;
+
+    std::tuple<DQ, MatrixXd> _get_center_of_mass_and_inertia_matrix(const int& handle) const;
 
     template<typename T, typename U>
     void _check_sizes(const T &v1,

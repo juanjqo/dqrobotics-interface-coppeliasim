@@ -50,7 +50,6 @@ INSTALL(TARGETS ${PROJECT_NAME}
 
 if(APPLE)
     TARGET_LINK_LIBRARIES(${PROJECT_NAME}
-        cppzmq
         -ldqrobotics)
 endif()
 
