@@ -96,7 +96,7 @@ sudo xargs rm < install_manifest.txt
 ```
 
 
-#### Example (Find more examples [here](https://github.com/juanjqo/cpp-interface-coppeliasim-examples/tree/main))
+#### Example (Find more examples [here](https://github.com/juanjqo/dqrobotics-interface-coppeliasim-examples))
 
 1) Open CoppeliaSim. (You do not need to load a specific scene).
 2) Run and enjoy!
