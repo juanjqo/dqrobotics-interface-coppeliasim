@@ -63,7 +63,7 @@ Required vcpkg packages:
 Example for coppeliasim-v4.6.0-rev18. Note: :warning: replace coppeliasim-v4.6.0-rev18 with the actual CoppeliaSim version you have.
 
 ```shell
-git clone https://github.com/juanjqo/cpp-interface-coppeliasim --recursive
+git clone https://github.com/juanjqo/dqrobotics-interface-coppeliasim --recursive
 cd dqrobotics-interface-coppeliasim/coppeliarobotics/zmqRemoteApi
 git checkout coppeliasim-v4.6.0-rev18
 cd ../.. && mkdir build && cd build
