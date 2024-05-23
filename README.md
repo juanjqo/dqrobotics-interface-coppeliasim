@@ -64,7 +64,7 @@ Example for coppeliasim-v4.6.0-rev18. Note: :warning: replace coppeliasim-v4.6.0
 
 ```shell
 git clone https://github.com/juanjqo/cpp-interface-coppeliasim --recursive
-cd cpp-interface-coppeliasim/coppeliarobotics/zmqRemoteApi
+cd dqrobotics-interface-coppeliasim/coppeliarobotics/zmqRemoteApi
 git checkout coppeliasim-v4.6.0-rev18
 cd ../.. && mkdir build && cd build
 cmake ..
