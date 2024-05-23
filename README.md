@@ -15,11 +15,11 @@ This project is under active development, incomplete, and experimental/unstable.
 
 
 
-| CoppeliaSim  | SO | Status |
-| ------------- | ------------- |------------- |
-| ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/arm64-blue)| macOS Sonoma (Apple Silicon) | ![Static Badge](https://img.shields.io/badge/experimental-red)|
-| ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/x64-blue)   | Ubuntu 22.04 LTS (arm64, x64) |  ![Static Badge](https://img.shields.io/badge/experimental-red)|
-| ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/x64-blue)   | Windows 11 (arm64, x64)  |  ![Static Badge](https://img.shields.io/badge/experimental-red)
+| CoppeliaSim  | SO | Status (C++17) | Status (Python) |  Status (Matlab) |
+| ------------- | ------------- |------------- |------------- |------------- |
+| ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/arm64-blue)| macOS Sonoma (Apple Silicon) | ![Static Badge](https://img.shields.io/badge/experimental-red)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|
+| ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/x64-blue)   | Ubuntu 22.04 LTS (arm64, x64) |  ![Static Badge](https://img.shields.io/badge/experimental-red)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|
+| ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/x64-blue)   | Windows 11 (arm64, x64)  |  ![Static Badge](https://img.shields.io/badge/experimental-red) | ![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|
 
 
 ## Basic requirements
