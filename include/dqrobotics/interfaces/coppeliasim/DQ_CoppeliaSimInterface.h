@@ -97,10 +97,7 @@ public:
     void set_object_rotation(const std::string& objectname, const DQ& r);
 
     DQ get_object_pose(const int& handle) const;
-    DQ get_object_pose(const int& handle, const int& relative_to_handle) const;
     DQ get_object_pose(const std::string& objectname);
-    DQ get_object_pose(const std::string& objectname,
-                       const std::string& relative_to_objectname);
 
     void set_object_pose(const int& handle, const DQ& h);
     void set_object_pose(const std::string& objectname, const DQ& h);
@@ -167,6 +164,15 @@ public:
     DQ   get_twist(const std::string& objectname,
                    const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
 
+    double get_mass(const int& handle) const;
+    double get_mass(const std::string& object_name);
+
+    DQ     get_center_of_mass(const int& handle, const REFERENCE& reference_frame=ABSOLUTE_FRAME) const;
+    DQ     get_center_of_mass(const std::string& object_name, const REFERENCE& reference_frame=ABSOLUTE_FRAME);
+
+    MatrixXd get_inertia_matrix(const int& handle, const REFERENCE& reference_frame=BODY_FRAME);
+    MatrixXd get_inertia_matrix(const std::string& link_name, const REFERENCE& reference_frame=BODY_FRAME);
+
     //------------------setting features-----------------------------------------------------
     void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
     void   set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
@@ -195,15 +201,9 @@ public:
 
     void set_object_name(const int& handle,
                          const std::string& new_object_name);
-    void set_object_name(const std::string& old_object_name,
+    void set_object_name(const std::string& current_object_name,
                          const std::string& new_object_name);
 
-
-    double get_mass(const int& handle) const;
-    double get_mass(const std::string& object_name);
-
-    DQ     get_center_of_mass(const int& handle, const REFERENCE& reference_frame=ABSOLUTE_FRAME) const;
-    DQ     get_center_of_mass(const std::string& object_name, const REFERENCE& reference_frame=ABSOLUTE_FRAME);
 
 
     //----------------------------------------------------------------------------------------
@@ -226,6 +226,7 @@ public:
 
 private:
     bool client_created_ = false;
+    bool enable_deprecated_name_compatibility_ = true;
 
     //-------------------map zone--------------------------------------------
     std::string _map_simulation_state(const int& state) const;
@@ -234,6 +235,7 @@ private:
     int _get_handle_from_map(const std::string& objectname);
     //------------------------------------------------------------------------
     std::string _remove_first_slash_from_string(const std::string& str);
+    bool _string_contain_first_slash(const std::string& str);
 
     std::vector<int> _get_velocity_const_params() const;
     bool _load_model(const std::string& path_to_filename,

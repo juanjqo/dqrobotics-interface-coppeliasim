@@ -88,7 +88,6 @@ include(FetchContent)
 Set(FETCHCONTENT_QUIET FALSE) # Needed to print downloading progress
 FetchContent_Declare(
     Boost
-    #URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.7z # downloading a zip release speeds up the download
     URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.gz
     USES_TERMINAL_DOWNLOAD TRUE
     GIT_PROGRESS TRUE

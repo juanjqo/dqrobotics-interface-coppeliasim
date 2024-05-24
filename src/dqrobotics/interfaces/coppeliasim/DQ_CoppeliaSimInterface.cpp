@@ -248,18 +248,31 @@ void DQ_CoppeliaSimInterface::set_status_bar_message(const std::string &message)
 int DQ_CoppeliaSimInterface::get_object_handle(const std::string &objectname)
 {
     int handle;
+    std::string additional_error_message = "";
+    if (!_string_contain_first_slash(objectname) && enable_deprecated_name_compatibility_ == false)
+    {
+        additional_error_message = std::string("Did you mean \"/" + objectname + "\"? \n");;
+
+    }
     try
     {
-        handle = sim_->getObject(objectname);
+        if (!_string_contain_first_slash(objectname) && enable_deprecated_name_compatibility_ == true)
+        {
+            handle = sim_->getObject(std::string("/")+objectname);
+        }else{
+            handle = sim_->getObject(objectname);
+        }
     }
     catch(const std::runtime_error& e)
     {
+
         throw std::runtime_error(
             std::string(e.what())
-            + " "
-            + std::string("The object ")
-            + objectname
-            + std::string(" does not exist in the current scene in CoppeliaSim.")
+            + " \n"
+            + std::string("The object \"")
+            + objectname + std::string("\"")
+            + std::string(" does not exist in the current scene in CoppeliaSim. \n")
+            + additional_error_message
             );
     }
     _update_map(objectname, handle);
@@ -402,13 +415,6 @@ DQ DQ_CoppeliaSimInterface::get_object_pose(const int &handle) const
     return r + 0.5*E_*t*r;
 }
 
-DQ DQ_CoppeliaSimInterface::get_object_pose(const int &handle, const int &relative_to_handle) const
-{
-    DQ x1 = get_object_pose(handle);
-    DQ x2 = get_object_pose(relative_to_handle);
-    return x2.conj()*x1;
-}
-
 /**
  * @brief DQ_CoppeliaSimInterface::get_object_pose
  * @param objectname
@@ -419,16 +425,6 @@ DQ DQ_CoppeliaSimInterface::get_object_pose(const std::string &objectname)
     return get_object_pose(_get_handle_from_map(objectname));
 }
 
-/**
- * @brief DQ_CoppeliaSimInterface::get_object_pose
- * @param objectname
- * @param relative_to_objectname
- * @return
- */
-DQ DQ_CoppeliaSimInterface::get_object_pose(const std::string &objectname, const std::string &relative_to_objectname)
-{
-    return get_object_pose(_get_handle_from_map(objectname), _get_handle_from_map(relative_to_objectname));
-}
 
 /**
  * @brief DQ_CoppeliaSimInterface::set_object_pose
@@ -1062,7 +1058,9 @@ void DQ_CoppeliaSimInterface::set_joint_control_mode(const std::string &jointnam
 void DQ_CoppeliaSimInterface::set_joint_control_modes(const std::vector<std::string> &jointnames, const JOINT_CONTROL_MODE &joint_control_mode)
 {
     for(std::size_t i=0;i<jointnames.size();i++)
+    {
         set_joint_control_mode(jointnames.at(i), joint_control_mode);
+    }
 }
 
 /**
@@ -1232,12 +1230,12 @@ void DQ_CoppeliaSimInterface::set_object_name(const int &handle, const std::stri
 
 /**
  * @brief DQ_CoppeliaSimInterface::set_object_name
- * @param old_object_name
+ * @param current_object_name
  * @param new_object_name
  */
-void DQ_CoppeliaSimInterface::set_object_name(const std::string &old_object_name, const std::string &new_object_name)
+void DQ_CoppeliaSimInterface::set_object_name(const std::string &current_object_name, const std::string &new_object_name)
 {
-    set_object_name(_get_handle_from_map(old_object_name), new_object_name);
+    set_object_name(_get_handle_from_map(current_object_name), new_object_name);
 }
 
 /**
@@ -1290,6 +1288,40 @@ DQ DQ_CoppeliaSimInterface::get_center_of_mass(const int &handle, const REFERENC
 DQ DQ_CoppeliaSimInterface::get_center_of_mass(const std::string &object_name, const REFERENCE &reference_frame)
 {
     return get_center_of_mass(_get_handle_from_map(object_name), reference_frame);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_inertia_matrix
+ * @param handle
+ * @param reference_frame
+ * @return
+ */
+MatrixXd DQ_CoppeliaSimInterface::get_inertia_matrix(const int &handle, const REFERENCE &reference_frame)
+{
+    DQ COM_body_frame;
+    MatrixXd Inertia_maxtrix_body_frame;
+    std::tie(COM_body_frame, Inertia_maxtrix_body_frame) =_get_center_of_mass_and_inertia_matrix(handle);
+    if (reference_frame == BODY_FRAME)
+        return Inertia_maxtrix_body_frame;
+    else
+    {
+        DQ x_0_bodyFrame = get_object_pose(handle);
+        DQ x_bodyFrame_com = 1 + 0.5*E_*COM_body_frame;
+        DQ x_0_com = x_0_bodyFrame*x_bodyFrame_com;
+        MatrixXd R_0_COM = _get_rotation_matrix(x_0_com.P());
+        return R_0_COM*Inertia_maxtrix_body_frame*R_0_COM.transpose();
+    }
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_inertia_matrix
+ * @param link_name
+ * @param reference_frame
+ * @return
+ */
+MatrixXd DQ_CoppeliaSimInterface::get_inertia_matrix(const std::string &link_name, const REFERENCE &reference_frame)
+{
+    return get_inertia_matrix(_get_handle_from_map(link_name), reference_frame);
 }
 
 
@@ -1347,6 +1379,15 @@ std::string DQ_CoppeliaSimInterface::_remove_first_slash_from_string(const std::
         }
     }
     return new_str;
+}
+
+bool DQ_CoppeliaSimInterface::_string_contain_first_slash(const std::string &str)
+{
+    size_t found = str.find('/');
+    if(found == 0) // The string containt the '/'
+        return true;
+    else
+        return false;
 }
 
 /**
