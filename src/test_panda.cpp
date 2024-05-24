@@ -108,6 +108,15 @@ int main(void)
     vi.set_joint_modes(jointnames, DQ_CoppeliaSimInterface::DYNAMIC);
     vi.set_joint_control_modes(jointnames, DQ_CoppeliaSimInterface::POSITION);
 
+
+    std::vector<std::string> testnames =
+        vi.get_linknames_from_base_objectname(std::string("/Franka"));
+
+    for (auto &p:  linknames)
+    {
+        std::cout<<p<<std::endl;
+    }
+
     //------------------- Robot definition--------------------------
     //---------- Franka Emika Panda serial manipulator
     DQ_SerialManipulatorMDH franka = FrankaEmikaPandaRobot::kinematics();

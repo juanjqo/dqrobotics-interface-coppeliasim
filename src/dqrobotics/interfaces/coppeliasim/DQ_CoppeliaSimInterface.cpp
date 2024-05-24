@@ -24,6 +24,7 @@ Contributors:
 
 */
 
+#include "dqrobotics/DQ.h"
 #include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
 #include <RemoteAPIClient.h>
 
@@ -804,6 +805,23 @@ std::string DQ_CoppeliaSimInterface::get_object_name(const int &handle)
     return objectname;
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_names
+ * @param handles
+ * @return
+ */
+template<typename T>
+std::vector<std::string> DQ_CoppeliaSimInterface::get_object_names(const T &handles)
+{
+    std::size_t n = handles.size();
+    std::vector<std::string> objectnames(n);
+    for(std::size_t i=0;i<n;i++)
+    {
+        objectnames.at(i)=get_object_name(handles.at(i));
+    }
+    return objectnames;
+}
+
 
 /**
  * @brief DQ_CoppeliaSimInterface::get_jointnames_from_base_objectname
@@ -816,14 +834,17 @@ std::vector<std::string> DQ_CoppeliaSimInterface::get_jointnames_from_base_objec
     std::vector<int64_t> jointhandles = sim_->getObjectsInTree(base_handle,
                                         sim_->object_joint_type,
                                         0);
-    std::size_t n = jointhandles.size();
-    std::vector<std::string> jointnames(n);
-    for(std::size_t i=0;i<n;i++)
-    {
-        jointnames.at(i)=get_object_name(jointhandles.at(i));
-    }
-    return jointnames;
+    return get_object_names(jointhandles);
 
+}
+
+std::vector<std::string> DQ_CoppeliaSimInterface::get_linknames_from_base_objectname(const std::string &base_objectname)
+{
+    int base_handle = _get_handle_from_map(base_objectname);
+    std::vector<int64_t> shapehandles = sim_->getObjectsInTree(base_handle,
+                                                               sim_->object_shape_type,
+                                                               0);
+    return get_object_names(shapehandles);
 }
 
 /**

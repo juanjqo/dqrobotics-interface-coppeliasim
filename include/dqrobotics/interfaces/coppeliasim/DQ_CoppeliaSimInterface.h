@@ -138,7 +138,12 @@ public:
     VectorXd get_joint_torques(const std::vector<std::string>& jointnames);
 
     std::string get_object_name(const int& handle);
+
+    template<typename T>
+    std::vector<std::string> get_object_names(const T& handles);
+
     std::vector<std::string> get_jointnames_from_base_objectname(const std::string& base_objectname);
+    std::vector<std::string> get_linknames_from_base_objectname(const std::string& base_objectname);
 
     VectorXd get_angular_and_linear_velocities(const int& handle,
                                            const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
