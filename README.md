@@ -55,7 +55,7 @@ Required vcpkg packages:
 ```
 
 
-#### Download and install CoppeliaSim (for Apple Silicon Macs use CoppeliaSim arm64)
+#### Download and install CoppeliaSim (Use CoppeliaSim arm64 for Apple Silicon Macs)
 
 #### Build and Install (UNIX)
 
