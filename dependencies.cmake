@@ -1,4 +1,10 @@
 
+
+# Set CMake Policies
+if(POLICY CMP0135)
+  cmake_policy(SET CMP0135 NEW)
+endif(POLICY CMP0135)
+
 if(UNIX AND NOT APPLE)
     FIND_PACKAGE(Eigen3 REQUIRED)
     INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
@@ -83,14 +89,14 @@ set(BOOST_INCLUDE_LIBRARIES thread format filesystem system program_options)
 set(BOOST_ENABLE_CMAKE ON)
 
 # Download and extract the boost library from GitHub
-message(STATUS "Downloading and extracting boost library sources. This will take some time...")
+message(STATUS "Downloading dependencies. This will take some time...")
 include(FetchContent)
 Set(FETCHCONTENT_QUIET FALSE) # Needed to print downloading progress
 FetchContent_Declare(
     Boost
     URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.gz
-    USES_TERMINAL_DOWNLOAD TRUE
-    GIT_PROGRESS TRUE
+    USES_TERMINAL_DOWNLOAD FALSE
+    GIT_PROGRESS FALSE
     DOWNLOAD_NO_EXTRACT FALSE
 )
 FetchContent_MakeAvailable(Boost)
@@ -106,7 +112,7 @@ if(NOT jsoncons_POPULATED)
     FetchContent_Populate(jsoncons)
     #add_subdirectory(${jsoncons_SOURCE_DIR} ${jsoncons_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
-
+message(STATUS "Dependencies ready!")
 
 
 
