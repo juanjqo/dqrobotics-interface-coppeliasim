@@ -178,7 +178,7 @@ public:
     MatrixXd get_inertia_matrix(const int& handle, const REFERENCE& reference_frame=BODY_FRAME);
     MatrixXd get_inertia_matrix(const std::string& link_name, const REFERENCE& reference_frame=BODY_FRAME);
 
-    //------------------setting features-----------------------------------------------------
+    //------------------Exclusive methods---------------------------------------------------------------
     void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
     void   set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
     void   set_joint_control_mode(const std::string& jointname, const JOINT_CONTROL_MODE& joint_control_mode);
@@ -191,6 +191,10 @@ public:
     void   set_dynamic_engine(const ENGINE& engine);
     void   set_gravity(const DQ& gravity=-9.81*k_);
     DQ     get_gravity() const;
+
+    void load_scene(const std::string& path_to_filename) const;
+    void save_scene(const std::string& path_to_filename) const;
+    void close_scene() const;
 
     bool load_model(const std::string& path_to_filename,
                     const std::string& desired_model_name,

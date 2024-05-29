@@ -1160,6 +1160,42 @@ DQ DQ_CoppeliaSimInterface::get_gravity() const
 }
 
 /**
+ * @brief DQ_CoppeliaSimInterface::load_scene loads a scene from your computer.
+ * @param path_to_filename the path to the scene. This string must containt
+ *        the file extension.
+ *
+ *        Example:
+ *
+ *        load_scene("/Users/juanjqo/git/space_robot/scenes/space_robot.ttt");
+ */
+void DQ_CoppeliaSimInterface::load_scene(const std::string &path_to_filename) const
+{
+    sim_->loadScene(path_to_filename);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::save_scene saves the current scene.
+ * @param path_to_filename The path where you want to save the scene including
+ *        the name of the scene and its file extension.
+ *
+ *        Example:
+ *
+ *        save_scene("/Users/juanjqo/git/space_robot/scenes/space_robot2.ttt");
+ */
+void DQ_CoppeliaSimInterface::save_scene(const std::string &path_to_filename) const
+{
+    sim_->saveScene(path_to_filename);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::close_scene closes the current scene.
+ */
+void DQ_CoppeliaSimInterface::close_scene() const
+{
+    sim_->closeScene();
+}
+
+/**
  * @brief DQ_CoppeliaSimInterface::load_model loads a model to
  *        the scene.
  *
