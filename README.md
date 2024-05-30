@@ -8,7 +8,7 @@
 
 An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API and C++17. This API provides more functionalities when compared to the legacy remote API (the one used by the [DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep)). However, unlike DQ Robotics, dqrobotics-interface-coppeliasim is experimental and lacks official support.
 
-| CoppeliaSim  | SO | Status (C++17) | Status (Python) |  Status (Matlab) |
+| CoppeliaSim  | SO | Status (C++17) | Status (Python) |  Status (Matlab ≥ R2022b) |
 | ------------- | ------------- |------------- |------------- |------------- |
 | ![Static Badge](https://img.shields.io/badge/CS-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/arm64-blue)| macOS (Apple Silicon) | ![Static Badge](https://img.shields.io/badge/experimental-red)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|
 | ![Static Badge](https://img.shields.io/badge/CS-4.6.0--rev18-orange)![Static Badge](https://img.shields.io/badge/x64-blue)   | Ubuntu 22.04 LTS (arm64, x64) |  ![Static Badge](https://img.shields.io/badge/experimental-red)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|
