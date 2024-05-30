@@ -7,10 +7,9 @@ vi = DQ_CoppeliaSimInterface();
 vi.connect();
 vi.set_stepping_mode(true);
 vi.start_simulation();
-for i=1:5
-    t = vi.get_simulation_time()
-    vi.trigger_next_simulation_step();
-end
+
+objectname = "Franka";
+handles = vi.get_object_handles({"/Franka", "/Jaco"})
 
 vi.stop_simulation();
 
