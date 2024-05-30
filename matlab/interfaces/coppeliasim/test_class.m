@@ -8,8 +8,7 @@ vi.connect();
 vi.set_stepping_mode(true);
 vi.start_simulation();
 
-objectname = "Franka";
-handles = vi.get_object_handles({"/Franka", "/Jaco"})
+vi.set_object_translation("/Sphere", DQ([1,1,1]));
 
 vi.stop_simulation();
 

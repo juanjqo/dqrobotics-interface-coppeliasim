@@ -38,10 +38,14 @@ classdef DQ_CoppeliaSimInterface < handle
         end
 
         function rtn = get_handle_from_map_(obj, objectname)
-            if isKey(obj.handles_map_ , objectname)
-                rtn = obj.handles_map_(objectname);
+            if isConfigured(obj.handles_map_)
+                if (isKey(obj.handles_map_ , objectname))
+                  rtn = obj.handles_map_(objectname);
+                else
+                  rtn = obj.get_object_handle(objectname);
+                end
             else
-                obj.get_object_handle(objectname);
+                rtn = obj.get_object_handle(objectname);
             end
         end
 
@@ -191,6 +195,34 @@ classdef DQ_CoppeliaSimInterface < handle
                handles{i} = obj.get_object_handle(objectnames{i});
            end
         end
+
+        function rtn = get_map(obj)
+            % For debugging
+            rtn = obj.handles_map_;
+        end
+
+        function t = get_object_translation(obj, objectname)
+          arguments 
+                obj
+                objectname string
+           end
+             position = obj.sim_.getObjectPosition(obj.get_handle_from_map_(objectname), ...
+                 obj.sim_.handle_world);
+             t = DQ([position{1},position{2},position{3}]);
+        end
+
+        function set_object_translation(obj, objectname, t)
+           arguments 
+                obj
+                objectname string
+                t DQ
+           end 
+            vec_t = vec3(t);
+            position = {vec_t(1), vec_t(2), vec_t(3)};
+            obj.sim_.setObjectPosition(obj.get_handle_from_map_(objectname), ...
+                                       position,obj.sim_.handle_world);
+        end
+
 
        %% Deprecated methods
         function set_synchronous(obj, flag)
