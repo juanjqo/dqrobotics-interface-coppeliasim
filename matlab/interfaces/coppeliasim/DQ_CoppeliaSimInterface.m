@@ -185,6 +185,8 @@ classdef DQ_CoppeliaSimInterface < handle
         end
 
         function handles = get_object_handles(obj, objectnames)
+            % This method returns a cell that contains the handles
+            % corresponding to the objectnames.
            arguments 
                 obj
                 objectnames cell
