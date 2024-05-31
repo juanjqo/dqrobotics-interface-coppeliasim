@@ -260,8 +260,10 @@ int DQ_CoppeliaSimInterface::get_object_handle(const std::string &objectname)
         if (!_string_contain_first_slash(objectname) && enable_deprecated_name_compatibility_ == true)
         {
             handle = sim_->getObject(std::string("/")+objectname);
+            _update_map(std::string("/")+objectname, handle);
         }else{
             handle = sim_->getObject(objectname);
+            _update_map(objectname, handle);
         }
     }
     catch(const std::runtime_error& e)
@@ -276,7 +278,6 @@ int DQ_CoppeliaSimInterface::get_object_handle(const std::string &objectname)
             + additional_error_message
             );
     }
-    _update_map(objectname, handle);
     return handle;
 }
 
