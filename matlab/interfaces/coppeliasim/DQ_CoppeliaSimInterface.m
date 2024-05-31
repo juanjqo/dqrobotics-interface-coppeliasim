@@ -170,20 +170,24 @@ classdef DQ_CoppeliaSimInterface < handle
                     obj.enable_deprecated_name_compatibility_ == false)      
                 additional_error_message = "Did you mean   " + char(34) + '/' +objectname +  char(34) + '   ?';
             end
-            if (~obj.string_contain_first_slash_(objectname) && ...
-                    obj.enable_deprecated_name_compatibility_ == true)
-                   objectname = '/'+objectname;
-            end
+
 
             try
-               handle = obj.sim_.getObject(objectname);
+                if (~obj.string_contain_first_slash_(objectname) && ...
+                        obj.enable_deprecated_name_compatibility_ == true)
+                    handle = obj.sim_.getObject('/'+objectname);
+                    obj.update_map_('/'+objectname, handle);
+                else
+                    handle = obj.sim_.getObject(objectname);
+                    obj.update_map_(objectname, handle);
+                end
+               
             catch ME
                 
                 disp("The object "  + char(34) + objectname  + char(34) + " does not exist in the " + ...
                     "current scene in CoppeliaSim. " + additional_error_message);
                 rethrow(ME);
-            end
-            obj.update_map_(objectname, handle);
+            end            
         end
 
         function handles = get_object_handles(obj, objectnames)
