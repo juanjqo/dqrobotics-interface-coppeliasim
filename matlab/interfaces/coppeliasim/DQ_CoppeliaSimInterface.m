@@ -282,7 +282,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 obj
                 jointname string
            end  
-           theta = obj.sim_.getJointPosition(obj.get_handle_from_map_(jointname));
+           theta = double(obj.sim_.getJointPosition(obj.get_handle_from_map_(jointname)));
 
         end
 
@@ -294,8 +294,134 @@ classdef DQ_CoppeliaSimInterface < handle
            n = length(jointnames);
            q = zeros(n,1);
            for i=1:n
-               obj.get_joint_position(jointnames{i});
+                q(i) = obj.get_joint_position(jointnames{i});
            end
+        end
+
+        function set_joint_position(obj, jointname, angle_rad)
+           arguments 
+                obj
+                jointname string
+                angle_rad double
+           end            
+           obj.sim_.setJointPosition(obj.get_handle_from_map_(jointname), angle_rad);
+        end
+
+        function set_joint_positions(obj, jointnames, angles_rad)
+           arguments 
+                obj
+                jointnames cell
+                angles_rad double
+           end 
+           n = length(jointnames);
+           for i=1:n
+               obj.set_joint_position(jointnames{i}, angles_rad(i));
+           end
+        end
+
+
+ %%
+        function enable_dynamics(obj, flag)
+            arguments
+                obj
+                flag logical
+            end
+            obj.sim_.setBoolParam(obj.sim_.boolparam_dynamics_handling_enabled, flag);
+        end 
+    
+        function set_joint_mode(obj, jointname, joint_mode)
+           arguments 
+                obj
+                jointname string
+                joint_mode JOINT_MODE
+           end
+           switch(joint_mode)
+               case JOINT_MODE.KINEMATIC
+                   jointMode = obj.sim_.jointmode_kinematic;
+               case JOINT_MODE.DYNAMIC
+                   jointMode = obj.sim_.jointmode_dynamic;
+               case JOINT_MODE.DEPENDENT
+                   jointMode = obj.sim_.jointmode_dependent;
+           end
+           obj.sim_.setJointMode(obj.get_handle_from_map_(jointname), jointMode, 0);
+        end
+
+        function set_joint_modes(obj, jointnames, joint_mode)
+           arguments 
+                obj
+                jointnames cell
+                joint_mode JOINT_MODE
+           end
+           for i=1:length(jointnames)
+               obj.set_joint_mode(jointnames{i}, joint_mode);
+           end
+        end
+
+        function set_joint_control_mode(obj, jointname, joint_control_mode)
+           arguments 
+                obj
+                jointname string
+                joint_control_mode JOINT_CONTROL_MODE
+           end
+           switch (joint_control_mode)
+               case JOINT_CONTROL_MODE.FREE
+                  control_mode = obj.sim_.jointdynctrl_free;
+               case JOINT_CONTROL_MODE.FORCE
+                   control_mode = obj.sim_.jointdynctrl_force;
+               case JOINT_CONTROL_MODE.VELOCITY
+                   control_mode = obj.sim_.jointdynctrl_velocity;
+               case JOINT_CONTROL_MODE.POSITION
+                    control_mode = obj.sim_.jointdynctrl_position;
+               case JOINT_CONTROL_MODE.SPRING
+                    control_mode = obj.sim_.ointdynctrl_spring;
+               case JOINT_CONTROL_MODE.CUSTOM
+                    control_mode = obj.sim_.jointdynctrl_callback;
+               case JOINT_CONTROL_MODE.TORQUE
+                    control_mode = obj.sim_.jointdynctrl_velocity;
+           end
+           obj.sim_.setObjectInt32Param(obj.get_handle_from_map_(jointname),...
+                              obj.sim_.jointintparam_dynctrlmode, ...
+                              control_mode);
+        end
+
+        function set_joint_control_modes(obj, jointnames, joint_control_mode)
+           arguments 
+                obj
+                jointnames cell
+                joint_control_mode JOINT_CONTROL_MODE
+           end
+           for i=1:length(jointnames)
+               obj.set_joint_control_mode(jointnames{i}, joint_control_mode);
+           end
+        end
+        
+        function objectname = get_object_name(obj, handle) 
+            objectname = obj.sim_.getObjectAlias(handle, 1);
+            obj.update_map_(objectname, handle);
+        end
+
+        function objectnames = get_object_names(obj, handles)
+            arguments 
+               obj
+               handles cell
+            end
+            n = length(handles);
+            objectnames = cell(1,n);
+            for i=1:n
+                objectnames{i}=obj.get_object_name(handles{i});
+            end
+        end
+
+        function jointnames = get_jointnames_from_base_objectname(obj, base_objectname)
+           arguments 
+                obj
+                base_objectname string
+           end
+            base_handle = obj.get_handle_from_map_(base_objectname);
+            jointhandles = obj.sim_.getObjectsInTree(base_handle,...
+                                                obj.sim_.object_joint_type,0);
+            jointnames = obj.get_object_names(jointhandles);
+
         end
 
         
