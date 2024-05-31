@@ -51,10 +51,15 @@ classdef DQ_CoppeliaSimInterface < handle
 
         function rtn = string_contain_first_slash_(~, objectname)
             k = strfind(objectname,'/');
-            if (k==1)
-                rtn = true;
-            else
+            n = length(k);
+            if (n==0)
                 rtn = false;
+            else
+              if (k(1)==1)
+                rtn = true;
+              else
+                rtn = false;
+              end
             end
         end
 
@@ -165,21 +170,18 @@ classdef DQ_CoppeliaSimInterface < handle
                     obj.enable_deprecated_name_compatibility_ == false)      
                 additional_error_message = "Did you mean   " + char(34) + '/' +objectname +  char(34) + '   ?';
             end
+            if (~obj.string_contain_first_slash_(objectname) && ...
+                    obj.enable_deprecated_name_compatibility_ == true)
+                   objectname = '/'+objectname;
+            end
 
             try
-               if (~obj.string_contain_first_slash_(objectname) && ...
-                    obj.enable_deprecated_name_compatibility_ == true)
-                   handle = obj.sim_.getObject('/'+objectname);
-               else
-                   handle = obj.sim_.getObject(objectname);
-               end
+               handle = obj.sim_.getObject(objectname);
             catch ME
                 
                 disp("The object "  + char(34) + objectname  + char(34) + " does not exist in the " + ...
                     "current scene in CoppeliaSim. " + additional_error_message);
                 rethrow(ME);
-            
-      
             end
             obj.update_map_(objectname, handle);
         end
@@ -269,6 +271,27 @@ classdef DQ_CoppeliaSimInterface < handle
            pose = {vec_t(1), vec_t(2), vec_t(3),vec_r(1), vec_r(2), vec_r(3), vec_r(4)};
            obj.sim_.setObjectPose(obj.get_handle_from_map_(objectname) + obj.sim_.handleflag_wxyzquat, ...
                      pose, obj.sim_.handle_world);
+        end
+
+        function theta = get_joint_position(obj, jointname)
+           arguments 
+                obj
+                jointname string
+           end  
+           theta = obj.sim_.getJointPosition(obj.get_handle_from_map_(jointname));
+
+        end
+
+        function q = get_joint_positions(obj, jointnames)
+           arguments 
+                obj
+                jointnames cell
+           end 
+           n = length(jointnames);
+           q = zeros(n,1);
+           for i=1:n
+               obj.get_joint_position(jointnames{i});
+           end
         end
 
         
