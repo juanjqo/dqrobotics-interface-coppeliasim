@@ -225,6 +225,54 @@ classdef DQ_CoppeliaSimInterface < handle
                                        position,obj.sim_.handle_world);
         end
 
+        function r = get_object_rotation(obj, objectname) 
+           arguments 
+                obj
+                objectname string
+           end
+           rotation = obj.sim_.getObjectQuaternion(obj.get_handle_from_map_(objectname) ...
+                        + obj.sim_.handleflag_wxyzquat, obj.sim_.handle_world);
+
+           r = DQ([rotation{1},rotation{2},rotation{3}, rotation{4}]);
+        end
+
+        function set_object_rotation(obj, objectname, r)
+           arguments 
+                obj
+                objectname string
+                r DQ
+           end
+           vec_r = vec4(r);
+           rotation = {vec_r(1), vec_r(2), vec_r(3), vec_r(4)};
+           obj.sim_.setObjectQuaternion(obj.get_handle_from_map_(objectname) ...
+                        + obj.sim_.handleflag_wxyzquat, rotation, obj.sim_.handle_world);
+        end
+
+        function x = get_object_pose(obj, objectname)
+           arguments 
+                obj
+                objectname string
+           end 
+           t = obj.get_object_translation(objectname);
+           r = obj.get_object_rotation(objectname);
+           x = r + 0.5*DQ.E*t*r;
+        end
+
+        function set_object_pose(obj, objectname, h)
+           arguments 
+                obj
+                objectname string
+                h DQ
+           end 
+           vec_r = h.P().vec4();
+           vec_t = h.translation().vec3(); 
+           pose = {vec_t(1), vec_t(2), vec_t(3),vec_r(1), vec_r(2), vec_r(3), vec_r(4)};
+           obj.sim_.setObjectPose(obj.get_handle_from_map_(objectname) + obj.sim_.handleflag_wxyzquat, ...
+                     pose, obj.sim_.handle_world);
+        end
+
+        
+
 
        %% Deprecated methods
         function set_synchronous(obj, flag)

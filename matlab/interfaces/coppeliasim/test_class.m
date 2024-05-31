@@ -8,7 +8,11 @@ vi.connect();
 vi.set_stepping_mode(true);
 vi.start_simulation();
 
-vi.set_object_translation("/Sphere", DQ([1,1,1]));
+phi = pi/4;
+r = cos(phi/2) + DQ.k*sin(phi/2);
+
+vi.set_object_pose("/Sphere", DQ(1))
+
 
 vi.stop_simulation();
 
