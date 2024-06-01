@@ -397,6 +397,58 @@ classdef DQ_CoppeliaSimInterface < handle
            end            
         end
 
+        function set_joint_torque(obj, jointname, torque)
+           arguments 
+                obj
+                jointname string
+                torque double
+           end  
+           angle_dot_rad_max = 10000.0;
+           if (torque==0)      
+                angle_dot_rad_max = 0.0;
+           elseif (torque<0)
+                angle_dot_rad_max = -10000.0;
+           end
+           handle = obj.get_handle_from_map_(jointname);
+           obj.sim_.setJointTargetVelocity(handle, angle_dot_rad_max);
+           obj.sim_.setJointTargetForce(handle, abs(torque));
+        end
+
+        function set_joint_torques(obj, jointnames, torques)
+           arguments 
+                obj
+                jointnames cell
+                torques double
+           end
+           message = "Error in DQ_CoppeliaSimInterface.set_joint_torques: " + ...
+                     "jointnames and torques have incompatible sizes";
+           obj.check_sizes_(jointnames, torques, message);   
+           n = length(jointnames);
+           for i=1:n
+               obj.set_joint_torque(jointnames{i}, torques(i));
+           end          
+        end
+
+        function  torque = get_joint_torque(obj, jointname)
+           arguments 
+                obj
+                jointname string
+           end 
+           torque = obj.sim_.getJointForce(obj.get_handle_from_map_(jointname));
+        end
+
+        function torques = get_joint_torques(obj, jointnames)
+           arguments 
+                obj
+                jointnames cell
+           end          
+           n = length(jointnames);
+           torques = zeros(n,1);
+           for i=1:n
+               torques(i) = obj.get_joint_torque(jointnames{i});
+           end 
+        end
+
 
  %%
         function enable_dynamics(obj, flag)
