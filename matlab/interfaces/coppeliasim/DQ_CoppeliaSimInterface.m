@@ -63,6 +63,14 @@ classdef DQ_CoppeliaSimInterface < handle
             end
         end
 
+        function newstr = remove_first_slash_from_string_(obj, str)            
+            if obj.string_contain_first_slash_(str)
+                 newstr = erase(str,"/");
+            else
+                 newstr = str;
+            end
+        end
+
         function check_sizes_(~, v1, v2, message)
             if (length(v1) ~= length(v2))
                 error(message);
@@ -732,8 +740,10 @@ classdef DQ_CoppeliaSimInterface < handle
             obj.sim_.closeScene();
         end
 
-        function 
+        function load_model(obj, path_to_filename, desired_model_name, load_model_only_if_missing,remove_child_script)
+            
         end
+
 
        %% Deprecated methods
         function set_synchronous(obj, flag)
