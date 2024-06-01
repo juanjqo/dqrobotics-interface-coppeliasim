@@ -1,13 +1,6 @@
 #include "RemoteAPIClient.h"
 #include <iostream>
-#include <iomanip>
 
-json myFunc(const json& input)
-{
-    std::cout << pretty_print(input) << "\n\n";
-    return 21;
-}
-std::function<json(const json &)> myCallback = myFunc;
 
 int main()
 {
@@ -15,21 +8,12 @@ int main()
     {
         RemoteAPIClient client;
         auto sim = client.getObject().sim();
-
-        //sim.setStepping(true);
-
-        //sim.startSimulation();
-        //double t = 0.0;
-        /*
-            do
-        {
-            t = sim.getSimulationTime();
-            printf("Simulation time: %.2f [s]\n", t);
-            sim.step();
-        } while (t < 3.0);
-*/
+        sim.startSimulation();
+        auto handle = sim.getObject("/Franka");
+        auto shapehandles = sim.getObjectsInTree(handle, sim.object_shape_type, 0);
+        for (auto& v: shapehandles)
+            std::cout<<v<<std::endl;
         sim.stopSimulation();
-
 
     }
     catch (const std::runtime_error& e)

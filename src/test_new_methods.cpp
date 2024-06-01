@@ -12,11 +12,11 @@ int main()
 {
     DQ_CoppeliaSimInterface vi;
     vi.connect("localhost", 23000);
-    //vi.start_simulation();
+    vi.start_simulation();
+    auto jointnames = vi.get_jointnames_from_base_objectname("/Franka/joint");
+    auto torques = vi.get_joint_torques(jointnames);
+    std::cout<<torques<<std::endl;
 
-    vi.close_scene();
-    vi.load_scene("/Users/juanjqo/git/space_robot/scenes/space_robot.ttt");
-    vi.save_scene("/Users/juanjqo/git/space_robot/scenes/space_robot2.ttt");
 
 
     vi.stop_simulation();

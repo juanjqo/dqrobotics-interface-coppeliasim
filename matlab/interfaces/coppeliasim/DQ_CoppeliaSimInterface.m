@@ -69,6 +69,15 @@ classdef DQ_CoppeliaSimInterface < handle
             end
         end
 
+        function params = get_velocity_const_params_(obj)
+            params =   [obj.sim_.shapefloatparam_init_velocity_a;
+                        obj.sim_.shapefloatparam_init_velocity_b;
+                        obj.sim_.shapefloatparam_init_velocity_g;
+                        obj.sim_.shapefloatparam_init_velocity_x;
+                        obj.sim_.shapefloatparam_init_velocity_y;
+                        obj.sim_.shapefloatparam_init_velocity_z];
+        end
+
     end
 
     methods
@@ -434,14 +443,22 @@ classdef DQ_CoppeliaSimInterface < handle
                 obj
                 jointname string
            end 
-           torque = obj.sim_.getJointForce(obj.get_handle_from_map_(jointname));
+
+           try
+                torque = obj.sim_.getJointForce(obj.get_handle_from_map_(jointname));
+           catch
+               disp("This method has a bug in CoppeliaSim 4.6.0-rev18. " + ...
+                     "https://forum.coppeliarobotics.com/viewtopic.php?p=40811#p40811");
+               disp("Meanwhile, to avoid this error, don't read the force in the first simulation step.")
+           end
         end
 
         function torques = get_joint_torques(obj, jointnames)
            arguments 
                 obj
                 jointnames cell
-           end          
+           end     
+
            n = length(jointnames);
            torques = zeros(n,1);
            for i=1:n
@@ -449,87 +466,11 @@ classdef DQ_CoppeliaSimInterface < handle
            end 
         end
 
-
- %%
-        function enable_dynamics(obj, flag)
-            arguments
-                obj
-                flag logical
-            end
-            obj.sim_.setBoolParam(obj.sim_.boolparam_dynamics_handling_enabled, flag);
-        end 
-    
-        function set_joint_mode(obj, jointname, joint_mode)
-           arguments 
-                obj
-                jointname string
-                joint_mode JOINT_MODE
-           end
-           switch(joint_mode)
-               case JOINT_MODE.KINEMATIC
-                   jointMode = obj.sim_.jointmode_kinematic;
-               case JOINT_MODE.DYNAMIC
-                   jointMode = obj.sim_.jointmode_dynamic;
-               case JOINT_MODE.DEPENDENT
-                   jointMode = obj.sim_.jointmode_dependent;
-           end
-           obj.sim_.setJointMode(obj.get_handle_from_map_(jointname), jointMode, 0);
-        end
-
-        function set_joint_modes(obj, jointnames, joint_mode)
-           arguments 
-                obj
-                jointnames cell
-                joint_mode JOINT_MODE
-           end
-           for i=1:length(jointnames)
-               obj.set_joint_mode(jointnames{i}, joint_mode);
-           end
-        end
-
-        function set_joint_control_mode(obj, jointname, joint_control_mode)
-           arguments 
-                obj
-                jointname string
-                joint_control_mode JOINT_CONTROL_MODE
-           end
-           switch (joint_control_mode)
-               case JOINT_CONTROL_MODE.FREE
-                  control_mode = obj.sim_.jointdynctrl_free;
-               case JOINT_CONTROL_MODE.FORCE
-                   control_mode = obj.sim_.jointdynctrl_force;
-               case JOINT_CONTROL_MODE.VELOCITY
-                   control_mode = obj.sim_.jointdynctrl_velocity;
-               case JOINT_CONTROL_MODE.POSITION
-                    control_mode = obj.sim_.jointdynctrl_position;
-               case JOINT_CONTROL_MODE.SPRING
-                    control_mode = obj.sim_.ointdynctrl_spring;
-               case JOINT_CONTROL_MODE.CUSTOM
-                    control_mode = obj.sim_.jointdynctrl_callback;
-               case JOINT_CONTROL_MODE.TORQUE
-                    control_mode = obj.sim_.jointdynctrl_velocity;
-           end
-           obj.sim_.setObjectInt32Param(obj.get_handle_from_map_(jointname),...
-                              obj.sim_.jointintparam_dynctrlmode, ...
-                              control_mode);
-        end
-
-        function set_joint_control_modes(obj, jointnames, joint_control_mode)
-           arguments 
-                obj
-                jointnames cell
-                joint_control_mode JOINT_CONTROL_MODE
-           end
-           for i=1:length(jointnames)
-               obj.set_joint_control_mode(jointnames{i}, joint_control_mode);
-           end
-        end
-        
         function objectname = get_object_name(obj, handle) 
             objectname = obj.sim_.getObjectAlias(handle, 1);
             obj.update_map_(objectname, handle);
         end
-
+        
         function objectnames = get_object_names(obj, handles)
             arguments 
                obj
@@ -553,8 +494,246 @@ classdef DQ_CoppeliaSimInterface < handle
             jointnames = obj.get_object_names(jointhandles);
         end
 
-        
+        function linknames = get_linknames_from_base_objectname(obj, base_objectname)
+           arguments 
+                obj
+                base_objectname string
+           end  
+           base_handle = obj.get_handle_from_map_(base_objectname);
+           shapehandles = obj.sim_.getObjectsInTree(base_handle,obj.sim_.object_shape_type, 0);
+           linknames = obj.get_object_names(shapehandles);
+        end
 
+
+        function v = get_angular_and_linear_velocities(obj, objectname, reference)
+           arguments 
+                obj
+                objectname string
+                reference DQ_CoppeliaSimInterface_REFERENCE
+           end 
+           params = obj.get_velocity_const_params_();
+           n = length(params);
+           v = zeros(n,1);
+           for i=1:n
+               v(i) = obj.sim_.getObjectFloatParam(obj.get_handle_from_map_(objectname), params(i));
+           end
+           if reference == DQ_CoppeliaSimInterface_REFERENCE.BODY_FRAME
+               x = obj.get_object_pose(objectname);
+               r = x.P();
+               w_b = r.conj()*DQ(v(1:3))*r;
+              p_dot_b = r.conj()*DQ(v(4:6))*r;
+              v = [vec3(w_b); vec3(p_dot_b)];
+           end
+        end
+
+
+        function set_angular_and_linear_velocities(obj, objectname, w, p_dot, reference)
+           arguments 
+                obj
+                objectname string
+                w DQ
+                p_dot DQ
+                reference DQ_CoppeliaSimInterface_REFERENCE
+           end  
+           params = obj.get_velocity_const_params_();
+           n = length(params);
+           if reference == DQ_CoppeliaSimInterface_REFERENCE.ABSOLUTE_FRAME
+                 w_a = w;
+                 p_dot_a = p_dot;
+                 v = [w_a.vec3();
+                      p_dot_a.vec3()];
+           else
+                 x = obj.get_object_pose(objectname);
+                 r = x.P();
+                 w_a = r*w*r.conj();
+                 p_dot_a = r*p_dot*r.conj();
+                 v = [w_a.vec3();
+                     p_dot_a.vec3()];
+           end
+           handle = obj.get_handle_from_map_(objectname);
+           obj.sim_.resetDynamicObject(handle);
+           for i=1:n
+               obj.sim_.setObjectFloatParam(handle, params(i), v(i));
+           end
+        end
+
+
+        function twist = get_twist(obj, objectname, reference)
+           arguments 
+                obj
+                objectname string
+                reference DQ_CoppeliaSimInterface_REFERENCE
+           end      
+           v = obj.get_angular_and_linear_velocities(objectname, reference);
+           w = DQ(v(1:3));
+           p_dot = DQ(v(4:6));
+           x = obj.get_object_pose(objectname);
+           twist =  w + DQ.E*(p_dot + cross(x.translation(), w));
+           if (reference == DQ_CoppeliaSimInterface_REFERENCE.BODY_FRAME)
+               twist =  x.conj()*twist*x;
+           end
+        end
+
+
+        function set_twist(obj, objectname, twist, reference)
+           arguments 
+                obj
+                objectname string
+                twist DQ
+                reference DQ_CoppeliaSimInterface_REFERENCE
+           end   
+           if (~is_pure(twist))
+                error("Bad set_object_twist() call: Not a pure dual quaternion");
+           end
+           if (reference == DQ_CoppeliaSimInterface_REFERENCE.BODY_FRAME)
+               obj.set_angular_and_linear_velocities(objectname, twist.P(), twist.D(),...
+                                                  DQ_CoppeliaSimInterface_REFERENCE.BODY_FRAME);
+           else
+                x = obj.get_object_pose(objectname);
+                obj.set_angular_and_linear_velocities(objectname, twist.P(), twist.D()-cross(x.translation(), twist.P()),...
+                                          DQ_CoppeliaSimInterface_REFERENCE.ABSOLUTE_FRAME);
+           end
+        end
+
+
+        function set_joint_mode(obj, jointname, joint_mode)
+           arguments 
+                obj
+                jointname string
+                joint_mode DQ_CoppeliaSimInterface_JOINT_MODE
+           end
+           switch(joint_mode)
+               case DQ_CoppeliaSimInterface_JOINT_MODE.KINEMATIC
+                   jointMode = obj.sim_.jointmode_kinematic;
+               case DQ_CoppeliaSimInterface_JOINT_MODE.DYNAMIC
+                   jointMode = obj.sim_.jointmode_dynamic;
+               case DQ_CoppeliaSimInterface_JOINT_MODE.DEPENDENT
+                   jointMode = obj.sim_.jointmode_dependent;
+           end
+           obj.sim_.setJointMode(obj.get_handle_from_map_(jointname), jointMode, 0);
+        end
+
+
+        function set_joint_modes(obj, jointnames, joint_mode)
+           arguments 
+                obj
+                jointnames cell
+                joint_mode DQ_CoppeliaSimInterface_JOINT_MODE
+           end
+           for i=1:length(jointnames)
+               obj.set_joint_mode(jointnames{i}, joint_mode);
+           end
+        end
+
+
+        function set_joint_control_mode(obj, jointname, joint_control_mode)
+           arguments 
+                obj
+                jointname string
+                joint_control_mode DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE
+           end
+           switch (joint_control_mode)
+               case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.FREE
+                  control_mode = obj.sim_.jointdynctrl_free;
+               case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.FORCE
+                   control_mode = obj.sim_.jointdynctrl_force;
+               case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.VELOCITY
+                   control_mode = obj.sim_.jointdynctrl_velocity;
+               case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.POSITION
+                    control_mode = obj.sim_.jointdynctrl_position;
+               case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.SPRING
+                    control_mode = obj.sim_.ointdynctrl_spring;
+               case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.CUSTOM
+                    control_mode = obj.sim_.jointdynctrl_callback;
+               case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.TORQUE
+                    control_mode = obj.sim_.jointdynctrl_velocity;
+           end
+           obj.sim_.setObjectInt32Param(obj.get_handle_from_map_(jointname),...
+                              obj.sim_.jointintparam_dynctrlmode, ...
+                              control_mode);
+        end
+
+
+        function set_joint_control_modes(obj, jointnames, joint_control_mode)
+           arguments 
+                obj
+                jointnames cell
+                joint_control_mode DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE
+           end
+           for i=1:length(jointnames)
+               obj.set_joint_control_mode(jointnames{i}, joint_control_mode);
+           end
+        end
+
+
+        function enable_dynamics(obj, flag)
+            arguments
+                obj
+                flag logical
+            end
+            obj.sim_.setBoolParam(obj.sim_.boolparam_dynamics_handling_enabled, flag);
+        end 
+
+        function t = get_simulation_time_step(obj)
+            t = obj.sim_.getFloatParam(obj.sim_.floatparam_simulation_time_step);
+        end
+
+        function set_simulation_time_step(obj, time_step)
+            obj.sim_.setFloatParam(obj.sim_.floatparam_simulation_time_step, time_step);
+        end
+
+        function t = get_physics_time_step(obj)
+            t = obj.sim_.getFloatParam(obj.sim_.floatparam_physicstimestep);
+        end
+
+        function set_physics_time_step(obj, time_step) 
+            obj.sim_.setFloatParam(obj.sim_.floatparam_physicstimestep, time_step);
+        end
+
+        function set_dynamic_engine(obj, engine)
+            arguments
+                obj
+                engine DQ_CoppeliaSimInterface_ENGINE
+            end
+            obj.sim_.setInt32Param(obj.sim_.intparam_dynamic_engine, engine);
+        end 
+
+        function set_gravity(obj, gravity)
+            arguments
+                obj
+                gravity DQ
+            end
+            gravity_vec = gravity.vec3();
+            g = {gravity_vec(1),gravity_vec(2), gravity_vec(3)};
+            obj.sim_.setArrayParam(obj.sim_.arrayparam_gravity, g);
+        end
+
+        function gravity = get_gravity(obj) 
+            g = obj.sim_.getArrayParam(obj.sim_.arrayparam_gravity);
+            gravity = DQ([0, g{1}, g{2}, g{3}]);
+        end
+
+        function load_scene(obj, path_to_filename) 
+             % * @brief DQ_CoppeliaSimInterface.load_scene loads a scene from your computer.
+             % * @param path_to_filename the path to the scene. This string must containt
+             % *        the file extension.
+             % *
+             % *        Example:
+             % *
+             % *        load_scene("/Users/juanjqo/git/space_robot/scenes/space_robot.ttt");
+            arguments
+                obj
+                path_to_filename string
+            end
+            obj.sim_.loadScene(path_to_filename);
+        end
+
+        function close_scene(obj)
+            obj.sim_.closeScene();
+        end
+
+        function 
+        end
 
        %% Deprecated methods
         function set_synchronous(obj, flag)

@@ -97,8 +97,8 @@ INSTALL(FILES
 
 
 # Temporal Only for Test
-#add_executable(example src/main.cpp)
-#target_link_libraries(example PRIVATE ${PROJECT_NAME})
+add_executable(example src/main.cpp)
+target_link_libraries(example PRIVATE ${PROJECT_NAME})
 
 #add_executable(example2 src/test_library.cpp)
 #target_link_libraries(example2 PRIVATE ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
@@ -109,8 +109,7 @@ INSTALL(FILES
 #                      dqrobotics
 #                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
-
-add_executable(example4 src/test_panda.cpp)
-target_link_libraries(example4 PRIVATE
-                    dqrobotics
-                    ${PROJECT_NAME})
+#add_executable(example4 src/test_panda.cpp)
+#target_link_libraries(example4 PRIVATE
+#                    dqrobotics
+#                    ${PROJECT_NAME})

@@ -1,4 +1,4 @@
-classdef JOINT_CONTROL_MODE
+classdef DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE
    enumeration
         FREE,
         FORCE,
