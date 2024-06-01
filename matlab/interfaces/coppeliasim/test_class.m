@@ -5,27 +5,27 @@ clc
 
 vi = DQ_CoppeliaSimInterface();
 vi.connect();
-vi.set_stepping_mode(false);
+vi.set_stepping_mode(true);
 
 
 phi = pi/4;
 r = cos(phi/2) + DQ.k*sin(phi/2);
 
-vi.set_object_pose("/Sphere", DQ(1))
 
 jointnames = vi.get_jointnames_from_base_objectname("/Franka");
 
-vi.set_joint_modes(jointnames, "KINEMATIC");
-vi.set_joint_control_modes(jointnames, "POSITION");
-vi.enable_dynamics(false);
+vi.set_joint_modes(jointnames, "DYNAMIC");
+vi.set_joint_control_modes(jointnames, "VELOCITY");
+vi.enable_dynamics(true);
 
-q = [0.9 0 0 -1.5 0 0 0]';
+q = [0.1 0 0 0 0 0 0]';
 
 vi.start_simulation();
 for i=1:100
-    vi.set_joint_positions(jointnames, q);
+    vi.set_joint_target_velocities(jointnames, q);
     %vi.set_joint_position(jointnames{4}, 1.5)
-    qr = vi.get_joint_positions(jointnames)'
+    q_dot = vi.get_joint_velocities(jointnames)'
+    vi.trigger_next_simulation_step();
 end
 v = vi.get_joint_position(jointnames{4})
 map = vi.get_map();

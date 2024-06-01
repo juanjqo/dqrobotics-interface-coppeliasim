@@ -63,6 +63,12 @@ classdef DQ_CoppeliaSimInterface < handle
             end
         end
 
+        function check_sizes_(~, v1, v2, message)
+            if (length(v1) ~= length(v2))
+                error(message);
+            end
+        end
+
     end
 
     methods
@@ -313,10 +319,82 @@ classdef DQ_CoppeliaSimInterface < handle
                 jointnames cell
                 angles_rad double
            end 
+           message = "Error in DQ_CoppeliaSimInterface.set_joint_positions: " + ...
+                     "jointnames and angles_rad have incompatible sizes";
+           obj.check_sizes_(jointnames, angles_rad, message);
            n = length(jointnames);
            for i=1:n
                obj.set_joint_position(jointnames{i}, angles_rad(i));
            end
+        end
+
+        function set_joint_target_position(obj, jointname, angle_rad)
+           arguments 
+                obj
+                jointname string
+                angle_rad double
+           end
+           obj.sim_.setJointTargetPosition(obj.get_handle_from_map_(jointname), angle_rad);
+        end
+
+        function set_joint_target_positions(obj, jointnames, angles_rad)
+           arguments 
+                obj
+                jointnames cell
+                angles_rad double
+           end 
+           message = "Error in DQ_CoppeliaSimInterface.set_joint_target_positions: " + ...
+                     "jointnames and angles_rad have incompatible sizes";
+           obj.check_sizes_(jointnames, angles_rad, message);   
+           n = length(jointnames);
+           for i=1:n
+               obj.set_joint_target_position(jointnames{i}, angles_rad(i));
+           end
+        end
+
+        function theta_dot = get_joint_velocity(obj, jointname)
+           arguments 
+                obj
+                jointname string
+           end 
+            theta_dot = obj.sim_.getObjectFloatParam(obj.get_handle_from_map_(jointname), ...
+                        obj.sim_.jointfloatparam_velocity);
+        end
+
+        function q_dot = get_joint_velocities(obj, jointnames)
+           arguments 
+                obj
+                jointnames cell
+           end  
+           n = length(jointnames);
+           q_dot = zeros(n,1);
+           for i=1:n
+               q_dot(i) = obj.get_joint_velocity(jointnames{i});
+           end
+        end
+
+        function set_joint_target_velocity(obj, jointname, angle_rad_dot)
+           arguments 
+                obj
+                jointname string
+                angle_rad_dot double
+           end   
+           obj.sim_.setJointTargetVelocity(obj.get_handle_from_map_(jointname), angle_rad_dot);
+        end
+
+        function set_joint_target_velocities(obj, jointnames, angles_rad_dot)
+           arguments 
+                obj
+                jointnames cell
+                angles_rad_dot double
+           end 
+           message = "Error in DQ_CoppeliaSimInterface.set_joint_target_velocities: " + ...
+                     "jointnames and angles_rad_dot have incompatible sizes";
+           obj.check_sizes_(jointnames, angles_rad_dot, message);   
+           n = length(jointnames);
+           for i=1:n
+               obj.set_joint_target_velocity(jointnames{i}, angles_rad_dot(i));
+           end            
         end
 
 
@@ -421,7 +499,6 @@ classdef DQ_CoppeliaSimInterface < handle
             jointhandles = obj.sim_.getObjectsInTree(base_handle,...
                                                 obj.sim_.object_joint_type,0);
             jointnames = obj.get_object_names(jointhandles);
-
         end
 
         
