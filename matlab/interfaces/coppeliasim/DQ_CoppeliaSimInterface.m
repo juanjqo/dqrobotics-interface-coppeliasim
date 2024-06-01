@@ -86,6 +86,19 @@ classdef DQ_CoppeliaSimInterface < handle
                         obj.sim_.shapefloatparam_init_velocity_z];
         end
 
+        function status = load_model_(obj, path_to_filename, desired_model_name, remove_child_script)
+            rtn = obj.sim_.loadModel(path_to_filename);
+             if (rtn ~= -1)
+                 obj.set_object_name(obj.get_object_name(rtn), obj.remove_first_slash_from_string_(desired_model_name));
+                 if (remove_child_script)
+                      obj.remove_child_script_from_object("/" +obj.remove_first_slash_from_string_(desired_model_name));
+                 end
+                 status = true;
+             else
+                status = false;
+             end
+        end
+
     end
 
     methods
@@ -474,7 +487,7 @@ classdef DQ_CoppeliaSimInterface < handle
            end 
         end
 
-        function objectname = get_object_name(obj, handle) 
+        function objectname= get_object_name(obj, handle)
             objectname = obj.sim_.getObjectAlias(handle, 1);
             obj.update_map_(objectname, handle);
         end
@@ -721,6 +734,7 @@ classdef DQ_CoppeliaSimInterface < handle
             gravity = DQ([0, g{1}, g{2}, g{3}]);
         end
 
+
         function load_scene(obj, path_to_filename) 
              % * @brief DQ_CoppeliaSimInterface.load_scene loads a scene from your computer.
              % * @param path_to_filename the path to the scene. This string must containt
@@ -736,13 +750,127 @@ classdef DQ_CoppeliaSimInterface < handle
             obj.sim_.loadScene(path_to_filename);
         end
 
+        function save_scene(obj, path_to_filename) 
+            obj.sim_.saveScene(path_to_filename);
+        end
+
         function close_scene(obj)
             obj.sim_.closeScene();
         end
 
-        function load_model(obj, path_to_filename, desired_model_name, load_model_only_if_missing,remove_child_script)
-            
+        function status = load_model(obj, path_to_filename, desired_model_name, load_model_only_if_missing,remove_child_script)
+                % /**
+                %  * @brief DQ_CoppeliaSimInterface::load_model loads a model to
+                %  *        the scene.
+                %  *
+                %  * @param path_to_filename The path to the model.
+                %  * @param desired_model_name The name you want for the loaded model.
+                %  * @param load_model_only_if_missing If the model exists (with the same alias)
+                %  *                                   the model is not loaded. (Default)
+                %  * @param remove_child_script Remove the associated child script of the model
+                %  *                            (Default)
+                %  * @return A boolean flag. True if the model was loaded. False otherwise.
+                %  */
+                switch (nargin)
+                   case 3
+                       load_model_only_if_missing = true;
+                       remove_child_script = true;
+                   case 4  
+                       remove_child_script = true;
+                   case 5
+
+                   otherwise
+                       error("Wrong number of parameters");
+                end
+                if (load_model_only_if_missing == true)
+                    if (~obj.object_exist_on_scene("/"+obj.remove_first_slash_from_string_(desired_model_name)))
+                        status = obj.load_model_(path_to_filename, desired_model_name, remove_child_script);
+                    else
+                        status = true;
+                    end
+                else
+                    status = obj.load_model_(path_to_filename, desired_model_name, remove_child_script);
+                end
         end
+
+
+        function status = load_from_model_browser(obj, path_to_filename, desired_model_name, load_model_only_if_missing, remove_child_script)
+                % /**
+                % * @brief DQ_CoppeliaSimInterface::load_from_model_browser loads a model from
+                % *        the CoppeliaSim model browser.
+                % *
+                % *      Ex: load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm",
+                %                                    "/Franka");
+                % * @param path_to_filename The path to the model relative to the model browser.
+                % * @param desired_model_name The name you want for the loaded model.
+                % * @param load_model_only_if_missing If the model exists (with the same alias)
+                % *                                   the model is not loaded. (Default)
+                % * @param remove_child_script Remove the associated child script of the model
+                % *                            (Default)
+                % * @return A boolean flag. True if the model was loaded. False otherwise.
+                % */
+                switch (nargin)
+                   case 3
+                       load_model_only_if_missing = true;
+                       remove_child_script = true;
+                   case 4  
+                       remove_child_script = true;
+                   otherwise
+                       error("Wrong number of parameters");
+                end
+                resources_path = obj.sim_.getStringParam(obj.sim_.stringparam_resourcesdir);
+                status = obj.load_model(resources_path + "/models" + path_to_filename, ...
+                              desired_model_name, load_model_only_if_missing, remove_child_script);
+        end
+        
+
+        function remove_child_script_from_object(obj, objectname)
+            arguments
+                obj
+                objectname string
+            end
+            script_handle = obj.sim_.getScript(obj.sim_.scripttype_childscript,...
+                                         obj.get_handle_from_map_(objectname));
+            if (script_handle ~= -1)
+                obj.sim_.removeScript(script_handle);
+            end
+        end
+
+
+        function status = object_exist_on_scene(obj, objectname)
+
+            options = {{"noError", false}};
+            try 
+                rtn = obj.sim_.getObject(objectname, options);
+                if (rtn ~= -1)
+                    status = true;
+                else
+                    status = false;
+                end
+            catch 
+                status = false;
+            end
+        end
+
+        function set_object_name(obj, current_object_name, new_object_name)
+            arguments
+                obj
+                current_object_name string
+                new_object_name string
+            end
+            obj.sim_.setObjectAlias(obj.get_handle_from_map_(current_object_name), new_object_name);
+        end
+
+        % function mass = get_mass(obj, object_name)
+        % end
+        % 
+        % function get_center_of_mass
+        % end
+        % 
+        % function get_inertia_matrix()
+        % end
+
+
 
 
        %% Deprecated methods
