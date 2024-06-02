@@ -1,5 +1,5 @@
 classdef DQ_CoppeliaSimRobot < handle    
-    properties (Access = private)
+    properties (Access = protected)
         robot_name_ string
         coppeliasim_interface_sptr_ DQ_CoppeliaSimInterface
     end

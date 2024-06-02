@@ -1,9 +1,9 @@
 classdef DQ_SerialCoppeliaSimRobot < DQ_CoppeliaSimRobot
 
-    properties (Access = private)
+    properties (Access = protected)
         jointnames_        cell
         base_frame_name_   string
-        joint_control_mode_ DQ_CoppeliaSimInterface.JOINT_CONTROL_MODE 
+        joint_control_mode_ DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE 
         robot_is_used_as_visualization_tool_ logical
     end
 
@@ -18,8 +18,8 @@ classdef DQ_SerialCoppeliaSimRobot < DQ_CoppeliaSimRobot
         end
 
         function initialize_jointnames_from_coppeliasim_(obj)
-            obj.jointnames_ = obj.get_interface_sptr_().get_jointnames_from_base_objectname(robot_name_);
-            obj.base_frame_name_ = obj.jointnames_{0};
+            obj.jointnames_ = obj.get_interface_sptr_().get_jointnames_from_base_objectname(obj.robot_name_);
+            obj.base_frame_name_ = obj.jointnames_{1};
         end
     end
     
@@ -55,19 +55,24 @@ classdef DQ_SerialCoppeliaSimRobot < DQ_CoppeliaSimRobot
         end
 
         function set_control_inputs(obj, u)
-            switch (obj.joint_control_mode_)
-                case DQ_CoppeliaSimInterface_FREE
-                case DQ_CoppeliaSimInterface_FORCE
-                case DQ_CoppeliaSimInterface_VELOCITY
-                     obj.get_interface_sptr_().set_joint_target_velocities(obj.jointnames_, u);
-                case DQ_CoppeliaSimInterface_POSITION
-                     obj.get_interface_sptr_().set_joint_target_positions(obj.jointnames_, u);           
-                case DQ_CoppeliaSimInterface_SPRING
-                case DQ_CoppeliaSimInterface_CUSTOM
-                case DQ_CoppeliaSimInterface_TORQUE
-                    obj.get_interface_sptr_().set_joint_torques(obj.jointnames_, u);
+            if (obj.robot_is_used_as_visualization_tool_)
+                    obj.get_interface_sptr_().set_joint_positions(obj.jointnames_, u);
+            else
+                switch (obj.joint_control_mode_)
+                    case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.FREE
+                    case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.FORCE
+                    case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.VELOCITY
+                         obj.get_interface_sptr_().set_joint_target_velocities(obj.jointnames_, u);
+                    case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.POSITION
+                         obj.get_interface_sptr_().set_joint_target_positions(obj.jointnames_, u);           
+                    case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.SPRING
+                    case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.CUSTOM
+                    case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.TORQUE
+                        obj.get_interface_sptr_().set_joint_torques(obj.jointnames_, u);
+                end
+                obj.get_interface_sptr_().trigger_next_simulation_step();
             end
-            obj.get_interface_sptr_().trigger_next_simulation_step();
+            
         end
 
         function rtn = get_joint_names(obj)
@@ -84,6 +89,23 @@ classdef DQ_SerialCoppeliaSimRobot < DQ_CoppeliaSimRobot
 
         function set_target_configuration_space_positions(obj, q_target)
             obj.get_interface_sptr_().set_joint_target_positions(obj.jointnames_, q_target);
+        end
+
+        function q_dot = get_configuration_space_velocities(obj)
+            q_dot = obj.get_interface_sptr_().get_joint_velocities(obj.jointnames_);
+        end
+
+        function set_target_configuration_space_velocities(obj, v_target)
+            obj.get_interface_sptr_().set_joint_target_velocities(obj.jointnames_, v_target);
+        end
+
+        function set_configuration_space_torques(obj, torques)
+            obj.get_interface_sptr_().set_joint_torques(obj.jointnames_, torques);
+        end
+
+
+        function torques = get_configuration_space_torques(obj)
+            torques = obj.get_interface_sptr_().get_joint_torques(obj.jointnames_);
         end
 
     end
