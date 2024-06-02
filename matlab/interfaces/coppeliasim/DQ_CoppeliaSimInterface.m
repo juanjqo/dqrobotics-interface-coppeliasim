@@ -602,7 +602,8 @@ classdef DQ_CoppeliaSimInterface < handle
                 objectname string
                 twist DQ
                 reference DQ_CoppeliaSimInterface_REFERENCE
-           end   
+           end  
+
            if (~is_pure(twist))
                 error("Bad set_object_twist() call: Not a pure dual quaternion");
            end
