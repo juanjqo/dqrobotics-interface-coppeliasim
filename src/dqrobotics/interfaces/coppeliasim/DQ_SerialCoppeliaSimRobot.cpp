@@ -169,7 +169,7 @@ VectorXd DQ_SerialCoppeliaSimRobot::get_configuration_space_positions()
  */
 void DQ_SerialCoppeliaSimRobot::set_target_configuration_space_positions(const VectorXd &q_target)
 {
-    return _get_interface_sptr()->set_joint_target_positions(jointnames_, q_target);
+    _get_interface_sptr()->set_joint_target_positions(jointnames_, q_target);
 }
 
 
