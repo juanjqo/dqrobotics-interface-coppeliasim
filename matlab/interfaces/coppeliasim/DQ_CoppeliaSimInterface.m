@@ -881,6 +881,15 @@ classdef DQ_CoppeliaSimInterface < handle
             obj.set_stepping_mode(flag);
         end
 
+        function disconnect(obj)
+        end
+
+        function disconnect_all(obj)
+        end 
+
+        function wait_for_simulation_step_to_end(obj)
+        end
+
 
     end
 end
