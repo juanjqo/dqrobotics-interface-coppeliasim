@@ -18,10 +18,12 @@ vi.start_simulation()
 for i=1:50
     q = robot.get_configuration_space_positions();
     x = robot_model.fkm(q);
+    vi.set_object_pose("/ReferenceFrame", x)
     u = [1.5         0         0   -1.5708         0    1.5708];
     robot.set_control_inputs(u);
 end
-translation(robot_model.get_base_frame())
+
+
 
 vi.stop_simulation();
 x.translation()

@@ -252,7 +252,7 @@ classdef DQ_CoppeliaSimInterface < handle
            end
              position = obj.sim_.getObjectPosition(obj.get_handle_from_map_(objectname), ...
                  obj.sim_.handle_world);
-             t = DQ([position{1},position{2},position{3}]);
+             t = DQ(double([position{1},position{2},position{3}]));
         end
 
         function set_object_translation(obj, objectname, t)
@@ -275,7 +275,7 @@ classdef DQ_CoppeliaSimInterface < handle
            rotation = obj.sim_.getObjectQuaternion(obj.get_handle_from_map_(objectname) ...
                         + obj.sim_.handleflag_wxyzquat, obj.sim_.handle_world);
 
-           r = DQ([rotation{1},rotation{2},rotation{3}, rotation{4}]);
+           r = DQ(double([rotation{1},rotation{2},rotation{3}, rotation{4}]));
         end
 
         function set_object_rotation(obj, objectname, r)
