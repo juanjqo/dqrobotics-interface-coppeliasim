@@ -99,6 +99,30 @@ classdef DQ_CoppeliaSimInterface < handle
              end
         end
 
+        function [COM_body_frame, Inertia_maxtrix_body_frame] = get_center_of_mass_and_inertia_matrix_(obj, objectname)
+            [inertia_matrix_coeff, center_of_mass_coeff] = obj.sim_.getShapeInertia(obj.get_handle_from_map_(objectname));        
+
+            Inertia_maxtrix_body_frame = reshape([inertia_matrix_coeff{:}],[3,3]);
+            COM_body_frame_matrix= [center_of_mass_coeff{4}, center_of_mass_coeff{8}, center_of_mass_coeff{12}];
+
+            COM_body_frame = DQ(COM_body_frame_matrix);
+            mass = obj.get_mass(objectname);
+            Inertia_maxtrix_body_frame = Inertia_maxtrix_body_frame/mass;           
+        end
+
+        function R = get_rotation_matrix_(~, r) 
+            vecr = r.vec4();
+            w = vecr(1);
+            a = vecr(2);
+            b = vecr(3);
+            c = vecr(4);
+            R = [1-2*(b*b +c*c), 2*(a*b-w*c), 2*(a*c+w*b);
+                2*(a*b+w*c), 1-2*(a*a+c*c),  2*(b*c-w*a);
+                2*(a*c-w*b), 2*(b*c+w*a),   1-2*(a*a+b*b)];
+        end
+
+
+
     end
 
     methods
@@ -862,8 +886,53 @@ classdef DQ_CoppeliaSimInterface < handle
             obj.sim_.setObjectAlias(obj.get_handle_from_map_(current_object_name), new_object_name);
         end
 
-        % function mass = get_mass(obj, object_name)
-        % end
+        function mass = get_mass(obj, objectname)
+            arguments
+                obj
+                objectname string
+            end
+            mass = obj.sim_.getShapeMassAndInertia(obj.get_handle_from_map_(objectname));
+        end
+
+        function Im = get_inertia_matrix(obj, link_name, reference_frame)
+            arguments
+                obj 
+                link_name string
+                reference_frame DQ_CoppeliaSimInterface_REFERENCE
+            end
+            [COM_body_frame, Inertia_maxtrix_body_frame] = obj.get_center_of_mass_and_inertia_matrix_(link_name);
+            if reference_frame == DQ_CoppeliaSimInterface_REFERENCE.BODY_FRAME
+                Im = Inertia_maxtrix_body_frame;
+            else
+                x_0_bodyFrame = obj.get_object_pose(link_name);
+                x_bodyFrame_com = 1 + 0.5*DQ.E*COM_body_frame;
+                x_0_com = x_0_bodyFrame*x_bodyFrame_com;
+                R_0_COM = obj.get_rotation_matrix_(x_0_com.P());
+                Im = R_0_COM*Inertia_maxtrix_body_frame*R_0_COM';
+            end
+
+        end
+
+        function com = get_center_of_mass(obj, object_name, reference_frame)
+            arguments
+                obj
+                object_name string
+                reference_frame DQ_CoppeliaSimInterface_REFERENCE
+            end
+            [COM_body_frame, ~] = obj.get_center_of_mass_and_inertia_matrix_(object_name);
+
+            if reference_frame == DQ_CoppeliaSimInterface_REFERENCE.BODY_FRAME
+                com = COM_body_frame;
+            else
+                x_0_bodyFrame = obj.get_object_pose(object_name);
+                x_bodyFrame_com = 1 + 0.5*DQ.E*COM_body_frame;
+                com = translation((x_0_bodyFrame*x_bodyFrame_com));
+            end
+        end
+
+
+
+
         % 
         % function get_center_of_mass
         % end
