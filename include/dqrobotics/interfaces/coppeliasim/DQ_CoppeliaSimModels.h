@@ -76,6 +76,10 @@ public:
 
     void load_reference_frames(const std::vector<std::string>& desired_model_names);
 
+    void load_panda(const std::string& desired_model_name,
+                    const DQ& pose = DQ(0));
+
+
 };
 
 }

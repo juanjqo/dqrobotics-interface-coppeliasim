@@ -58,7 +58,6 @@ void DQ_CoppeliaSimModels::load_model(const COMPONENTS &model,
                                       const bool &remove_child_script)
 {
     _load_model(model, desired_model_name, load_model_only_if_missing, remove_child_script);
-    _get_interface_sptr()->set_object_pose(desired_model_name, pose);
     if (pose != DQ(0))
         _get_interface_sptr()->set_object_pose(desired_model_name, pose);
 }
@@ -86,6 +85,11 @@ void DQ_CoppeliaSimModels::load_reference_frames(const std::vector<std::string> 
 {
     for (auto& name : desired_model_names)
         load_reference_frame(name, DQ(1), true, true);
+}
+
+void DQ_CoppeliaSimModels::load_panda(const std::string &desired_model_name, const DQ &pose)
+{
+    load_model(COMPONENTS::FRANKA_EMIKA_PANDA, desired_model_name, pose, true, true);
 }
 
 

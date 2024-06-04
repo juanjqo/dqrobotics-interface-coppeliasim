@@ -15,9 +15,9 @@ int main()
 
 
     auto csmodels = DQ_CoppeliaSimModels(vi);
+    csmodels.load_reference_frames({"x", "xd", "x_e", "x_m"});
+    csmodels.load_panda("/Franka");
 
-
-    csmodels.load_reference_frames({"x", "xd"});
     vi->start_simulation();
 
 
