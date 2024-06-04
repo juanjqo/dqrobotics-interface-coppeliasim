@@ -15,7 +15,8 @@ INCLUDE_DIRECTORIES(${PROJECT_NAME} /coppeliarobotics/zmqRemoteApi/clients/cpp)
 
 add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp  
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimModels.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimRobot.cpp
@@ -69,6 +70,7 @@ INSTALL(TARGETS ${PROJECT_NAME}
 # Other Headers
 INSTALL(FILES
     include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.h
+    include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimModels.h
     include/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.h
     DESTINATION "include/dqrobotics/interfaces/coppeliasim")
 
@@ -85,6 +87,7 @@ INSTALL(FILES
 # base folder
 INSTALL(FILES
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimModels.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/coppeliasim")
@@ -104,10 +107,10 @@ INSTALL(FILES
 #target_link_libraries(example2 PRIVATE ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
 
-#add_executable(example3 src/test_new_methods.cpp)
-#target_link_libraries(example3 PRIVATE
-#                      dqrobotics
-#                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
+add_executable(example3 src/test_new_methods.cpp)
+target_link_libraries(example3 PRIVATE
+                      dqrobotics
+                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
 #add_executable(example4 src/test_panda.cpp)
 #target_link_libraries(example4 PRIVATE

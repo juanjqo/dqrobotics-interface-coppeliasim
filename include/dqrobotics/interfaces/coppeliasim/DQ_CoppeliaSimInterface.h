@@ -232,7 +232,6 @@ public:
     int wait_for_simulation_step_to_end();
     //---------------------------------------------------------//
 
-
 private:
     bool client_created_ = false;
     bool enable_deprecated_name_compatibility_ = true;
