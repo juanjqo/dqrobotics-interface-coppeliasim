@@ -54,6 +54,7 @@ if(APPLE)
         -ldqrobotics)
 endif()
 
+if(WIN32)
 INSTALL(TARGETS ${PROJECT_NAME}
 # https://stackoverflow.com/questions/21592361/cmake-install-is-not-installing-libraries-on-windows
     RUNTIME DESTINATION "bin"
@@ -61,6 +62,7 @@ INSTALL(TARGETS ${PROJECT_NAME}
     ARCHIVE DESTINATION "lib"
     PUBLIC_HEADER DESTINATION "include/dqrobotics"
     PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+endif()
 
 
 ################################################################

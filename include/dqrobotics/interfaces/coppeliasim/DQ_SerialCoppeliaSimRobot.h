@@ -47,7 +47,9 @@ public:
     virtual void set_operation_modes(const DQ_CoppeliaSimInterface::JOINT_MODE& joint_mode,
                                      const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE& joint_control_mode);
     virtual void set_robot_as_visualization_tool();
+    virtual void set_robot_as_dynamic_tool(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE& joint_control_mode);
     virtual void set_joint_control_type(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE& joint_control_mode);
+
     virtual void set_control_inputs(const VectorXd& u);
 
     virtual std::vector<std::string> get_joint_names();

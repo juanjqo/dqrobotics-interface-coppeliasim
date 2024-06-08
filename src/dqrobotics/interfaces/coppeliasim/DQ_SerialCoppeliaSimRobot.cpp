@@ -85,16 +85,28 @@ void DQ_SerialCoppeliaSimRobot::set_robot_as_visualization_tool()
 }
 
 /**
+ * @brief DQ_SerialCoppeliaSimRobot::set_robot_as_dynamic_tool enables the joint
+ *        dynamic mode in the robot. Furthermore, both the dynamic engine and the stepping mode are enabled.
+ *        Use this mode if you want to control the robot
+ *        by target joint commands in stepped mode taking into account the dynamics.
+ *
+ * @param joint_control_mode Use POSITION, VELOCITY or TORQUE.
+ */
+void DQ_SerialCoppeliaSimRobot::set_robot_as_dynamic_tool(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE &joint_control_mode)
+{
+    _get_interface_sptr()->enable_dynamics(true);
+    _get_interface_sptr()->set_stepping_mode(true);
+    set_joint_control_type(joint_control_mode);
+}
+
+/**
  * @brief DQ_SerialCoppeliaSimRobot::set_joint_control_type sets the joint control mode
- *        of the robot. Furthermore, both the dynamic engine and the stepping mode are enabled.
+ *        of the robot.
  * @param joint_control_mode Use POSITION, VELOCITY or TORQUE.
  */
 void DQ_SerialCoppeliaSimRobot::set_joint_control_type(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE &joint_control_mode)
 {
-    _get_interface_sptr()->enable_dynamics(true);
-    _get_interface_sptr()->set_stepping_mode(true);
-    set_operation_modes(DQ_CoppeliaSimInterface::JOINT_MODE::DYNAMIC,
-                        joint_control_mode_);
+    set_operation_modes(DQ_CoppeliaSimInterface::JOINT_MODE::DYNAMIC, joint_control_mode);
 }
 
 /**
