@@ -63,6 +63,7 @@ DQ_SerialCoppeliaSimRobot::DQ_SerialCoppeliaSimRobot(const std::string &robot_na
  */
 void DQ_SerialCoppeliaSimRobot::set_operation_modes(const DQ_CoppeliaSimInterface::JOINT_MODE &joint_mode, const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE &joint_control_mode)
 {
+    joint_control_mode_ = joint_control_mode;
     _get_interface_sptr()->set_joint_modes(jointnames_, joint_mode);
     _get_interface_sptr()->set_joint_control_modes(jointnames_, joint_control_mode);
 }
@@ -90,7 +91,6 @@ void DQ_SerialCoppeliaSimRobot::set_robot_as_visualization_tool()
  */
 void DQ_SerialCoppeliaSimRobot::set_joint_control_type(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE &joint_control_mode)
 {
-    joint_control_mode_ = joint_control_mode;
     _get_interface_sptr()->enable_dynamics(true);
     _get_interface_sptr()->set_stepping_mode(true);
     set_operation_modes(DQ_CoppeliaSimInterface::JOINT_MODE::DYNAMIC,
