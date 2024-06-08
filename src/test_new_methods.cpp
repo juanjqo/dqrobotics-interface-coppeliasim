@@ -15,16 +15,15 @@ int main()
     vi->close_scene();
 
 
+
     auto csmodels = DQ_CoppeliaSimModels(vi);
     csmodels.load_reference_frames({"x", "xd", "x_e", "x_m"});
     csmodels.load_panda("/Franka");
 
-    vi->add_primitive("/obstacle",
-                      DQ_CoppeliaSimInterface::PRIMITIVE::SPHEROID,
-                      {0.5,0.5,0.5},
-                      {0,0,1}, 0.5,true, true
-
-                      );
+    csmodels.load_primitive(DQ_CoppeliaSimInterface::SPHEROID,
+                            "/cone",
+                            DQ(1),
+                            {1,1,1},{1,0,0},0.5,false, true);
 
     vi->start_simulation();
 

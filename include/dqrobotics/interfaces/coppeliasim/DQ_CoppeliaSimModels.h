@@ -79,6 +79,16 @@ public:
     void load_panda(const std::string& desired_model_name,
                     const DQ& pose = DQ(0));
 
+    void load_primitive(const DQ_CoppeliaSimInterface::PRIMITIVE& primitive,
+                        const std::string& name = "shape",
+                        const DQ& pose = DQ(1),
+                        const std::vector<double> sizes = {0.2,0.2,0.2},
+                        const std::vector<double> rgb_color = {1,0,0},
+                        const double& transparency = 1,
+                        const bool& set_as_static = true,
+                        const bool& set_as_respondable = false
+                        );
+
 
 };
 

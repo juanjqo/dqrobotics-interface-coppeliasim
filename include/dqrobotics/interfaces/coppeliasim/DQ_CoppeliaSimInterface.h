@@ -222,13 +222,30 @@ public:
     void set_object_name(const std::string& current_object_name,
                          const std::string& new_object_name);
 
-    void add_primitive(const std::string& name,
-                       const PRIMITIVE& primitive,
-                       const std::vector<double> sizes,
-                       const std::vector<double> rgb_color,
-                       const double& transparency = 1,
-                       const bool& dynamic_enabled = false,
-                       const bool& respondable = false);
+    // Methods to be implemented on Matlab
+    void set_object_color(const int& handle,
+                          const std::vector<double> rgb_color,
+                          const double& transparency = 1);
+
+    void set_object_color(const std::string& objectname,
+                          const std::vector<double> rgb_color,
+                          const double& transparency = 1);
+
+    void set_object_as_respondable(const int& handle,
+                                   const bool& respondable_object = true);
+
+    void set_object_as_respondable(const std::string& objectname,
+                                   const bool& respondable_object = true);
+
+    void set_object_as_static(const int& handle,
+                              const bool& static_object = true);
+
+    void set_object_as_static(const std::string& objectname,
+                              const bool& static_object = true);
+
+    void add_primitive(const PRIMITIVE& primitive,
+                       const std::string& name,
+                       const std::vector<double> sizes);
 
 
 
@@ -249,6 +266,7 @@ public:
     int wait_for_simulation_step_to_end();
     //---------------------------------------------------------//
 
+    int get_primitive(const PRIMITIVE& primitive);
 private:
     bool client_created_ = false;
     bool enable_deprecated_name_compatibility_ = true;
@@ -270,7 +288,7 @@ private:
     MatrixXd _get_transformation_matrix(const std::vector<double>& coeff_vector) const;
     MatrixXd _get_rotation_matrix(const DQ& r) const;
 
-    int _get_primitive(const PRIMITIVE& primitive);
+
 
     std::tuple<DQ, MatrixXd> _get_center_of_mass_and_inertia_matrix(const int& handle) const;
 

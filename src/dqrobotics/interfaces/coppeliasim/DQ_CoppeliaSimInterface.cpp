@@ -1296,21 +1296,51 @@ void DQ_CoppeliaSimInterface::set_object_name(const std::string &current_object_
     set_object_name(_get_handle_from_map(current_object_name), new_object_name);
 }
 
-void DQ_CoppeliaSimInterface::add_primitive(const std::string &name,
-                                            const PRIMITIVE &primitive,
-                                            const std::vector<double> sizes,
-                                            const std::vector<double> rgb_color, const double &transparency,
-                                            const bool &dynamic_enabled,
-                                            const bool &respondable)
+
+void DQ_CoppeliaSimInterface::set_object_color(const int &handle, const std::vector<double> rgb_color, const double &transparency)
+{
+    sim_->setShapeColor(handle, "", sim_->colorcomponent_ambient_diffuse, rgb_color);
+    sim_->setShapeColor(handle, "", sim_->colorcomponent_transparency,{transparency});
+}
+
+void DQ_CoppeliaSimInterface::set_object_color(const std::string &objectname, const std::vector<double> rgb_color, const double &transparency)
+{
+    set_object_color(_get_handle_from_map(objectname), rgb_color, transparency);
+}
+
+void DQ_CoppeliaSimInterface::set_object_as_respondable(const int &handle, const bool &respondable_object)
+{
+        sim_->setObjectInt32Param(handle,
+                              sim_->shapeintparam_respondable,
+                              (respondable_object == true ? 1 : 0));
+}
+
+
+void DQ_CoppeliaSimInterface::set_object_as_respondable(const std::string &objectname, const bool &respondable_object)
+{
+    set_object_as_respondable(_get_handle_from_map(objectname), respondable_object);
+}
+
+void DQ_CoppeliaSimInterface::set_object_as_static(const int &handle, const bool &static_object)
+{
+    sim_->setObjectInt32Param(handle,
+                              sim_->shapeintparam_static,
+                              (static_object == true ? 1 : 0));
+}
+
+void DQ_CoppeliaSimInterface::set_object_as_static(const std::string &objectname, const bool &static_object)
+{
+    set_object_as_static(_get_handle_from_map(objectname), static_object);
+}
+
+
+void DQ_CoppeliaSimInterface::add_primitive(const PRIMITIVE &primitive, const std::string &name,
+                                            const std::vector<double> sizes)
 {
     if (!object_exist_on_scene(name))
     {
-        int shapeHandle = sim_->createPrimitiveShape(_get_primitive(primitive), sizes, 0);
-        sim_->setShapeColor(shapeHandle, "", sim_->colorcomponent_ambient_diffuse, rgb_color);
-        sim_->setShapeColor(shapeHandle, "", sim_->colorcomponent_transparency,{transparency});
+        int shapeHandle = sim_->createPrimitiveShape(get_primitive(primitive), sizes, 0);
         set_object_name(shapeHandle, _remove_first_slash_from_string(name));
-        sim_->setObjectInt32Param(shapeHandle, sim_->shapeintparam_respondable, (respondable == true ? 1 : 0));
-        sim_->setObjectInt32Param(shapeHandle, sim_->shapeintparam_static, (dynamic_enabled == false ? 1 : 0));
     }
 
 }
@@ -1540,7 +1570,7 @@ MatrixXd DQ_CoppeliaSimInterface::_get_rotation_matrix(const DQ& r) const{
     return R;
 }
 
-int DQ_CoppeliaSimInterface::_get_primitive(const PRIMITIVE &primitive)
+int DQ_CoppeliaSimInterface::get_primitive(const PRIMITIVE &primitive)
 {
     switch (primitive)
     {

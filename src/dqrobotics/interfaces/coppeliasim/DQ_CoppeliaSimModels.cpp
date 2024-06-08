@@ -2,12 +2,20 @@
 
 namespace DQ_robotics
 {
-
+/**
+ * @brief DQ_CoppeliaSimModels::_get_interface_sptr
+ * @return
+ */
 std::shared_ptr<DQ_CoppeliaSimInterface> DQ_CoppeliaSimModels::_get_interface_sptr() const
 {
     return coppeliasim_interface_sptr_;
 }
 
+/**
+ * @brief DQ_CoppeliaSimModels::_get_string_from_others
+ * @param model
+ * @return
+ */
 std::string DQ_CoppeliaSimModels::_get_string_from_others(const COMPONENTS &model)
 {
     switch (model)
@@ -33,12 +41,23 @@ std::string DQ_CoppeliaSimModels::_get_string_from_others(const COMPONENTS &mode
     }
 }
 
+/**
+ * @brief DQ_CoppeliaSimModels::DQ_CoppeliaSimModels
+ * @param coppeliasim_interface_sptr
+ */
 DQ_CoppeliaSimModels::DQ_CoppeliaSimModels(const std::shared_ptr<DQ_CoppeliaSimInterface> &coppeliasim_interface_sptr)
     :coppeliasim_interface_sptr_(coppeliasim_interface_sptr)
 {
 
 }
 
+/**
+ * @brief DQ_CoppeliaSimModels::_load_model
+ * @param model
+ * @param desired_model_name
+ * @param load_model_only_if_missing
+ * @param remove_child_script
+ */
 void DQ_CoppeliaSimModels::_load_model(const COMPONENTS &model,
                                        const std::string &desired_model_name,
                                        const bool &load_model_only_if_missing,
@@ -51,6 +70,14 @@ void DQ_CoppeliaSimModels::_load_model(const COMPONENTS &model,
 
 }
 
+/**
+ * @brief DQ_CoppeliaSimModels::load_model
+ * @param model
+ * @param desired_model_name
+ * @param pose
+ * @param load_model_only_if_missing
+ * @param remove_child_script
+ */
 void DQ_CoppeliaSimModels::load_model(const COMPONENTS &model,
                                       const std::string &desired_model_name,
                                       const DQ &pose,
@@ -63,7 +90,13 @@ void DQ_CoppeliaSimModels::load_model(const COMPONENTS &model,
 }
 
 
-
+/**
+ * @brief DQ_CoppeliaSimModels::load_reference_frame
+ * @param desired_model_name
+ * @param pose
+ * @param load_model_only_if_missing
+ * @param remove_child_script
+ */
 void DQ_CoppeliaSimModels::load_reference_frame(const std::string &desired_model_name,
                                                 const DQ &pose,
                                                 const bool &load_model_only_if_missing,
@@ -74,6 +107,11 @@ void DQ_CoppeliaSimModels::load_reference_frame(const std::string &desired_model
         _get_interface_sptr()->set_object_pose(desired_model_name, pose);
 }
 
+/**
+ * @brief DQ_CoppeliaSimModels::load_reference_frames
+ * @param desired_model_names
+ * @param poses
+ */
 void DQ_CoppeliaSimModels::load_reference_frames(const std::vector<std::string> &desired_model_names, const std::vector<DQ> &poses)
 {
     size_t n = desired_model_names.size();
@@ -81,15 +119,56 @@ void DQ_CoppeliaSimModels::load_reference_frames(const std::vector<std::string> 
         load_reference_frame(desired_model_names.at(i), poses.at(i), true, true);
 }
 
+
+/**
+ * @brief DQ_CoppeliaSimModels::load_reference_frames
+ * @param desired_model_names
+ */
 void DQ_CoppeliaSimModels::load_reference_frames(const std::vector<std::string> &desired_model_names)
 {
     for (auto& name : desired_model_names)
         load_reference_frame(name, DQ(1), true, true);
 }
 
-void DQ_CoppeliaSimModels::load_panda(const std::string &desired_model_name, const DQ &pose)
+/**
+ * @brief DQ_CoppeliaSimModels::load_panda
+ * @param desired_model_name
+ * @param pose
+ */
+void DQ_CoppeliaSimModels::load_panda(const std::string &desired_model_name,
+                                        const DQ &pose) {
+    load_model(COMPONENTS::FRANKA_EMIKA_PANDA, desired_model_name, pose, true,
+               true);
+}
+
+/**
+ * @brief DQ_CoppeliaSimModels::load_primitive
+ * @param primitive
+ * @param name
+ * @param pose
+ * @param sizes
+ * @param rgb_color
+ * @param transparency
+ * @param set_as_static
+ * @param set_as_respondable
+ */
+void DQ_CoppeliaSimModels::load_primitive(const DQ_CoppeliaSimInterface::PRIMITIVE &primitive,
+                                          const std::string &name,
+                                          const DQ &pose,
+                                          const std::vector<double> sizes,
+                                          const std::vector<double> rgb_color,
+                                          const double &transparency,
+                                          const bool &set_as_static,
+                                          const bool &set_as_respondable)
 {
-    load_model(COMPONENTS::FRANKA_EMIKA_PANDA, desired_model_name, pose, true, true);
+    if (!_get_interface_sptr()->object_exist_on_scene(name))
+    {
+        _get_interface_sptr()->add_primitive(primitive, name, sizes);
+        _get_interface_sptr()->set_object_color(name, rgb_color, transparency);
+        _get_interface_sptr()->set_object_as_respondable(name, set_as_respondable);
+        _get_interface_sptr()->set_object_as_static(name, set_as_static);
+        _get_interface_sptr()->set_object_pose(name, pose);
+    }
 }
 
 
