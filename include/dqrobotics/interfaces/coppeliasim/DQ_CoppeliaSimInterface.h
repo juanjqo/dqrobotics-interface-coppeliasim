@@ -63,6 +63,15 @@ public:
         BODY_FRAME,
         ABSOLUTE_FRAME
     };
+    enum PRIMITIVE {
+        PLANE,
+        DISC,
+        CUBOID,
+        SPHEROID,
+        CYLINDER,
+        CONE,
+        CAPSULE
+    };
 
     DQ_CoppeliaSimInterface();
     bool connect(const std::string& host = "localhost",
@@ -213,6 +222,14 @@ public:
     void set_object_name(const std::string& current_object_name,
                          const std::string& new_object_name);
 
+    void add_primitive(const std::string& name,
+                       const PRIMITIVE& primitive,
+                       const std::vector<double> sizes,
+                       const std::vector<double> rgb_color,
+                       const double& transparency = 1,
+                       const bool& dynamic_enabled = false,
+                       const bool& respondable = false);
+
 
 
     //----------------------------------------------------------------------------------------
@@ -252,6 +269,8 @@ private:
 
     MatrixXd _get_transformation_matrix(const std::vector<double>& coeff_vector) const;
     MatrixXd _get_rotation_matrix(const DQ& r) const;
+
+    int _get_primitive(const PRIMITIVE& primitive);
 
     std::tuple<DQ, MatrixXd> _get_center_of_mass_and_inertia_matrix(const int& handle) const;
 
