@@ -142,7 +142,8 @@ bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
  */
 void DQ_CoppeliaSimInterface::start_simulation() const
 {
-   sim_->startSimulation();
+    _check_client();
+    sim_->startSimulation();
 }
 
 /**
@@ -150,7 +151,8 @@ void DQ_CoppeliaSimInterface::start_simulation() const
  */
 void DQ_CoppeliaSimInterface::pause_simulation() const
 {
-   sim_->pauseSimulation();
+    _check_client();
+    sim_->pauseSimulation();
 
 }
 
@@ -160,7 +162,8 @@ void DQ_CoppeliaSimInterface::pause_simulation() const
  */
 void DQ_CoppeliaSimInterface::stop_simulation() const
 {
-   sim_->stopSimulation();
+    _check_client();
+    sim_->stopSimulation();
 }
 
 
@@ -172,7 +175,8 @@ void DQ_CoppeliaSimInterface::stop_simulation() const
  */
 void DQ_CoppeliaSimInterface::set_stepping_mode(const bool &flag)
 {
-   sim_->setStepping(flag);
+    _check_client();
+    sim_->setStepping(flag);
 }
 
 /**
@@ -182,6 +186,7 @@ void DQ_CoppeliaSimInterface::set_stepping_mode(const bool &flag)
  */
 double DQ_CoppeliaSimInterface::get_simulation_time() const
 {
+    _check_client();
     return sim_->getSimulationTime();
 }
 
@@ -191,6 +196,7 @@ double DQ_CoppeliaSimInterface::get_simulation_time() const
  */
 void DQ_CoppeliaSimInterface::trigger_next_simulation_step() const
 {
+    _check_client();
     sim_->step();
 }
 
@@ -202,6 +208,7 @@ void DQ_CoppeliaSimInterface::trigger_next_simulation_step() const
  */
 bool DQ_CoppeliaSimInterface::is_simulation_running() const
 {
+    _check_client();
     return (sim_->getSimulationState() > sim_->simulation_paused);
 }
 
@@ -224,6 +231,7 @@ bool DQ_CoppeliaSimInterface::is_simulation_running() const
  */
 int DQ_CoppeliaSimInterface::get_simulation_state() const
 {
+    _check_client();
     return sim_->getSimulationState();
 }
 
@@ -235,6 +243,7 @@ int DQ_CoppeliaSimInterface::get_simulation_state() const
  */
 void DQ_CoppeliaSimInterface::set_status_bar_message(const std::string &message) const
 {
+    _check_client();
     _set_status_bar_message(message, sim_->verbosity_undecorated);
 }
 
@@ -250,21 +259,17 @@ int DQ_CoppeliaSimInterface::get_object_handle(const std::string &objectname)
 {
     int handle;
     std::string additional_error_message = "";
-    if (!_string_contain_first_slash(objectname) && enable_deprecated_name_compatibility_ == false)
+    if (!_start_with_slash(objectname) && enable_deprecated_name_compatibility_ == false)
     {
         additional_error_message = std::string("Did you mean \"/" + objectname + "\"? \n");;
 
     }
     try
     {
-        if (!_string_contain_first_slash(objectname) && enable_deprecated_name_compatibility_ == true)
-        {
-            handle = sim_->getObject(std::string("/")+objectname);
-            _update_map(std::string("/")+objectname, handle);
-        }else{
-            handle = sim_->getObject(objectname);
-            _update_map(objectname, handle);
-        }
+        _check_client();
+        auto standard_objectname = _get_standard_name(objectname);
+        handle = sim_->getObject(standard_objectname );
+        _update_map(standard_objectname, handle);
     }
     catch(const std::runtime_error& e)
     {
@@ -318,6 +323,7 @@ void DQ_CoppeliaSimInterface::show_map()
  */
 DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle) const
 {
+    _check_client();
     auto position = sim_->getObjectPosition(handle, sim_->handle_world);
     const DQ t = DQ(0, position.at(0),position.at(1),position.at(2));
     return t;
@@ -346,6 +352,7 @@ void DQ_CoppeliaSimInterface::set_object_translation(const int &handle, const DQ
 {
     VectorXd vec_t = t.vec3();
     std::vector<double> position = {vec_t[0], vec_t[1],vec_t[2]};
+    _check_client();
     sim_->setObjectPosition(handle, position,sim_->handle_world);
 }
 
@@ -366,6 +373,7 @@ void DQ_CoppeliaSimInterface::set_object_translation(const std::string &objectna
  */
 DQ DQ_CoppeliaSimInterface::get_object_rotation(const int &handle) const
 {
+    _check_client();
     auto rotation = sim_->getObjectQuaternion(handle +
                                               sim_->handleflag_wxyzquat,
                                               sim_->handle_world);
@@ -390,8 +398,10 @@ DQ DQ_CoppeliaSimInterface::get_object_rotation(const std::string &objectname)
  */
 void DQ_CoppeliaSimInterface::set_object_rotation(const int &handle, const DQ &r)
 {
+
     VectorXd vec_r = r.vec4();
     std::vector<double> rotation= {vec_r[0], vec_r[1],vec_r[2], vec_r[3]};
+    _check_client();
     sim_->setObjectQuaternion(handle + sim_->handleflag_wxyzquat, rotation, sim_->handle_world);
 }
 
@@ -435,9 +445,11 @@ DQ DQ_CoppeliaSimInterface::get_object_pose(const std::string &objectname)
  */
 void DQ_CoppeliaSimInterface::set_object_pose(const int &handle, const DQ &h)
 {
+
     VectorXd vec_r = h.P().vec4();
     VectorXd vec_p = h.translation().vec3();
     std::vector<double> pose = {vec_p[0], vec_p[1],vec_p[2],vec_r[0], vec_r[1],vec_r[2], vec_r[3]};
+    _check_client();
     sim_->setObjectPose(handle + sim_->handleflag_wxyzquat, pose, sim_->handle_world);
 }
 
@@ -459,6 +471,7 @@ void DQ_CoppeliaSimInterface::set_object_pose(const std::string &objectname, con
  */
 double DQ_CoppeliaSimInterface::get_joint_position(const int &handle) const
 {
+    _check_client();
     return double(sim_->getJointPosition(handle));
 }
 
@@ -512,6 +525,7 @@ VectorXd DQ_CoppeliaSimInterface::get_joint_positions(const std::vector<std::str
  */
 void DQ_CoppeliaSimInterface::set_joint_position(const int &handle, const double &angle_rad) const
 {
+    _check_client();
     sim_->setJointPosition(handle, angle_rad);
 }
 
@@ -556,6 +570,7 @@ void DQ_CoppeliaSimInterface::set_joint_positions(const std::vector<std::string>
  */
 void DQ_CoppeliaSimInterface::set_joint_target_position(const int &handle, const double &angle_rad) const
 {
+    _check_client();
     sim_->setJointTargetPosition(handle, angle_rad);
 }
 
@@ -600,6 +615,7 @@ void DQ_CoppeliaSimInterface::set_joint_target_positions(const std::vector<std::
  */
 double DQ_CoppeliaSimInterface::get_joint_velocity(const int &handle) const
 {
+    _check_client();
     return sim_->getObjectFloatParam(handle, sim_->jointfloatparam_velocity);
 }
 
@@ -651,6 +667,7 @@ VectorXd DQ_CoppeliaSimInterface::get_joint_velocities(const std::vector<std::st
  */
 void DQ_CoppeliaSimInterface::set_joint_target_velocity(const int &handle, const double &angle_rad_dot) const
 {
+    _check_client();
     sim_->setJointTargetVelocity(handle, angle_rad_dot);
 }
 
@@ -695,6 +712,7 @@ void DQ_CoppeliaSimInterface::set_joint_target_velocities(const std::vector<std:
  */
 void DQ_CoppeliaSimInterface::set_joint_torque(const int &handle, const double &torque) const
 {
+    _check_client();
     double angle_dot_rad_max = 10000.0;
     if (torque==0)
     {
@@ -750,6 +768,7 @@ void DQ_CoppeliaSimInterface::set_joint_torques(const std::vector<std::string> &
  */
 double DQ_CoppeliaSimInterface::get_joint_torque(const int &handle) const
 {
+    _check_client();
     return sim_->getJointForce(handle);
 }
 
@@ -801,6 +820,7 @@ VectorXd DQ_CoppeliaSimInterface::get_joint_torques(const std::vector<std::strin
  */
 std::string DQ_CoppeliaSimInterface::get_object_name(const int &handle)
 {
+    _check_client();
     std::string objectname = sim_->getObjectAlias(handle, 1);
     _update_map(objectname, handle);
     return objectname;
@@ -832,6 +852,7 @@ std::vector<std::string> DQ_CoppeliaSimInterface::get_object_names(const T &hand
 std::vector<std::string> DQ_CoppeliaSimInterface::get_jointnames_from_base_objectname(const std::string &base_objectname)
 {
     int base_handle = _get_handle_from_map(base_objectname);
+    _check_client();
     std::vector<int64_t> jointhandles = sim_->getObjectsInTree(base_handle,
                                         sim_->object_joint_type,
                                         0);
@@ -842,6 +863,7 @@ std::vector<std::string> DQ_CoppeliaSimInterface::get_jointnames_from_base_objec
 std::vector<std::string> DQ_CoppeliaSimInterface::get_linknames_from_base_objectname(const std::string &base_objectname)
 {
     int base_handle = _get_handle_from_map(base_objectname);
+    _check_client();
     std::vector<int64_t> shapehandles = sim_->getObjectsInTree(base_handle,
                                                                sim_->object_shape_type,
                                                                0);
@@ -858,6 +880,7 @@ VectorXd DQ_CoppeliaSimInterface::get_angular_and_linear_velocities(const int &h
 {
     std::vector<int> params = _get_velocity_const_params();
     VectorXd v = VectorXd::Zero(params.size());
+    _check_client();
     for (size_t i=0; i < params.size(); i++)
     {
         v(i) = sim_->getObjectFloatParam(handle, params.at(i));
@@ -912,6 +935,7 @@ void DQ_CoppeliaSimInterface::set_angular_and_linear_velocities(const int &handl
         v.head(3) = w_a.vec3();
         v.tail(3) = p_dot_a.vec3();
     }
+    _check_client();
     sim_->resetDynamicObject(handle);
     for (size_t i=0; i < params.size(); i++)
     {
@@ -1007,6 +1031,7 @@ void DQ_CoppeliaSimInterface::set_twist(const std::string &objectname, const DQ 
  */
 void DQ_CoppeliaSimInterface::set_joint_mode(const std::string &jointname, const JOINT_MODE &joint_mode)
 {
+    _check_client();
     int jointMode;
     switch (joint_mode)
         {
@@ -1041,10 +1066,10 @@ void DQ_CoppeliaSimInterface::set_joint_modes(const std::vector<std::string> &jo
  */
 void DQ_CoppeliaSimInterface::set_joint_control_mode(const std::string &jointname, const JOINT_CONTROL_MODE &joint_control_mode)
 {
+    _check_client();
     int64_t control_mode;
     switch (joint_control_mode)
     {
-
     case FREE:
         control_mode = sim_->jointdynctrl_free;
         break;
@@ -1091,6 +1116,7 @@ void DQ_CoppeliaSimInterface::set_joint_control_modes(const std::vector<std::str
  */
 void DQ_CoppeliaSimInterface::enable_dynamics(const bool &flag)
 {
+   _check_client();
    sim_->setBoolParam(sim_->boolparam_dynamics_handling_enabled, flag);
 }
 
@@ -1100,6 +1126,7 @@ void DQ_CoppeliaSimInterface::enable_dynamics(const bool &flag)
  */
 double DQ_CoppeliaSimInterface::get_simulation_time_step() const
 {
+    _check_client();
     return sim_->getFloatParam(sim_->floatparam_simulation_time_step);
 }
 
@@ -1109,6 +1136,7 @@ double DQ_CoppeliaSimInterface::get_simulation_time_step() const
  */
 void DQ_CoppeliaSimInterface::set_simulation_time_step(const double &time_step)
 {
+    _check_client();
     sim_->setFloatParam(sim_->floatparam_simulation_time_step, time_step);
 }
 
@@ -1118,6 +1146,7 @@ void DQ_CoppeliaSimInterface::set_simulation_time_step(const double &time_step)
  */
 double DQ_CoppeliaSimInterface::get_physics_time_step() const
 {
+    _check_client();
     return sim_->getFloatParam(sim_->floatparam_physicstimestep);
 }
 
@@ -1127,6 +1156,7 @@ double DQ_CoppeliaSimInterface::get_physics_time_step() const
  */
 void DQ_CoppeliaSimInterface::set_physics_time_step(const double &time_step) const
 {
+    _check_client();
     sim_->setFloatParam(sim_->floatparam_physicstimestep, time_step);
 }
 
@@ -1136,6 +1166,7 @@ void DQ_CoppeliaSimInterface::set_physics_time_step(const double &time_step) con
  */
 void DQ_CoppeliaSimInterface::set_dynamic_engine(const ENGINE &engine)
 {
+    _check_client();
     sim_->setInt32Param(sim_->intparam_dynamic_engine, engine);
 }
 
@@ -1147,6 +1178,7 @@ void DQ_CoppeliaSimInterface::set_gravity(const DQ &gravity)
 {
     VectorXd gravity_vec = gravity.vec3();
     std::vector<double> g = {gravity_vec(0),gravity_vec(1), gravity_vec(2)};
+    _check_client();
     sim_->setArrayParam(sim_->arrayparam_gravity, g);
 }
 
@@ -1156,6 +1188,7 @@ void DQ_CoppeliaSimInterface::set_gravity(const DQ &gravity)
  */
 DQ DQ_CoppeliaSimInterface::get_gravity() const
 {
+    _check_client();
     std::vector<double> g = sim_->getArrayParam(sim_->arrayparam_gravity);
     return DQ(0, g.at(0), g.at(1), g.at(2));
 }
@@ -1171,6 +1204,7 @@ DQ DQ_CoppeliaSimInterface::get_gravity() const
  */
 void DQ_CoppeliaSimInterface::load_scene(const std::string &path_to_filename) const
 {
+    _check_client();
     sim_->loadScene(path_to_filename);
 }
 
@@ -1185,6 +1219,7 @@ void DQ_CoppeliaSimInterface::load_scene(const std::string &path_to_filename) co
  */
 void DQ_CoppeliaSimInterface::save_scene(const std::string &path_to_filename) const
 {
+    _check_client();
     sim_->saveScene(path_to_filename);
 }
 
@@ -1193,6 +1228,7 @@ void DQ_CoppeliaSimInterface::save_scene(const std::string &path_to_filename) co
  */
 void DQ_CoppeliaSimInterface::close_scene() const
 {
+    _check_client();
     sim_->closeScene();
 }
 
@@ -1247,6 +1283,7 @@ bool DQ_CoppeliaSimInterface::load_from_model_browser(const std::string &path_to
                                                             const bool &load_model_only_if_missing,
                                                             const bool &remove_child_script)
 {
+    _check_client();
     std::string resources_path = sim_->getStringParam(sim_->stringparam_resourcesdir);
     return load_model(resources_path + std::string("/models") + path_to_filename,
                       desired_model_name, load_model_only_if_missing, remove_child_script);
@@ -1258,6 +1295,7 @@ bool DQ_CoppeliaSimInterface::load_from_model_browser(const std::string &path_to
  */
 void DQ_CoppeliaSimInterface::remove_child_script_from_object(const std::string &objectname)
 {
+    _check_client();
     auto script_handle = sim_->getScript(sim_->scripttype_childscript,
                                          _get_handle_from_map(objectname));
     if (script_handle != -1)
@@ -1273,6 +1311,7 @@ bool DQ_CoppeliaSimInterface::object_exist_on_scene(const std::string &objectnam
 {
     std::optional<json> options = {{"noError", false}};
     try {
+        _check_client();
         auto rtn = sim_->getObject(objectname, options);
         return (rtn != -1) ? true : false;
     } catch (...) {
@@ -1283,6 +1322,7 @@ bool DQ_CoppeliaSimInterface::object_exist_on_scene(const std::string &objectnam
 
 void DQ_CoppeliaSimInterface::set_object_name(const int &handle, const std::string &new_object_name)
 {
+    _check_client();
     sim_->setObjectAlias(handle, new_object_name);
 }
 
@@ -1299,6 +1339,7 @@ void DQ_CoppeliaSimInterface::set_object_name(const std::string &current_object_
 
 void DQ_CoppeliaSimInterface::set_object_color(const int &handle, const std::vector<double> rgb_color, const double &transparency)
 {
+    _check_client();
     sim_->setShapeColor(handle, "", sim_->colorcomponent_ambient_diffuse, rgb_color);
     sim_->setShapeColor(handle, "", sim_->colorcomponent_transparency,{transparency});
 }
@@ -1310,7 +1351,8 @@ void DQ_CoppeliaSimInterface::set_object_color(const std::string &objectname, co
 
 void DQ_CoppeliaSimInterface::set_object_as_respondable(const int &handle, const bool &respondable_object)
 {
-        sim_->setObjectInt32Param(handle,
+    _check_client();
+    sim_->setObjectInt32Param(handle,
                               sim_->shapeintparam_respondable,
                               (respondable_object == true ? 1 : 0));
 }
@@ -1323,6 +1365,7 @@ void DQ_CoppeliaSimInterface::set_object_as_respondable(const std::string &objec
 
 void DQ_CoppeliaSimInterface::set_object_as_static(const int &handle, const bool &static_object)
 {
+    _check_client();
     sim_->setObjectInt32Param(handle,
                               sim_->shapeintparam_static,
                               (static_object == true ? 1 : 0));
@@ -1339,6 +1382,7 @@ void DQ_CoppeliaSimInterface::add_primitive(const PRIMITIVE &primitive, const st
 {
     if (!object_exist_on_scene(name))
     {
+        _check_client();
         int shapeHandle = sim_->createPrimitiveShape(get_primitive(primitive), sizes, 0);
         set_object_name(shapeHandle, _remove_first_slash_from_string(name));
     }
@@ -1352,6 +1396,7 @@ void DQ_CoppeliaSimInterface::add_primitive(const PRIMITIVE &primitive, const st
  */
 double DQ_CoppeliaSimInterface::get_mass(const int &handle) const
 {
+   _check_client();
    return sim_->getShapeMassAndInertia(handle);
 }
 
@@ -1474,6 +1519,8 @@ void DQ_CoppeliaSimInterface::disconnect_all(){}
 void DQ_CoppeliaSimInterface::set_synchronous(const bool &flag){set_stepping_mode(flag);}
 int DQ_CoppeliaSimInterface::wait_for_simulation_step_to_end(){return 0;}
 
+
+//---------------Private methods-----------------------------
 std::string DQ_CoppeliaSimInterface::_remove_first_slash_from_string(const std::string &str)
 {
     std::string new_str = str;
@@ -1488,13 +1535,31 @@ std::string DQ_CoppeliaSimInterface::_remove_first_slash_from_string(const std::
     return new_str;
 }
 
-bool DQ_CoppeliaSimInterface::_string_contain_first_slash(const std::string &str)
+bool DQ_CoppeliaSimInterface::_start_with_slash(const std::string &str)
 {
+    /*
     size_t found = str.find('/');
     if(found == 0) // The string containt the '/'
         return true;
     else
         return false;
+    */
+    return str.starts_with("/");
+
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::_get_standard_string returns a string that
+ *        always start with "/"
+ * @param str
+ * @return
+ */
+std::string DQ_CoppeliaSimInterface::_get_standard_name(const std::string &str)
+{
+    std::string standard_str = str;
+    if (!_start_with_slash(str) && enable_deprecated_name_compatibility_ == true)
+        standard_str = std::string("/")+str;
+    return standard_str;
 }
 
 /**
@@ -1590,6 +1655,12 @@ int DQ_CoppeliaSimInterface::get_primitive(const PRIMITIVE &primitive)
         return sim_->primitiveshape_capsule;
 
     }
+}
+
+void DQ_CoppeliaSimInterface::_check_client() const
+{
+    if (!client_created_)
+        throw std::runtime_error("Unestablished connection. Did you use connect()?");
 }
 
 /**

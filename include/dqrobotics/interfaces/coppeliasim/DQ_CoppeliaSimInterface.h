@@ -270,6 +270,7 @@ public:
 private:
     bool client_created_ = false;
     bool enable_deprecated_name_compatibility_ = true;
+    void _check_client() const;
 
     //-------------------map zone--------------------------------------------
     std::string _map_simulation_state(const int& state) const;
@@ -278,7 +279,8 @@ private:
     int _get_handle_from_map(const std::string& objectname);
     //------------------------------------------------------------------------
     std::string _remove_first_slash_from_string(const std::string& str);
-    bool _string_contain_first_slash(const std::string& str);
+    bool _start_with_slash(const std::string& str);
+    std::string _get_standard_name(const std::string& str);
 
     std::vector<int> _get_velocity_const_params() const;
     bool _load_model(const std::string& path_to_filename,
