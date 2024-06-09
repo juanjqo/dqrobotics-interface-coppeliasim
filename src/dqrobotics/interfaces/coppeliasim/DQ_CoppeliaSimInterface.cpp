@@ -1389,6 +1389,28 @@ void DQ_CoppeliaSimInterface::add_primitive(const PRIMITIVE &primitive, const st
 
 }
 
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_object_parent
+ * @param handle
+ * @param parent_handle
+ */
+void DQ_CoppeliaSimInterface::set_object_parent(const int &handle, const int &parent_handle)
+{
+    _check_client();
+    sim_->setObjectParent(handle, parent_handle, false);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_object_parent
+ * @param objectname
+ * @param parent_object_name
+ */
+void DQ_CoppeliaSimInterface::set_object_parent(const std::string &objectname, const std::string &parent_object_name)
+{
+    set_object_parent(_get_handle_from_map(objectname), _get_handle_from_map(parent_object_name));
+}
+
 /**
  * @brief DQ_CoppeliaSimInterface::get_mass
  * @param handle

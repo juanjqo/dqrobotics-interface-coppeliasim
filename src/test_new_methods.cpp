@@ -25,6 +25,8 @@ int main()
                             DQ(1),
                             {1,1,1},{1,0,0},0.5,false, true);
 
+    vi->set_object_parent("/cone", "/Franka/connection");
+
     vi->start_simulation();
 
 

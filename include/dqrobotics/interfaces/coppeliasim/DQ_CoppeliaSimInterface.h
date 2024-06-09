@@ -247,6 +247,9 @@ public:
                        const std::string& name,
                        const std::vector<double> sizes);
 
+    void set_object_parent(const int& handle, const int& parent_handle);
+    void set_object_parent(const std::string& objectname, const std::string& parent_object_name);
+
 
 
     //----------------------------------------------------------------------------------------
