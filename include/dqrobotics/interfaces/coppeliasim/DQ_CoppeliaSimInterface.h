@@ -222,7 +222,8 @@ public:
     void set_object_name(const std::string& current_object_name,
                          const std::string& new_object_name);
 
-    // Methods to be implemented on Matlab
+    //-------- Methods to be implemented on Matlab---------------
+
     void set_object_color(const int& handle,
                           const std::vector<double> rgb_color,
                           const double& transparency = 1);
@@ -254,8 +255,23 @@ public:
                            const std::string& parent_object_name,
                            const bool& move_child_to_parent_pose = true);
 
+    bool check_collision(const int& handle1,
+                         const int& handle2);
+    bool check_collision(const std::string& objectname1,
+                         const std::string& objectname2);
+    std::tuple<double, DQ, DQ> check_distance(const int& handle1,
+                                                const int& handle2,
+                                                const double& threshold = 0);
+    std::tuple<double, DQ, DQ> check_distance(const std::string& objectname1,
+                                                const std::string& objectname2,
+                                                const double& threshold = 0);
 
-
+    double compute_distance(const int& handle1,
+                            const int& handle2,
+                            const double& threshold = 0);
+    double compute_distance(const std::string& objectname1,
+                            const std::string& objectname2,
+                            const double& threshold = 0);
     //----------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------
 

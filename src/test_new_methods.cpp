@@ -18,14 +18,25 @@ int main()
 
     auto csmodels = DQ_CoppeliaSimModels(vi);
     csmodels.load_reference_frames({"/x", "xd", "x_e", "x_m"});
-    csmodels.load_panda("/Franka");
+    //csmodels.load_panda("/Franka");
 
-    csmodels.load_primitive(DQ_CoppeliaSimInterface::CONE,
+    csmodels.load_primitive(DQ_CoppeliaSimInterface::SPHEROID,
                             "/cone",
                             DQ(1),
-                            {1,1,1},{1,0,0},0.5,false, true);
+                            {0.1,0.1,0.1},{1,0,0},0.5,false, true);
 
-    vi->set_object_parent("/cone", "/Franka/connection", false);
+    csmodels.load_primitive(DQ_CoppeliaSimInterface::SPHEROID,
+                            "/cone2",
+                            1+0.5*E_*0.5*k_,
+                            {0.1,0.1,0.1},{0,1,0},0.5,false, true);
+
+    //vi->set_object_parent("/cone", "/Franka/connection", false);
+    auto dist = vi->compute_distance("/cone", "/cone2", 1);
+    std::cout<<dist<<std::endl;
+
+
+
+
 
     vi->start_simulation();
 

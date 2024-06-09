@@ -1414,6 +1414,84 @@ void DQ_CoppeliaSimInterface::set_object_parent(const std::string &objectname,
 }
 
 /**
+ * @brief DQ_CoppeliaSimInterface::check_collision
+ * @param handle1
+ * @param handle2
+ * @return
+ */
+bool DQ_CoppeliaSimInterface::check_collision(const int &handle1, const int &handle2)
+{
+    _check_client();
+    auto [result, collidingObjectHandles] = sim_->checkCollision(handle1, handle2);
+    return result;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::check_collision
+ * @param objectname1
+ * @param objectname2
+ * @return
+ */
+bool DQ_CoppeliaSimInterface::check_collision(const std::string &objectname1, const std::string &objectname2)
+{
+    return check_collision(_get_handle_from_map(objectname1), _get_handle_from_map(objectname2));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::check_distance
+ * @param handle1
+ * @param handle2
+ * @param threshold
+ * @return
+ */
+std::tuple<double, DQ, DQ> DQ_CoppeliaSimInterface::check_distance(const int &handle1, const int &handle2, const double &threshold)
+{
+    _check_client();
+    auto [result, data, objectHandlePair] = sim_->checkDistance(handle1, handle2, threshold);
+         //[obj1X obj1Y obj1Z obj2X obj2Y obj2Z dist]
+    DQ point1 = DQ(0, data.at(0), data.at(1), data.at(2));
+    DQ point2 = DQ(0, data.at(3), data.at(4), data.at(5));
+    double distance = data.at(6);
+    return {distance, point1, point2};
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::check_distance
+ * @param objectname1
+ * @param objectname2
+ * @param threshold
+ * @return
+ */
+std::tuple<double, DQ, DQ> DQ_CoppeliaSimInterface::check_distance(const std::string &objectname1, const std::string &objectname2, const double &threshold)
+{
+    return check_distance(_get_handle_from_map(objectname1), _get_handle_from_map(objectname2), threshold);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::compute_distance
+ * @param handle1
+ * @param handle2
+ * @param threshold
+ * @return
+ */
+double DQ_CoppeliaSimInterface::compute_distance(const int &handle1, const int &handle2, const double &threshold)
+{
+    return std::get<0>(check_distance(handle1, handle2, threshold));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::compute_distance
+ * @param objectname1
+ * @param objectname2
+ * @param threshold
+ * @return
+ */
+double DQ_CoppeliaSimInterface::compute_distance(const std::string &objectname1, const std::string &objectname2, const double &threshold)
+{
+    return compute_distance(_get_handle_from_map(objectname1), _get_handle_from_map(objectname2), threshold);
+}
+
+/**
  * @brief DQ_CoppeliaSimInterface::get_mass
  * @param handle
  * @return
