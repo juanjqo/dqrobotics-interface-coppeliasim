@@ -20,12 +20,12 @@ int main()
     csmodels.load_reference_frames({"/x", "xd", "x_e", "x_m"});
     csmodels.load_panda("/Franka");
 
-    csmodels.load_primitive(DQ_CoppeliaSimInterface::SPHEROID,
+    csmodels.load_primitive(DQ_CoppeliaSimInterface::CONE,
                             "/cone",
                             DQ(1),
                             {1,1,1},{1,0,0},0.5,false, true);
 
-    vi->set_object_parent("/cone", "/Franka/connection");
+    vi->set_object_parent("/cone", "/Franka/connection", false);
 
     vi->start_simulation();
 

@@ -1395,10 +1395,10 @@ void DQ_CoppeliaSimInterface::add_primitive(const PRIMITIVE &primitive, const st
  * @param handle
  * @param parent_handle
  */
-void DQ_CoppeliaSimInterface::set_object_parent(const int &handle, const int &parent_handle)
+void DQ_CoppeliaSimInterface::set_object_parent(const int &handle, const int &parent_handle, const bool &move_child_to_parent_pose)
 {
     _check_client();
-    sim_->setObjectParent(handle, parent_handle, false);
+    sim_->setObjectParent(handle, parent_handle, !move_child_to_parent_pose);
 }
 
 /**
@@ -1406,9 +1406,11 @@ void DQ_CoppeliaSimInterface::set_object_parent(const int &handle, const int &pa
  * @param objectname
  * @param parent_object_name
  */
-void DQ_CoppeliaSimInterface::set_object_parent(const std::string &objectname, const std::string &parent_object_name)
+void DQ_CoppeliaSimInterface::set_object_parent(const std::string &objectname,
+                                                const std::string &parent_object_name,
+                                                const bool& move_child_to_parent_pose)
 {
-    set_object_parent(_get_handle_from_map(objectname), _get_handle_from_map(parent_object_name));
+    set_object_parent(_get_handle_from_map(objectname), _get_handle_from_map(parent_object_name), move_child_to_parent_pose);
 }
 
 /**
