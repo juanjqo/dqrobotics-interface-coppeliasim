@@ -1493,26 +1493,26 @@ double DQ_CoppeliaSimInterface::compute_distance(const std::string &objectname1,
 
 void DQ_CoppeliaSimInterface::add_plane(const std::string &name, const DQ &normal, const DQ &position, const std::vector<double> sizes, const std::vector<double> rgb_color, const double &transparency)
 {
-    if (!object_exist_on_scene(name))
-    {
-        add_primitive(PRIMITIVE::PLANE, name, sizes);
-        set_object_color(name, rgb_color, transparency);
-        set_object_as_respondable(name, false);
-        set_object_as_static(name, true);
-
+        if (!object_exist_on_scene(name))
+        {
+            add_primitive(PRIMITIVE::PLANE, name, sizes);
+            set_object_color(name, rgb_color, transparency);
+            set_object_as_respondable(name, false);
+            set_object_as_static(name, true);
+        }
         if (!is_pure(position) and !is_quaternion(position))
             throw std::runtime_error("The position must be a pure quaternion");
         if (!is_unit(normal))
             throw std::runtime_error("The normal must be a unit quaternion");
-
-        double phi = acos( double(dot(k_, normal.P())));
+        DQ rc = get_object_rotation(name);
+        DQ current_normal = rc*k_*rc.conj();
+        double phi = acos( double(dot(current_normal , normal.P())));
         DQ nx = cross(k_, normal.P());
         DQ rp = cos(phi/2) + nx.normalize()*sin(phi/2);
         set_object_rotation(name, rp);
         set_object_pose(name, rp*(1+0.5*E_*normal.D()*k_));
         set_object_translation(name, position);
     }
-}
 
 /**
  * @brief DQ_CoppeliaSimInterface::draw_trajectory
