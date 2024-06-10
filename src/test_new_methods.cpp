@@ -32,13 +32,18 @@ int main()
 
     //vi->set_object_parent("/cone", "/Franka/connection", false);
     auto dist = vi->compute_distance("/cone", "/cone2", 1);
+
+    //vi->draw_trajectory(DQ(0,1,1,0.5));//
+    //vi->draw_trajectory(DQ(0,1,1,0.5));
     std::cout<<dist<<std::endl;
 
 
-
+    vi->draw_trajectory("/cone");
 
 
     vi->start_simulation();
+
+
 
 
 

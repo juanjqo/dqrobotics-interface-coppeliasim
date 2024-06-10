@@ -1378,7 +1378,7 @@ void DQ_CoppeliaSimInterface::set_object_as_static(const std::string &objectname
 
 
 void DQ_CoppeliaSimInterface::add_primitive(const PRIMITIVE &primitive, const std::string &name,
-                                            const std::vector<double> sizes)
+                                            const std::vector<double> &sizes)
 {
     if (!object_exist_on_scene(name))
     {
@@ -1490,6 +1490,75 @@ double DQ_CoppeliaSimInterface::compute_distance(const std::string &objectname1,
 {
     return compute_distance(_get_handle_from_map(objectname1), _get_handle_from_map(objectname2), threshold);
 }
+
+/**
+ * @brief DQ_CoppeliaSimInterface::draw_trajectory
+ * @param point
+ * @param size
+ * @param color
+ * @param max_item_count
+ */
+void DQ_CoppeliaSimInterface::draw_trajectory(const DQ &point, const double &size, const std::vector<double> &color, const int &max_item_count)
+{
+    _check_client();
+    VectorXd vpoint = point.vec3();
+    std::vector<double> itemdata = {0,0,0,vpoint(0), vpoint(1), vpoint(2)};
+    auto drawn_handle = sim_->addDrawingObject(sim_->drawing_lines+sim_->drawing_cyclic,size,0,-1,max_item_count, color);
+    sim_->addDrawingObjectItem(
+        drawn_handle,
+        itemdata
+        );
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::add_child_script
+ * @param objectname
+ */
+int DQ_CoppeliaSimInterface::add_child_script(const std::string &objectname)
+{
+    _check_client();
+    auto scriptHandle = sim_->addScript(sim_->scripttype_childscript);
+    sim_->associateScriptWithObject(scriptHandle, _get_handle_from_map(objectname));
+    return scriptHandle;
+}
+
+void DQ_CoppeliaSimInterface::draw_trajectory(const std::string &objectname, const double &size, const std::vector<double> &color, const int &max_item_count)
+{
+    _check_client();
+    auto scriptHandle = add_child_script(objectname);
+    //set_object_parent(scriptHandle, _get_handle_from_map(objectname), true);
+
+    std::string stringToExecute = "function sysCall_init() "
+                                  "h=sim.getObjectHandle(sim.handle_self) "
+                                  "dr=sim.addDrawingObject(sim.drawing_lines|sim.drawing_cyclic,2,0,-1,2500,{1,0,1}) "
+                                  "pt=sim.getObjectPosition(h,-1) "
+                                  "end "
+                                  "function sysCall_init() "
+                                    "h=sim.getObjectHandle(sim.handle_self)"
+                                    "dr=sim.addDrawingObject(sim.drawing_lines|sim.drawing_cyclic,2,0,-1,2500,{1,0,1})"
+                                    "pt=sim.getObjectPosition(h,-1)"
+                                  "end";
+    //sim_->executeScriptString(stringToExecute, scriptHandle);
+
+}
+
+/*
+ *
+function sysCall_init()
+    h=sim.getObjectHandle(sim.handle_self)
+    dr=sim.addDrawingObject(sim.drawing_lines|sim.drawing_cyclic,2,0,-1,2500,{1,0,1})
+    pt=sim.getObjectPosition(h,-1)
+end
+
+function sysCall_sensing()
+    local l={pt[1],pt[2],pt[3]}
+    pt=sim.getObjectPosition(h,-1)
+    l[4]=pt[1]
+    l[5]=pt[2]
+    l[6]=pt[3]
+    sim.addDrawingObjectItem(dr,l)
+end
+ */
 
 /**
  * @brief DQ_CoppeliaSimInterface::get_mass

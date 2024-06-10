@@ -246,7 +246,7 @@ public:
 
     void add_primitive(const PRIMITIVE& primitive,
                        const std::string& name,
-                       const std::vector<double> sizes);
+                       const std::vector<double>& sizes);
 
     void set_object_parent(const int& handle,
                            const int& parent_handle,
@@ -272,6 +272,22 @@ public:
     double compute_distance(const std::string& objectname1,
                             const std::string& objectname2,
                             const double& threshold = 0);
+
+    // To be removed!
+    void draw_trajectory(const DQ& point,
+                         const double& size = 2,
+                         const std::vector<double>& color = {1,0,0},
+                         const int& max_item_count = 1000);
+
+    int add_child_script(const std::string& objectname);
+
+    // Not working!
+    void draw_trajectory(const std::string& objectname,
+                         const double& size = 2,
+                         const std::vector<double>& color = {1,0,0},
+                         const int& max_item_count = 1000);
+
+
     //----------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------
 
@@ -306,6 +322,8 @@ private:
     std::string _get_standard_name(const std::string& str);
 
     std::vector<int> _get_velocity_const_params() const;
+
+
     bool _load_model(const std::string& path_to_filename,
                      const std::string& desired_model_name,
                      const bool& remove_child_script);
