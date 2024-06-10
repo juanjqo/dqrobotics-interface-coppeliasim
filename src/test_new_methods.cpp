@@ -12,14 +12,14 @@ int main()
 {
     auto vi = std::make_shared<DQ_CoppeliaSimInterface>();
     vi->connect("localhost", 23000);
-    vi->close_scene();
+    //vi->close_scene();
 
 
 
     auto csmodels = DQ_CoppeliaSimModels(vi);
-    csmodels.load_reference_frames({"/x", "xd", "x_e", "x_m"});
+    //csmodels.load_reference_frames({"/x", "xd", "x_e", "x_m"});
     //csmodels.load_panda("/Franka");
-
+/*
     csmodels.load_primitive(DQ_CoppeliaSimInterface::SPHEROID,
                             "/cone",
                             DQ(1),
@@ -29,16 +29,22 @@ int main()
                             "/cone2",
                             1+0.5*E_*0.5*k_,
                             {0.1,0.1,0.1},{0,1,0},0.5,false, true);
+*/
 
     //vi->set_object_parent("/cone", "/Franka/connection", false);
-    auto dist = vi->compute_distance("/cone", "/cone2", 1);
+    //auto dist = vi->compute_distance("/cone", "/cone2", 1);
 
     //vi->draw_trajectory(DQ(0,1,1,0.5));//
     //vi->draw_trajectory(DQ(0,1,1,0.5));
-    std::cout<<dist<<std::endl;
+    //std::cout<<dist<<std::endl;
+
+    DQ xd = vi->get_object_pose("/xd");
+    DQ r = xd.P();
+    DQ plane = r*k_*r.conj() + E_*0.5;
+    vi->add_plane("/plane", plane, xd.translation());
 
 
-    vi->draw_trajectory("/cone");
+    //vi->draw_trajectory("/cone");
 
 
     vi->start_simulation();

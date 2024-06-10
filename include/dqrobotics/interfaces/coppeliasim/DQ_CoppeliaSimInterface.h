@@ -273,6 +273,13 @@ public:
                             const std::string& objectname2,
                             const double& threshold = 0);
 
+    void add_plane(const std::string& name,
+                   const DQ& normal,
+                   const DQ& position,
+                   const std::vector<double> sizes = {0.2,0.2,0.2},
+                   const std::vector<double> rgb_color = {1,0,0},
+                   const double& transparency = 0.5);
+
     // To be removed!
     void draw_trajectory(const DQ& point,
                          const double& size = 2,
