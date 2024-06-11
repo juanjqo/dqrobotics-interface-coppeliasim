@@ -1337,16 +1337,17 @@ void DQ_CoppeliaSimInterface::set_object_name(const std::string &current_object_
 }
 
 
-void DQ_CoppeliaSimInterface::set_object_color(const int &handle, const std::vector<double> rgb_color, const double &transparency)
+void DQ_CoppeliaSimInterface::set_object_color(const int &handle,
+                                               const std::vector<double> rgba_color)
 {
     _check_client();
-    sim_->setShapeColor(handle, "", sim_->colorcomponent_ambient_diffuse, rgb_color);
-    sim_->setShapeColor(handle, "", sim_->colorcomponent_transparency,{transparency});
+    sim_->setShapeColor(handle, "", sim_->colorcomponent_ambient_diffuse, {rgba_color.at(0), rgba_color.at(1),rgba_color.at(2)});
+    sim_->setShapeColor(handle, "", sim_->colorcomponent_transparency, {rgba_color.at(3)});
 }
 
-void DQ_CoppeliaSimInterface::set_object_color(const std::string &objectname, const std::vector<double> rgb_color, const double &transparency)
+void DQ_CoppeliaSimInterface::set_object_color(const std::string &objectname, const std::vector<double> rgba_color)
 {
-    set_object_color(_get_handle_from_map(objectname), rgb_color, transparency);
+    set_object_color(_get_handle_from_map(objectname), rgba_color);
 }
 
 void DQ_CoppeliaSimInterface::set_object_as_respondable(const int &handle, const bool &respondable_object)
@@ -1491,37 +1492,78 @@ double DQ_CoppeliaSimInterface::compute_distance(const std::string &objectname1,
     return compute_distance(_get_handle_from_map(objectname1), _get_handle_from_map(objectname2), threshold);
 }
 
-void DQ_CoppeliaSimInterface::add_plane(const std::string &name, const DQ &normal_to_the_plane, const DQ &location, const std::vector<double> sizes, const std::vector<double> rgb_color, const double &transparency)
+void DQ_CoppeliaSimInterface::add_plane(const std::string &name,
+                                        const DQ &normal_to_the_plane,
+                                        const DQ &location,
+                                        const std::vector<double> sizes,
+                                        const std::vector<double> rgba_color,
+                                        const bool &add_normal,
+                                        const double &normal_scale)
 {
         if (!object_exist_on_scene(name))
         {
             add_primitive(PRIMITIVE::PLANE, name,
                           {sizes.at(0), sizes.at(1), sizes.at(1)});
-            set_object_color(name, rgb_color, transparency);
+            set_object_color(name, rgba_color);
             set_object_as_respondable(name, false);
             set_object_as_static(name, true);
+
+            if (add_normal)
+            {
+            // Add the normal
+            double rfc = 0.02*normal_scale;
+            std::vector<double> normal_size = {rfc*sizes.at(0),rfc* sizes.at(1), 0.2*normal_scale*sizes.at(1)};
+            std::string normal_name = _get_standard_name(name)+std::string("_normal");
+            add_primitive(PRIMITIVE::CYLINDER,
+                          normal_name,
+                          normal_size);
+            _set_static_object_properties(normal_name,
+                                          name,
+                                          1+0.5*E_*0.5*normal_size.at(2)*k_,
+                                          {0,0,1,1}
+                                          );
+            std::vector<double> arrow_size = {2*normal_size.at(0), 2*normal_size.at(1), 2*normal_size.at(1)};
+            std::string arrow_name = _get_standard_name(name)+std::string("_arrow");
+            add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
+
+            _set_static_object_properties(arrow_name,
+                                          name,
+                                          1+0.5*E_*normal_size.at(2)*k_,
+                                          {0,0,1,1});
+            }
+
+
         }
         if (!is_pure(location) and !is_quaternion(location))
             throw std::runtime_error("Location must be a pure quaternion");
         if (!is_unit(normal_to_the_plane))
             throw std::runtime_error("The normal must be a unit quaternion");
 
-        //double argument = std::round(static_cast<double>(dot(k_,normal_to_the_plane.P()))*100000)/100000;
-        //double phi = acos(argument);
-        //DQ nx = cross(k_, normal_to_the_plane.P());
-        //DQ rp = cos(phi/2) + nx.normalize()*sin(phi/2);
         set_object_pose(name, _get_pose_from_direction(normal_to_the_plane, location));
     }
 
-void DQ_CoppeliaSimInterface::add_line(const std::string &name, const DQ &line_direction, const DQ &location, const std::vector<double> thickness_and_length, const std::vector<double> rgb_color, const double &transparency)
+void DQ_CoppeliaSimInterface::add_line(const std::string &name, const DQ &line_direction, const DQ &location, const std::vector<double> thickness_and_length, const std::vector<double> rgba_color, const bool &add_arrow, const double &arrow_scale)
 {
     if (!object_exist_on_scene(name))
     {
         add_primitive(PRIMITIVE::CYLINDER, name,
                       {thickness_and_length.at(0), thickness_and_length.at(0), thickness_and_length.at(1)});
-        set_object_color(name, rgb_color, transparency);
+        set_object_color(name, rgba_color);
         set_object_as_respondable(name, false);
         set_object_as_static(name, true);
+        if (add_arrow)
+        {
+            // Add the normal
+
+            double rfc = 2*arrow_scale;
+            std::vector<double> arrow_size = {rfc*thickness_and_length.at(0),rfc*thickness_and_length.at(0), 0.02*arrow_scale*thickness_and_length.at(1)};
+            std::string arrow_name = _get_standard_name(name)+std::string("_normal");
+            add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
+            _set_static_object_properties(arrow_name,
+                                          name,
+                                          1+0.5*E_*0.5*thickness_and_length.at(1)*k_,
+                                          {0,0,1,1});
+        }
     }
     if (!is_pure(location) and !is_quaternion(location))
         throw std::runtime_error("Location must be a pure quaternion");
@@ -1539,7 +1581,7 @@ void DQ_CoppeliaSimInterface::add_line(const std::string &name, const DQ &line_d
  * @param color
  * @param max_item_count
  */
-void DQ_CoppeliaSimInterface::draw_trajectory(const DQ &point, const double &size, const std::vector<double> &color, const int &max_item_count)
+void DQ_CoppeliaSimInterface::draw_permanent_trajectory(const DQ &point, const double &size, const std::vector<double> &color, const int &max_item_count)
 {
     _check_client();
     VectorXd vpoint = point.vec3();
@@ -1865,6 +1907,17 @@ DQ DQ_CoppeliaSimInterface::_get_pose_from_direction(const DQ& direction, const 
         nx = cross(base_direction, direction);
     DQ r = cos(phi/2) + nx.normalize()*sin(phi/2);
     return r + 0.5*E_*point*r;
+}
+
+void DQ_CoppeliaSimInterface::_set_static_object_properties(const std::string &name,
+                                                            const std::string &parent_name,
+                                                            const DQ &pose, const std::vector<double> &rgba_color)
+{
+    set_object_color(name, rgba_color);
+    set_object_as_respondable(name, false);
+    set_object_as_static(name, true);
+    set_object_pose(name, pose);
+    set_object_parent(name, parent_name, false);
 }
 
 int DQ_CoppeliaSimInterface::get_primitive(const PRIMITIVE &primitive)

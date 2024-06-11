@@ -156,15 +156,14 @@ void DQ_CoppeliaSimModels::load_primitive(const DQ_CoppeliaSimInterface::PRIMITI
                                           const std::string &name,
                                           const DQ &pose,
                                           const std::vector<double> sizes,
-                                          const std::vector<double> rgb_color,
-                                          const double &transparency,
+                                          const std::vector<double> rgba_color,
                                           const bool &set_as_static,
                                           const bool &set_as_respondable)
 {
     if (!_get_interface_sptr()->object_exist_on_scene(name))
     {
         _get_interface_sptr()->add_primitive(primitive, name, sizes);
-        _get_interface_sptr()->set_object_color(name, rgb_color, transparency);
+        _get_interface_sptr()->set_object_color(name, rgba_color);
         _get_interface_sptr()->set_object_as_respondable(name, set_as_respondable);
         _get_interface_sptr()->set_object_as_static(name, set_as_static);
         _get_interface_sptr()->set_object_pose(name, pose);

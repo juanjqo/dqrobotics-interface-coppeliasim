@@ -225,12 +225,10 @@ public:
     //-------- Methods to be implemented on Matlab---------------
 
     void set_object_color(const int& handle,
-                          const std::vector<double> rgb_color,
-                          const double& transparency = 1);
+                          const std::vector<double> rgba_color);
 
     void set_object_color(const std::string& objectname,
-                          const std::vector<double> rgb_color,
-                          const double& transparency = 1);
+                          const std::vector<double> rgba_color);
 
     void set_object_as_respondable(const int& handle,
                                    const bool& respondable_object = true);
@@ -277,18 +275,20 @@ public:
                    const DQ& normal_to_the_plane,
                    const DQ& location,
                    const std::vector<double> sizes = {0.2,0.2},
-                   const std::vector<double> rgb_color = {1,0,0},
-                   const double& transparency = 0.5);
+                   const std::vector<double> rgba_color = {1,0,0,0.5},
+                   const bool& add_normal = true,
+                   const double& normal_scale = 1);
 
     void add_line(const std::string& name,
                    const DQ& line_direction,
                    const DQ& location,
                    const std::vector<double> thickness_and_length = {0.01,1.5},
-                   const std::vector<double> rgb_color = {1,0,0},
-                   const double& transparency = 0.5);
+                   const std::vector<double> rgba_color = {1,0,0,0.5},
+                   const bool& add_arrow = true,
+                   const double& arrow_scale = 1);
 
-    // To be removed!
-    void draw_trajectory(const DQ& point,
+    // To be removed?
+    void draw_permanent_trajectory(const DQ& point,
                          const double& size = 2,
                          const std::vector<double>& color = {1,0,0},
                          const int& max_item_count = 1000);
@@ -354,6 +354,11 @@ private:
     MatrixXd _get_rotation_matrix(const DQ& r) const;
 
     DQ _get_pose_from_direction(const DQ& direction, const DQ& point = DQ(1));
+
+    void _set_static_object_properties(const std::string& name,
+                                       const std::string& parent_name,
+                                       const DQ& pose,
+                                       const std::vector<double>& rgba_color);
 
 
 
