@@ -342,7 +342,6 @@ private:
                                                 {ENGINE::NEWTON, 3},
                                                 {ENGINE::MUJOCO, 4}};
 
-    //int _map_intparam_dynamic_engine(const ENGINE& engine);
 
     std::vector<int> _get_velocity_const_params() const;
 

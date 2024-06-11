@@ -1774,23 +1774,6 @@ std::string DQ_CoppeliaSimInterface::_get_standard_name(const std::string &str)
     return standard_str;
 }
 
-    /*
-int DQ_CoppeliaSimInterface::_map_intparam_dynamic_engine(const ENGINE &engine)
-{
-
-    switch (engine)
-    {
-    case ENGINE::BULLET:
-        return 0;
-    case ENGINE::ODE:
-        return 1;
-    case ENGINE::VORTEX:
-    case ENGINE::NEWTON:
-    case ENGINE::MUJOCO:
-        break;
-
-}
-    }*/
 
 /**
  * @brief DQ_CoppeliaSimInterface::_get_velocity_const_params
