@@ -1492,7 +1492,7 @@ double DQ_CoppeliaSimInterface::compute_distance(const std::string &objectname1,
     return compute_distance(_get_handle_from_map(objectname1), _get_handle_from_map(objectname2), threshold);
 }
 
-void DQ_CoppeliaSimInterface::add_plane(const std::string &name,
+void DQ_CoppeliaSimInterface::plot_plane(const std::string &name,
                                         const DQ &normal_to_the_plane,
                                         const DQ &location,
                                         const std::vector<double> sizes,
@@ -1542,7 +1542,7 @@ void DQ_CoppeliaSimInterface::add_plane(const std::string &name,
         set_object_pose(name, _get_pose_from_direction(normal_to_the_plane, location));
     }
 
-void DQ_CoppeliaSimInterface::add_line(const std::string &name, const DQ &line_direction, const DQ &location, const std::vector<double> thickness_and_length, const std::vector<double> rgba_color, const bool &add_arrow, const double &arrow_scale)
+void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_direction, const DQ &location, const std::vector<double> thickness_and_length, const std::vector<double> rgba_color, const bool &add_arrow, const double &arrow_scale)
 {
     if (!object_exist_on_scene(name))
     {

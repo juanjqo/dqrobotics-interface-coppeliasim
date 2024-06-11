@@ -271,7 +271,7 @@ public:
                             const std::string& objectname2,
                             const double& threshold = 0);
 
-    void add_plane(const std::string& name,
+    void plot_plane(const std::string& name,
                    const DQ& normal_to_the_plane,
                    const DQ& location,
                    const std::vector<double> sizes = {0.2,0.2},
@@ -279,7 +279,7 @@ public:
                    const bool& add_normal = true,
                    const double& normal_scale = 1);
 
-    void add_line(const std::string& name,
+    void plot_line(const std::string& name,
                    const DQ& line_direction,
                    const DQ& location,
                    const std::vector<double> thickness_and_length = {0.01,1.5},

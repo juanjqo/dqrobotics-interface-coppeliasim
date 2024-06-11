@@ -42,11 +42,11 @@ int main()
     DQ xd = 1+0.5*E_*1*k_;
     DQ r = xd.P();
     DQ plane = r*k_*r.conj() + E_*0.5;
-    vi->add_plane("/plane",
+    vi->plot_plane("/plane",
                   plane.P(),
                   xd.translation(), {2,2}, {1,0,0,0.5}, true, 0.5);
 
-    vi->add_line("line", plane.P(), xd.translation(), {0.01,1.5}, {1,0,0,0.5}, true, 1);
+    vi->plot_line("line", plane.P(), xd.translation(), {0.01,1.5}, {1,0,0,0.5}, true, 1);
 
 
     //vi->draw_trajectory("/cone");
