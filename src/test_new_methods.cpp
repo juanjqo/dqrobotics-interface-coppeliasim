@@ -15,9 +15,9 @@ int main()
     //vi->close_scene();
 
 
-
+    vi->set_dynamic_engine(DQ_CoppeliaSimInterface::ENGINE::MUJOCO);
     auto csmodels = DQ_CoppeliaSimModels(vi);
-    //csmodels.load_reference_frames({"/x", "xd", "x_e", "x_m"});
+    csmodels.load_reference_frames({"/x", "xd", "x_e", "x_m"});
     //csmodels.load_panda("/Franka");
 /*
     csmodels.load_primitive(DQ_CoppeliaSimInterface::SPHEROID,
@@ -41,7 +41,7 @@ int main()
     DQ xd = vi->get_object_pose("/xd");
     DQ r = xd.P();
     DQ plane = r*k_*r.conj() + E_*0.5;
-    vi->add_plane("/plane", plane, xd.translation());
+    vi->add_plane("/plane", plane.P(), xd.translation());
 
 
     //vi->draw_trajectory("/cone");

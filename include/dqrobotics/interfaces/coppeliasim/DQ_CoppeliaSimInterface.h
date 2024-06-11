@@ -34,13 +34,13 @@ using namespace Eigen;
 class DQ_CoppeliaSimInterface
 {
 public:
-    enum JOINT_MODE
+    enum class JOINT_MODE
     {
         KINEMATIC,
         DYNAMIC,
         DEPENDENT
     };
-    enum ENGINE
+    enum class ENGINE
     {
         BULLET,
         ODE,
@@ -48,7 +48,7 @@ public:
         NEWTON,
         MUJOCO
     };
-    enum JOINT_CONTROL_MODE
+    enum class JOINT_CONTROL_MODE
     {
         FREE,
         FORCE,
@@ -58,12 +58,12 @@ public:
         CUSTOM,
         TORQUE
     };
-    enum REFERENCE
+    enum class REFERENCE
     {
         BODY_FRAME,
         ABSOLUTE_FRAME
     };
-    enum PRIMITIVE {
+    enum class PRIMITIVE {
         PLANE,
         DISC,
         CUBOID,
@@ -181,11 +181,11 @@ public:
     double get_mass(const int& handle) const;
     double get_mass(const std::string& object_name);
 
-    DQ     get_center_of_mass(const int& handle, const REFERENCE& reference_frame=ABSOLUTE_FRAME) const;
-    DQ     get_center_of_mass(const std::string& object_name, const REFERENCE& reference_frame=ABSOLUTE_FRAME);
+    DQ     get_center_of_mass(const int& handle, const REFERENCE& reference_frame=REFERENCE::ABSOLUTE_FRAME) const;
+    DQ     get_center_of_mass(const std::string& object_name, const REFERENCE& reference_frame=REFERENCE::ABSOLUTE_FRAME);
 
-    MatrixXd get_inertia_matrix(const int& handle, const REFERENCE& reference_frame=BODY_FRAME);
-    MatrixXd get_inertia_matrix(const std::string& link_name, const REFERENCE& reference_frame=BODY_FRAME);
+    MatrixXd get_inertia_matrix(const int& handle, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
+    MatrixXd get_inertia_matrix(const std::string& link_name, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
 
     //------------------Exclusive methods---------------------------------------------------------------
     void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
@@ -334,6 +334,15 @@ private:
     std::string _remove_first_slash_from_string(const std::string& str);
     bool _start_with_slash(const std::string& str);
     std::string _get_standard_name(const std::string& str);
+
+
+    std::unordered_map<ENGINE, int> engines_ = {{ENGINE::BULLET, 0},
+                                                {ENGINE::ODE,    1},
+                                                {ENGINE::VORTEX, 2},
+                                                {ENGINE::NEWTON, 3},
+                                                {ENGINE::MUJOCO, 4}};
+
+    //int _map_intparam_dynamic_engine(const ENGINE& engine);
 
     std::vector<int> _get_velocity_const_params() const;
 

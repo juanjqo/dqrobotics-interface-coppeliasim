@@ -1035,15 +1035,15 @@ void DQ_CoppeliaSimInterface::set_joint_mode(const std::string &jointname, const
     int jointMode;
     switch (joint_mode)
         {
-            case KINEMATIC:
-                jointMode = sim_->jointmode_kinematic;
-                break;
-            case DYNAMIC:
-                jointMode = sim_->jointmode_dynamic;
-                break;
-            case DEPENDENT:
-                jointMode = sim_->jointmode_dependent;
-                break;
+        case JOINT_MODE::KINEMATIC:
+                    jointMode = sim_->jointmode_kinematic;
+                    break;
+        case JOINT_MODE::DYNAMIC:
+                    jointMode = sim_->jointmode_dynamic;
+                    break;
+        case JOINT_MODE::DEPENDENT:
+                    jointMode = sim_->jointmode_dependent;
+                    break;
         }
         sim_->setJointMode(_get_handle_from_map(jointname), jointMode, 0);
 }
@@ -1070,25 +1070,25 @@ void DQ_CoppeliaSimInterface::set_joint_control_mode(const std::string &jointnam
     int64_t control_mode;
     switch (joint_control_mode)
     {
-    case FREE:
+    case JOINT_CONTROL_MODE::FREE:
         control_mode = sim_->jointdynctrl_free;
         break;
-    case FORCE:
+    case JOINT_CONTROL_MODE::FORCE:
         control_mode = sim_->jointdynctrl_force;
         break;
-    case VELOCITY:
+    case JOINT_CONTROL_MODE::VELOCITY:
         control_mode = sim_->jointdynctrl_velocity;
         break;
-    case POSITION:
+    case JOINT_CONTROL_MODE::POSITION:
         control_mode = sim_->jointdynctrl_position;
         break;
-    case SPRING:
+    case JOINT_CONTROL_MODE::SPRING:
         control_mode = sim_->jointdynctrl_spring;
         break;
-    case CUSTOM:
+    case JOINT_CONTROL_MODE::CUSTOM:
         control_mode = sim_->jointdynctrl_callback;
         break;
-    case TORQUE:
+    case JOINT_CONTROL_MODE::TORQUE:
         control_mode = sim_->jointdynctrl_velocity;
         break;
     }
@@ -1167,7 +1167,7 @@ void DQ_CoppeliaSimInterface::set_physics_time_step(const double &time_step) con
 void DQ_CoppeliaSimInterface::set_dynamic_engine(const ENGINE &engine)
 {
     _check_client();
-    sim_->setInt32Param(sim_->intparam_dynamic_engine, engine);
+    sim_->setInt32Param(sim_->intparam_dynamic_engine, engines_[engine]);
 }
 
 /**
@@ -1633,7 +1633,7 @@ DQ DQ_CoppeliaSimInterface::get_center_of_mass(const int &handle, const REFERENC
     DQ COM_body_frame;
     MatrixXd Inertia_maxtrix_body_frame;
     std::tie(COM_body_frame, Inertia_maxtrix_body_frame) =_get_center_of_mass_and_inertia_matrix(handle);
-    if (reference_frame == BODY_FRAME)
+    if (reference_frame == REFERENCE::BODY_FRAME)
         return COM_body_frame;
     else
     {
@@ -1665,7 +1665,7 @@ MatrixXd DQ_CoppeliaSimInterface::get_inertia_matrix(const int &handle, const RE
     DQ COM_body_frame;
     MatrixXd Inertia_maxtrix_body_frame;
     std::tie(COM_body_frame, Inertia_maxtrix_body_frame) =_get_center_of_mass_and_inertia_matrix(handle);
-    if (reference_frame == BODY_FRAME)
+    if (reference_frame == REFERENCE::BODY_FRAME)
         return Inertia_maxtrix_body_frame;
     else
     {
@@ -1774,6 +1774,24 @@ std::string DQ_CoppeliaSimInterface::_get_standard_name(const std::string &str)
     return standard_str;
 }
 
+    /*
+int DQ_CoppeliaSimInterface::_map_intparam_dynamic_engine(const ENGINE &engine)
+{
+
+    switch (engine)
+    {
+    case ENGINE::BULLET:
+        return 0;
+    case ENGINE::ODE:
+        return 1;
+    case ENGINE::VORTEX:
+    case ENGINE::NEWTON:
+    case ENGINE::MUJOCO:
+        break;
+
+}
+    }*/
+
 /**
  * @brief DQ_CoppeliaSimInterface::_get_velocity_const_params
  * @return
@@ -1855,9 +1873,13 @@ MatrixXd DQ_CoppeliaSimInterface::_get_rotation_matrix(const DQ& r) const{
 DQ DQ_CoppeliaSimInterface::_get_pose_from_direction(const DQ& direction, const DQ& point)
 {
     DQ base_direction = k_;
+    DQ nx;
     double argument = std::round(static_cast<double>(dot(base_direction,direction.P()))*100000)/100000;
     double phi = acos(argument);
-    DQ nx = cross(base_direction, direction.P());
+    if (phi == 0)
+        nx = base_direction;
+    else
+        nx = cross(base_direction, direction);
     DQ r = cos(phi/2) + nx.normalize()*sin(phi/2);
     return r + 0.5*E_*point*r;
 }
@@ -1866,19 +1888,19 @@ int DQ_CoppeliaSimInterface::get_primitive(const PRIMITIVE &primitive)
 {
     switch (primitive)
     {
-    case PLANE:
+    case PRIMITIVE::PLANE:
         return sim_->primitiveshape_plane;
-    case DISC:
+    case PRIMITIVE::DISC:
         return sim_->primitiveshape_disc;
-    case CUBOID:
+    case PRIMITIVE::CUBOID:
         return sim_->primitiveshape_cuboid;
-    case SPHEROID:
+    case PRIMITIVE::SPHEROID:
         return sim_->primitiveshape_spheroid;
-    case CYLINDER:
+    case PRIMITIVE::CYLINDER:
         return sim_->primitiveshape_cylinder;
-    case CONE:
+    case PRIMITIVE::CONE:
         return sim_->primitiveshape_cone;
-    case CAPSULE:
+    case PRIMITIVE::CAPSULE:
         return sim_->primitiveshape_capsule;
 
     }

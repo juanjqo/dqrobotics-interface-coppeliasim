@@ -122,21 +122,21 @@ void DQ_SerialCoppeliaSimRobot::set_control_inputs(const VectorXd &u)
     {
         switch (joint_control_mode_)
         {
-        case DQ_CoppeliaSimInterface::FREE:
+        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::FREE:
             break;
-        case DQ_CoppeliaSimInterface::FORCE:
+        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::FORCE:
             break;
-        case DQ_CoppeliaSimInterface::VELOCITY:
+        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::VELOCITY:
             _get_interface_sptr()->set_joint_target_velocities(jointnames_, u);
             break;
-        case DQ_CoppeliaSimInterface::POSITION:
+        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::POSITION:
             _get_interface_sptr()->set_joint_target_positions(jointnames_, u);
             break;
-        case DQ_CoppeliaSimInterface::SPRING:
+        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::SPRING:
             break;
-        case DQ_CoppeliaSimInterface::CUSTOM:
+        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::CUSTOM:
             break;
-        case DQ_CoppeliaSimInterface::TORQUE:
+        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::TORQUE:
             _get_interface_sptr()->set_joint_torques(jointnames_, u);
             break;
         }
