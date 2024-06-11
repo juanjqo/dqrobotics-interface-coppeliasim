@@ -274,9 +274,16 @@ public:
                             const double& threshold = 0);
 
     void add_plane(const std::string& name,
-                   const DQ& normal,
-                   const DQ& position,
-                   const std::vector<double> sizes = {0.2,0.2,0.2},
+                   const DQ& normal_to_the_plane,
+                   const DQ& location,
+                   const std::vector<double> sizes = {0.2,0.2},
+                   const std::vector<double> rgb_color = {1,0,0},
+                   const double& transparency = 0.5);
+
+    void add_line(const std::string& name,
+                   const DQ& line_direction,
+                   const DQ& location,
+                   const std::vector<double> thickness_and_length = {0.01,1.5},
                    const std::vector<double> rgb_color = {1,0,0},
                    const double& transparency = 0.5);
 
@@ -337,6 +344,8 @@ private:
 
     MatrixXd _get_transformation_matrix(const std::vector<double>& coeff_vector) const;
     MatrixXd _get_rotation_matrix(const DQ& r) const;
+
+    DQ _get_pose_from_direction(const DQ& direction, const DQ& point = DQ(1));
 
 
 

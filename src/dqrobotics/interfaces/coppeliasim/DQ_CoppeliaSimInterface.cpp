@@ -1312,7 +1312,7 @@ bool DQ_CoppeliaSimInterface::object_exist_on_scene(const std::string &objectnam
     std::optional<json> options = {{"noError", false}};
     try {
         _check_client();
-        auto rtn = sim_->getObject(objectname, options);
+        auto rtn = sim_->getObject(_get_standard_name(objectname), options);
         return (rtn != -1) ? true : false;
     } catch (...) {
         return false;
@@ -1491,28 +1491,46 @@ double DQ_CoppeliaSimInterface::compute_distance(const std::string &objectname1,
     return compute_distance(_get_handle_from_map(objectname1), _get_handle_from_map(objectname2), threshold);
 }
 
-void DQ_CoppeliaSimInterface::add_plane(const std::string &name, const DQ &normal, const DQ &position, const std::vector<double> sizes, const std::vector<double> rgb_color, const double &transparency)
+void DQ_CoppeliaSimInterface::add_plane(const std::string &name, const DQ &normal_to_the_plane, const DQ &location, const std::vector<double> sizes, const std::vector<double> rgb_color, const double &transparency)
 {
         if (!object_exist_on_scene(name))
         {
-            add_primitive(PRIMITIVE::PLANE, name, sizes);
+            add_primitive(PRIMITIVE::PLANE, name,
+                          {sizes.at(0), sizes.at(1), sizes.at(1)});
             set_object_color(name, rgb_color, transparency);
             set_object_as_respondable(name, false);
             set_object_as_static(name, true);
         }
-        if (!is_pure(position) and !is_quaternion(position))
-            throw std::runtime_error("The position must be a pure quaternion");
-        if (!is_unit(normal))
+        if (!is_pure(location) and !is_quaternion(location))
+            throw std::runtime_error("Location must be a pure quaternion");
+        if (!is_unit(normal_to_the_plane))
             throw std::runtime_error("The normal must be a unit quaternion");
-        DQ rc = get_object_rotation(name);
-        DQ current_normal = k_;
-        double phi = acos( double(dot(current_normal , normal.P())));
-        DQ nx = cross(k_, normal.P());
-        DQ rp = cos(phi/2) + nx.normalize()*sin(phi/2);
-        set_object_rotation(name, rp);
-        //set_object_pose(name, rp*(1+0.5*E_*normal.D()*k_));
-        set_object_translation(name, position);
+
+        //double argument = std::round(static_cast<double>(dot(k_,normal_to_the_plane.P()))*100000)/100000;
+        //double phi = acos(argument);
+        //DQ nx = cross(k_, normal_to_the_plane.P());
+        //DQ rp = cos(phi/2) + nx.normalize()*sin(phi/2);
+        set_object_pose(name, _get_pose_from_direction(normal_to_the_plane, location));
     }
+
+void DQ_CoppeliaSimInterface::add_line(const std::string &name, const DQ &line_direction, const DQ &location, const std::vector<double> thickness_and_length, const std::vector<double> rgb_color, const double &transparency)
+{
+    if (!object_exist_on_scene(name))
+    {
+        add_primitive(PRIMITIVE::CYLINDER, name,
+                      {thickness_and_length.at(0), thickness_and_length.at(0), thickness_and_length.at(1)});
+        set_object_color(name, rgb_color, transparency);
+        set_object_as_respondable(name, false);
+        set_object_as_static(name, true);
+    }
+    if (!is_pure(location) and !is_quaternion(location))
+        throw std::runtime_error("Location must be a pure quaternion");
+    if (!is_unit(line_direction))
+        throw std::runtime_error("The line direction must be a unit quaternion");
+
+    set_object_pose(name, _get_pose_from_direction(line_direction, location));
+
+}
 
 /**
  * @brief DQ_CoppeliaSimInterface::draw_trajectory
@@ -1827,6 +1845,21 @@ MatrixXd DQ_CoppeliaSimInterface::_get_rotation_matrix(const DQ& r) const{
         2*(a*c-w*b), 2*(b*c+w*a),   1-2*(a*a+b*b);
 
     return R;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::_get_rotation_from_direction
+ * @param direction
+ * @return
+ */
+DQ DQ_CoppeliaSimInterface::_get_pose_from_direction(const DQ& direction, const DQ& point)
+{
+    DQ base_direction = k_;
+    double argument = std::round(static_cast<double>(dot(base_direction,direction.P()))*100000)/100000;
+    double phi = acos(argument);
+    DQ nx = cross(base_direction, direction.P());
+    DQ r = cos(phi/2) + nx.normalize()*sin(phi/2);
+    return r + 0.5*E_*point*r;
 }
 
 int DQ_CoppeliaSimInterface::get_primitive(const PRIMITIVE &primitive)
