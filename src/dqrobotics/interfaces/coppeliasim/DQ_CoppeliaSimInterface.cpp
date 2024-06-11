@@ -1505,12 +1505,12 @@ void DQ_CoppeliaSimInterface::add_plane(const std::string &name, const DQ &norma
         if (!is_unit(normal))
             throw std::runtime_error("The normal must be a unit quaternion");
         DQ rc = get_object_rotation(name);
-        DQ current_normal = rc*k_*rc.conj();
+        DQ current_normal = k_;
         double phi = acos( double(dot(current_normal , normal.P())));
         DQ nx = cross(k_, normal.P());
         DQ rp = cos(phi/2) + nx.normalize()*sin(phi/2);
         set_object_rotation(name, rp);
-        set_object_pose(name, rp*(1+0.5*E_*normal.D()*k_));
+        //set_object_pose(name, rp*(1+0.5*E_*normal.D()*k_));
         set_object_translation(name, position);
     }
 
