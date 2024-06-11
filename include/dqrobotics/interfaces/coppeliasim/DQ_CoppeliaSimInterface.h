@@ -27,6 +27,8 @@ Contributors:
 #pragma once
 #include <dqrobotics/DQ.h>
 #include <unordered_map>
+#include <numbers>
+#include <algorithm>
 
 using namespace DQ_robotics;
 using namespace Eigen;
@@ -287,6 +289,11 @@ public:
                    const bool& add_arrow = true,
                    const double& arrow_scale = 1);
 
+    void plot_reference_frame(const std::string& name,
+                              const DQ& pose,
+                              const double& scale = 1,
+                              const std::vector<double>& thickness_and_length = {0.005, 0.1});
+
     // To be removed?
     void draw_permanent_trajectory(const DQ& point,
                          const double& size = 2,
@@ -321,6 +328,11 @@ public:
 
     int get_primitive(const PRIMITIVE& primitive);
 private:
+    enum class AXIS{
+        i,
+        j,
+        k
+    };
     bool client_created_ = false;
     bool enable_deprecated_name_compatibility_ = true;
     void _check_client() const;
@@ -354,6 +366,11 @@ private:
     MatrixXd _get_rotation_matrix(const DQ& r) const;
 
     DQ _get_pose_from_direction(const DQ& direction, const DQ& point = DQ(1));
+
+    void _create_static_axis_at_origin(const std::string& parent_name,
+                                       const std::vector<double>& sizes,
+                                       const AXIS& axis,
+                                       const double& alpha_color = 1);
 
     void _set_static_object_properties(const std::string& name,
                                        const std::string& parent_name,

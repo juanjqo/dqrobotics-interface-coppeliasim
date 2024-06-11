@@ -17,7 +17,9 @@ int main()
 
     vi->set_dynamic_engine(DQ_CoppeliaSimInterface::ENGINE::MUJOCO);
     auto csmodels = DQ_CoppeliaSimModels(vi);
-    csmodels.load_reference_frames({"/x", "xd", "x_e", "x_m"});
+    csmodels.load_reference_frames({"/x"});
+    vi->set_object_pose("/x", 1+0.5*E_*+0.025*i_);
+    /*
     csmodels.load_panda("/Franka");
 
     csmodels.load_primitive(DQ_CoppeliaSimInterface::PRIMITIVE::SPHEROID,
@@ -31,6 +33,7 @@ int main()
                             {0.1,0.1,0.1},{0,1,0,0.5},false, true);
 
 
+    */
     //vi->set_object_parent("/cone", "/Franka/connection", false);
     //auto dist = vi->compute_distance("/cone", "/cone2", 1);
 
@@ -39,15 +42,16 @@ int main()
     //std::cout<<dist<<std::endl;
     //vi->set_object_pose("/xd", 1+0.5*E_*1*k_);
 
-    DQ xd = 1+0.5*E_*1*k_;
-    DQ r = xd.P();
-    DQ plane = r*k_*r.conj() + E_*0.5;
-    vi->plot_plane("/plane",
-                  plane.P(),
-                  xd.translation(), {2,2}, {1,0,0,0.5}, true, 0.5);
+   // DQ xd = 1+0.5*E_*0.2*k_;
+   // DQ r = xd.P();
+   // DQ plane = r*k_*r.conj() + E_*0.5;
+   // vi->plot_plane("/plane",
+   //               plane.P(),
+   //               xd.translation(), {2,2}, {1,0,0,0.5}, true, 0.5);
 
-    vi->plot_line("line", plane.P(), xd.translation(), {0.01,1.5}, {1,0,0,0.5}, true, 1);
+    //vi->plot_line("line", plane.P(), xd.translation(), {0.01,0.5}, {1,0,0,0.5}, true, 1);
 
+    vi->plot_reference_frame("/xpose", DQ(1), 1,{0.005, 0.1});
 
     //vi->draw_trajectory("/cone");
 
