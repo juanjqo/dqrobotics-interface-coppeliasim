@@ -273,7 +273,8 @@ int DQ_CoppeliaSimInterface::get_object_handle(const std::string &objectname)
     }
     catch(const std::runtime_error& e)
     {
-
+        stop_simulation();
+        std::cerr<<"Simulation stopped!"<<std::endl;
         throw std::runtime_error(
             std::string(e.what())
             + " \n"
