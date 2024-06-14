@@ -327,15 +327,20 @@ public:
     //---------------------------------------------------------//
 
     int get_primitive(const PRIMITIVE& primitive);
+
+
 private:
     enum class AXIS{
         i,
         j,
         k
     };
+    std::string error_msg_ = std::string("Error in DQ_CoppeliaSimInterface::");
     bool client_created_ = false;
     bool enable_deprecated_name_compatibility_ = true;
     void _check_client() const;
+
+    void _throw_runtime_error(const std::string& msg);
 
     //-------------------map zone--------------------------------------------
     std::string _map_simulation_state(const int& state) const;
