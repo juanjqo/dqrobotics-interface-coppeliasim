@@ -72,6 +72,12 @@ DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
 
 }
 
+DQ_CoppeliaSimInterface::~DQ_CoppeliaSimInterface()
+{
+    if (cronometer_thread_.joinable())
+        cronometer_thread_.join();
+}
+
 //-------------------Private components-----------------------//
 std::unique_ptr<RemoteAPIClient> client_;
 std::unique_ptr<RemoteAPIObject::sim> sim_;
@@ -106,6 +112,36 @@ void _create_client(const std::string& host = "localhost",
     }
 }
 
+void DQ_CoppeliaSimInterface::_start_chronometer()
+{
+    auto initial_time_ = std::chrono::steady_clock::now();
+    while(elapsed_time_ < MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_)
+    {
+        auto end{std::chrono::steady_clock::now()};
+        auto elapsed_seconds_ = std::chrono::duration<double>{end - initial_time_};
+        elapsed_time_ = elapsed_seconds_.count()*1e3;
+
+    }
+
+    if (client_created_ == false)
+    {
+        std::cerr<<"Unstablished connection at "+ host_
+                    + " in port " + std::to_string(rpcPort_)<<std::endl;
+        std::cerr<<"You used a wait time of "+std::to_string(MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_) + "ms. Is enough time for your system?"<<std::endl;
+        std::cerr<<"is CoppeliaSim running with the port "<<std::to_string(rpcPort_)<<" enabled?"<<std::endl;
+        std::cerr<<""<<std::endl;
+        std::cerr<<"Example: using the terminal, open CoppeliaSim with arguments:"<<std::endl;
+        std::cerr<<""<<std::endl;
+        std::cerr<<"coppeliasim -GzmqRemoteApi.rpcPort="+std::to_string(rpcPort_)<<std::endl;
+        std::cerr<<""<<std::endl;
+
+        throw std::runtime_error("Unstablished connection.");
+    }
+
+
+}
+
+
 /**
  * @brief DQ_CoppeliaSimInterface::connect establish a connection between the client (your code) and
  *                                         the host (the CoppeliaSim scene).
@@ -113,16 +149,30 @@ void _create_client(const std::string& host = "localhost",
  *                machine in which is running the client.
  * @param rpcPort The port to establish a connection. (e.g. 23000, 23001, 23002, 23003...).
  * @param cntPort
- * @param verbose_
+ * @param verbose
  * @return
  */
-bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPort, const int &cntPort, const int &verbose_)
+bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPort, const int &MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION, const int &cntPort, const int &verbose)
 {
     bool rtn = false;
     try
     {
-        _create_client(host, rpcPort, cntPort, verbose_, client_created_);
+        host_ = host;
+        rpcPort_ = rpcPort;
+        cntPort_ = cntPort;
+        verbose_ = verbose;
+        MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_ = MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION;
+
+        if (cronometer_thread_.joinable())
+            cronometer_thread_.join();
+        cronometer_thread_ = std::thread(&DQ_CoppeliaSimInterface::_start_chronometer, this);
+
+
+        _create_client(host, rpcPort, cntPort, verbose, client_created_);
         client_created_ = true;
+
+        if (cronometer_thread_.joinable())
+            cronometer_thread_.join();
         rtn = true;
         set_status_bar_message("       ");
         _set_status_bar_message("DQ_CoppeliaSimInterface "

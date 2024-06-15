@@ -13,12 +13,12 @@ int main()
     auto vi1 = std::make_shared<DQ_CoppeliaSimInterface>();
     auto vi2 = std::make_shared<DQ_CoppeliaSimInterface>();
 
-    vi1->connect("localhost", 23001);
+    vi1->connect("localhost", 23000, 100);
     vi2->connect();
 
     vi1->start_simulation();
 
-    vi2->plot_reference_frame("/x2", DQ(1));
+    vi2->plot_reference_frame("/x2", DQ(1));//
     std::cout<<vi1->get_object_pose("/x2")<<std::endl;;
 
 

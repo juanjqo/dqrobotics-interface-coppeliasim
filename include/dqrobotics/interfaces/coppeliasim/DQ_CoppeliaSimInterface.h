@@ -30,6 +30,8 @@ Contributors:
 #include <numbers>
 #include <algorithm>
 #include <source_location>
+#include <thread>
+#include <atomic>
 
 using namespace DQ_robotics;
 using namespace Eigen;
@@ -77,10 +79,12 @@ public:
     };
 
     DQ_CoppeliaSimInterface();
+    ~DQ_CoppeliaSimInterface();
     bool connect(const std::string& host = "localhost",
                  const int& rpcPort = 23000,
+                 const int& MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION = 300,
                  const int& cntPort = -1,
-                 const int& verbose_ = -1);
+                 const int& verbose = -1);
 
     void   start_simulation() const;
     void   pause_simulation() const;
@@ -336,10 +340,20 @@ private:
         k
     };
 
-    bool client_created_ = false;
+    std::string host_ = "localhost";
+    int rpcPort_ = 23000;
+    int cntPort_ = -1;
+    int verbose_ = -1;
+
+    std::atomic<bool> client_created_ = false;
     bool enable_deprecated_name_compatibility_ = true;
     void _check_client() const;
     void _throw_runtime_error(const std::string& msg);
+
+    int MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_ = 300;
+    double elapsed_time_ = 0;
+    std::thread cronometer_thread_;
+    void _start_chronometer();
     //-------------------map zone--------------------------------------------
     std::string _map_simulation_state(const int& state) const;
     std::unordered_map<std::string, int> handles_map_;
