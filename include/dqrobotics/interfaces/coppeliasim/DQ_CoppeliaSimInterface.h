@@ -151,8 +151,7 @@ public:
 
     std::string get_object_name(const int& handle);
 
-    template<typename T>
-    std::vector<std::string> get_object_names(const T& handles);
+    std::vector<std::string> get_object_names(const auto& handles);
 
     std::vector<std::string> get_jointnames_from_base_objectname(const std::string& base_objectname);
     std::vector<std::string> get_linknames_from_base_objectname(const std::string& base_objectname);
@@ -385,9 +384,9 @@ private:
 
     std::tuple<DQ, MatrixXd> _get_center_of_mass_and_inertia_matrix(const int& handle) const;
 
-    template<typename T, typename U>
-    void _check_sizes(const T &v1,
-                      const U &v2,
+
+    void _check_sizes(const auto &v1,
+                      const auto &v2,
                       const std::string error_message) const
     {
         if (static_cast<std::size_t>(v1.size()) != static_cast<std::size_t>(v2.size()))

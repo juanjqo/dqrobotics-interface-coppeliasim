@@ -49,7 +49,7 @@ int main()
    //               plane.P(),
    //               xd.translation(), {2,2}, {1,0,0,0.5}, true, 0.5);
 
-    vi->plot_line("lineTest", 1.1*k_, 0.5*k_, {0.01,0.5}, {1,0,0,0.5}, true, 1);
+    vi->plot_line("lineTest", 1.*k_, 0.5*k_, {0.01,0.5}, {1,0,0,0.5}, true, 1);
 
     vi->plot_reference_frame("/xpose", DQ(1), 1,{0.005, 0.1});
 
