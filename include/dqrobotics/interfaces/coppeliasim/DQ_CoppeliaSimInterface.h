@@ -29,6 +29,7 @@ Contributors:
 #include <unordered_map>
 #include <numbers>
 #include <algorithm>
+#include <source_location>
 
 using namespace DQ_robotics;
 using namespace Eigen;
@@ -335,13 +336,11 @@ private:
         j,
         k
     };
-    std::string error_msg_ = std::string("Error in DQ_CoppeliaSimInterface::");
+
     bool client_created_ = false;
     bool enable_deprecated_name_compatibility_ = true;
     void _check_client() const;
-
     void _throw_runtime_error(const std::string& msg);
-
     //-------------------map zone--------------------------------------------
     std::string _map_simulation_state(const int& state) const;
     std::unordered_map<std::string, int> handles_map_;

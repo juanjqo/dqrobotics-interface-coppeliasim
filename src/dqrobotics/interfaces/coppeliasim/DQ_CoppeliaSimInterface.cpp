@@ -460,8 +460,8 @@ void DQ_CoppeliaSimInterface::set_object_pose(const int &handle, const DQ &h)
 void DQ_CoppeliaSimInterface::set_object_pose(const std::string &objectname, const DQ &h)
 {
     if (!is_unit(h))
-        _throw_runtime_error("Error in DQ_CoppeliaSimInterface::set_object_pose(). "
-                             "The pose must be a unit dual quaternion!");
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The pose must be a unit dual quaternion!");
     set_object_pose(_get_handle_from_map(objectname), h);
 }
 
@@ -1514,9 +1514,11 @@ void DQ_CoppeliaSimInterface::plot_plane(const std::string &name,
                                         const double &normal_scale)
 {
     if (!is_unit(normal_to_the_plane) or !is_quaternion(normal_to_the_plane))
-        _throw_runtime_error("Error in DQ_CoppeliaSimInterface::plot_plane(). The normal to the plane must be a unit quaternion!");
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The normal to the plane must be a unit quaternion!");
     if (!is_pure(location) or !is_quaternion(location))
-        _throw_runtime_error("Error in DQ_CoppeliaSimInterface::plot_plane(). The location must be a pure quaternion!");
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The location must be a pure quaternion!");
 
 
     if (!object_exist_on_scene(name))
@@ -1558,10 +1560,12 @@ void DQ_CoppeliaSimInterface::plot_plane(const std::string &name,
 void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_direction, const DQ &location, const std::vector<double> thickness_and_length, const std::vector<double> rgba_color, const bool &add_arrow, const double &arrow_scale)
 {
     if (!is_unit(line_direction) or !is_quaternion(line_direction))
-        _throw_runtime_error("Error in DQ_CoppeliaSimInterface::plot_line(). The line direction must be a unit quaternion!");
-    if (!is_pure(location) or !is_quaternion(location))
-        _throw_runtime_error("Error in DQ_CoppeliaSimInterface::plot_line(). The location must be a pure quaternion!");
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The line direction must be a unit quaternion!");
 
+    if (!is_pure(location) or !is_quaternion(location))
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The location must be a pure quaternion!");
 
     if (!object_exist_on_scene(name))
     {
@@ -1609,7 +1613,9 @@ void DQ_CoppeliaSimInterface::plot_reference_frame(const std::string &name,
     _check_client();
 
     if (!is_unit(pose))
-        _throw_runtime_error("Error in DQ_CoppeliaSimInterface::plot_reference_frame(). The pose must be a unit dual quaternion!");
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The pose must be a unit dual quaternion!");
+
 
     if (!object_exist_on_scene(name))
     {
@@ -1647,7 +1653,8 @@ void DQ_CoppeliaSimInterface::draw_permanent_trajectory(const DQ &point, const d
 {
     _check_client();
     if (!is_pure(point) or !is_quaternion(point))
-        _throw_runtime_error("Error in DQ_CoppeliaSimInterface::draw_permanent_trajectory(). The point must be a pure quaternion.");
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The point must be a pure quaternion.");
     VectorXd vpoint = point.vec3();
     std::vector<double> itemdata = {0,0,0,vpoint(0), vpoint(1), vpoint(2)};
     auto drawn_handle = sim_->addDrawingObject(sim_->drawing_lines+sim_->drawing_cyclic,size,0,-1,max_item_count, color);
