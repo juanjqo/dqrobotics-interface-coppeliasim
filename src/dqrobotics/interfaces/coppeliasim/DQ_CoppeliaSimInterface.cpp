@@ -72,6 +72,12 @@ DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
 
 }
 
+DQ_CoppeliaSimInterface::~DQ_CoppeliaSimInterface()
+{
+    if (cronometer_thread_.joinable())
+        cronometer_thread_.join();
+}
+
 //-------------------Private components-----------------------//
 std::unique_ptr<RemoteAPIClient> client_;
 std::unique_ptr<RemoteAPIObject::sim> sim_;
@@ -106,6 +112,22 @@ void _create_client(const std::string& host = "localhost",
     }
 }
 
+void DQ_CoppeliaSimInterface::_start_chronometer()
+{
+    auto initial_time_ = std::chrono::steady_clock::now();
+    while(elapsed_time_ < MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_)
+    {
+        auto end{std::chrono::steady_clock::now()};
+        auto elapsed_seconds_ = std::chrono::duration<double>{end - initial_time_};
+        elapsed_time_ = elapsed_seconds_.count()*1e3;//
+
+    }
+
+    std::cout<<"elapsed time (ms): "<<elapsed_time_<<std::endl;
+    if (client_created_ == false)
+        throw std::runtime_error("Unstablished connection!");
+}
+
 /**
  * @brief DQ_CoppeliaSimInterface::connect establish a connection between the client (your code) and
  *                                         the host (the CoppeliaSim scene).
@@ -121,8 +143,18 @@ bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
     bool rtn = false;
     try
     {
+        std::cerr<<"Trying connection..."<<std::endl;
+        if (cronometer_thread_.joinable())
+            cronometer_thread_.join();
+        cronometer_thread_ = std::thread(&DQ_CoppeliaSimInterface::_start_chronometer, this);
+
+
         _create_client(host, rpcPort, cntPort, verbose_, client_created_);
         client_created_ = true;
+
+        std::cout<<"flag: "<<client_created_<<std::endl;
+        if (cronometer_thread_.joinable())
+            cronometer_thread_.join();
         rtn = true;
         set_status_bar_message("       ");
         _set_status_bar_message("DQ_CoppeliaSimInterface "
