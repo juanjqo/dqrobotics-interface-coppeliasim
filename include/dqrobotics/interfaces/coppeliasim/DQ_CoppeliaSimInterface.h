@@ -83,7 +83,7 @@ public:
     bool connect(const std::string& host = "localhost",
                  const int& rpcPort = 23000,
                  const int& cntPort = -1,
-                 const int& verbose_ = -1);
+                 const int& verbose = -1);
 
     void   start_simulation() const;
     void   pause_simulation() const;
@@ -339,12 +339,17 @@ private:
         k
     };
 
+    std::string host_ = "localhost";
+    int rpcPort_ = 23000;
+    int cntPort_ = -1;
+    int verbose_ = -1;
+
     std::atomic<bool> client_created_ = false;
     bool enable_deprecated_name_compatibility_ = true;
     void _check_client() const;
     void _throw_runtime_error(const std::string& msg);
 
-    int MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_ = 3000;
+    int MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_ = 300;
     double elapsed_time_ = 0;
     std::thread cronometer_thread_;
     void _start_chronometer();

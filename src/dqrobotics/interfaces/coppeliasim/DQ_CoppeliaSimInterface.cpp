@@ -119,14 +119,27 @@ void DQ_CoppeliaSimInterface::_start_chronometer()
     {
         auto end{std::chrono::steady_clock::now()};
         auto elapsed_seconds_ = std::chrono::duration<double>{end - initial_time_};
-        elapsed_time_ = elapsed_seconds_.count()*1e3;//
+        elapsed_time_ = elapsed_seconds_.count()*1e3;
 
     }
 
-    std::cout<<"elapsed time (ms): "<<elapsed_time_<<std::endl;
     if (client_created_ == false)
-        throw std::runtime_error("Unstablished connection!");
+    {
+        std::cerr<<"Unstablished connection at "+ host_
+                    + " in port " + std::to_string(rpcPort_)<<std::endl;
+        std::cerr<<"is CoppeliaSim running with the port "<<std::to_string(rpcPort_)<<" enabled?"<<std::endl;
+        std::cerr<<""<<std::endl;
+        std::cerr<<"Example: using the terminal, open CoppeliaSim with arguments:"<<std::endl;
+        std::cerr<<""<<std::endl;
+        std::cerr<<"coppeliasim -GzmqRemoteApi.rpcPort="+std::to_string(rpcPort_)<<std::endl;
+        std::cerr<<""<<std::endl;
+
+        throw std::runtime_error("Unstablished connection.");
+    }
+
+
 }
+
 
 /**
  * @brief DQ_CoppeliaSimInterface::connect establish a connection between the client (your code) and
@@ -135,24 +148,27 @@ void DQ_CoppeliaSimInterface::_start_chronometer()
  *                machine in which is running the client.
  * @param rpcPort The port to establish a connection. (e.g. 23000, 23001, 23002, 23003...).
  * @param cntPort
- * @param verbose_
+ * @param verbose
  * @return
  */
-bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPort, const int &cntPort, const int &verbose_)
+bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPort, const int &cntPort, const int &verbose)
 {
     bool rtn = false;
     try
     {
-        std::cerr<<"Trying connection..."<<std::endl;
+        host_ = host;
+        rpcPort_ = rpcPort;
+        cntPort_ = cntPort;
+        verbose_ = verbose;
+
         if (cronometer_thread_.joinable())
             cronometer_thread_.join();
         cronometer_thread_ = std::thread(&DQ_CoppeliaSimInterface::_start_chronometer, this);
 
 
-        _create_client(host, rpcPort, cntPort, verbose_, client_created_);
+        _create_client(host, rpcPort, cntPort, verbose, client_created_);
         client_created_ = true;
 
-        std::cout<<"flag: "<<client_created_<<std::endl;
         if (cronometer_thread_.joinable())
             cronometer_thread_.join();
         rtn = true;
