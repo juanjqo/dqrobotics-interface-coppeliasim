@@ -127,6 +127,7 @@ void DQ_CoppeliaSimInterface::_start_chronometer()
     {
         std::cerr<<"Unstablished connection at "+ host_
                     + " in port " + std::to_string(rpcPort_)<<std::endl;
+        std::cerr<<"You used a wait time of "+std::to_string(MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_) + "ms. Is enough time for your system?"<<std::endl;
         std::cerr<<"is CoppeliaSim running with the port "<<std::to_string(rpcPort_)<<" enabled?"<<std::endl;
         std::cerr<<""<<std::endl;
         std::cerr<<"Example: using the terminal, open CoppeliaSim with arguments:"<<std::endl;
@@ -151,7 +152,7 @@ void DQ_CoppeliaSimInterface::_start_chronometer()
  * @param verbose
  * @return
  */
-bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPort, const int &cntPort, const int &verbose)
+bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPort, const int &MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION, const int &cntPort, const int &verbose)
 {
     bool rtn = false;
     try
@@ -160,6 +161,7 @@ bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
         rpcPort_ = rpcPort;
         cntPort_ = cntPort;
         verbose_ = verbose;
+        MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_ = MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION;
 
         if (cronometer_thread_.joinable())
             cronometer_thread_.join();

@@ -13,7 +13,7 @@ int main()
     auto vi1 = std::make_shared<DQ_CoppeliaSimInterface>();
     auto vi2 = std::make_shared<DQ_CoppeliaSimInterface>();
 
-    vi1->connect("localhost", 23000);
+    vi1->connect("localhost", 23000, 100);
     vi2->connect();
 
     vi1->start_simulation();

@@ -82,6 +82,7 @@ public:
     ~DQ_CoppeliaSimInterface();
     bool connect(const std::string& host = "localhost",
                  const int& rpcPort = 23000,
+                 const int& MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION = 300,
                  const int& cntPort = -1,
                  const int& verbose = -1);
 
