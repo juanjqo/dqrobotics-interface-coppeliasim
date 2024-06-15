@@ -354,6 +354,7 @@ private:
     double elapsed_time_ = 0;
     std::thread cronometer_thread_;
     void _start_chronometer();
+    void _check_connection();
     //-------------------map zone--------------------------------------------
     std::string _map_simulation_state(const int& state) const;
     std::unordered_map<std::string, int> handles_map_;

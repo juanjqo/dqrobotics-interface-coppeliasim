@@ -122,11 +122,15 @@ void DQ_CoppeliaSimInterface::_start_chronometer()
         elapsed_time_ = elapsed_seconds_.count()*1e3;
 
     }
+    _check_connection();
+}
 
+void DQ_CoppeliaSimInterface::_check_connection()
+{
     if (client_created_ == false)
     {
-        std::cerr<<"Unstablished connection at "+ host_
-                    + " in port " + std::to_string(rpcPort_)<<std::endl;
+        std::cerr<<"Unestablished connection at "+ host_
+                         + " in port " + std::to_string(rpcPort_)<<std::endl;
         std::cerr<<"You used a wait time of "+std::to_string(MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_) + "ms. Is enough time for your system?"<<std::endl;
         std::cerr<<"is CoppeliaSim running with the port "<<std::to_string(rpcPort_)<<" enabled?"<<std::endl;
         std::cerr<<""<<std::endl;
@@ -135,10 +139,8 @@ void DQ_CoppeliaSimInterface::_start_chronometer()
         std::cerr<<"coppeliasim -GzmqRemoteApi.rpcPort="+std::to_string(rpcPort_)<<std::endl;
         std::cerr<<""<<std::endl;
 
-        throw std::runtime_error("Unstablished connection.");
+        throw std::runtime_error("Unestablished connection.");
     }
-
-
 }
 
 
