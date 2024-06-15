@@ -833,8 +833,7 @@ std::string DQ_CoppeliaSimInterface::get_object_name(const int &handle)
  * @param handles
  * @return
  */
-template<typename T>
-std::vector<std::string> DQ_CoppeliaSimInterface::get_object_names(const T &handles)
+std::vector<std::string> DQ_CoppeliaSimInterface::get_object_names(const auto &handles)
 {
     std::size_t n = handles.size();
     std::vector<std::string> objectnames(n);
