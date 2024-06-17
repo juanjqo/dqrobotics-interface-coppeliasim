@@ -111,12 +111,18 @@ void _create_client(const std::string& host = "localhost",
     }
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::_join_if_joinable_chronometer_thread
+ */
 void DQ_CoppeliaSimInterface::_join_if_joinable_chronometer_thread()
 {
     if (chronometer_thread_.joinable())
         chronometer_thread_.join();
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::_start_chronometer
+ */
 void DQ_CoppeliaSimInterface::_start_chronometer()
 {
     auto initial_time_ = std::chrono::steady_clock::now();
@@ -125,11 +131,13 @@ void DQ_CoppeliaSimInterface::_start_chronometer()
         auto end{std::chrono::steady_clock::now()};
         auto elapsed_seconds_ = std::chrono::duration<double>{end - initial_time_};
         elapsed_time_ = elapsed_seconds_.count()*1e3;
-
     }
     _check_connection();
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::_check_connection
+ */
 void DQ_CoppeliaSimInterface::_check_connection()
 {
     if (!client_created_)
@@ -320,8 +328,7 @@ int DQ_CoppeliaSimInterface::get_object_handle(const std::string &objectname)
     std::string additional_error_message = "";
     if (!_start_with_slash(objectname) && enable_deprecated_name_compatibility_ == false)
     {
-        additional_error_message = std::string("Did you mean \"/" + objectname + "\"? \n");;
-
+        additional_error_message = std::string("Did you mean \"/" + objectname + "\"? \n");
     }
     try
     {
@@ -353,10 +360,9 @@ std::vector<int> DQ_CoppeliaSimInterface::get_object_handles(const std::vector<s
 {
     int n = objectnames.size();
     std::vector<int> handles(n);
-    for(int i=0;i<n;i++)
-    {
+    for(auto i=0;i<n;i++)
         handles[i]=get_object_handle(objectnames[i]);
-    }
+
     return handles;
 }
 
@@ -554,12 +560,11 @@ double DQ_CoppeliaSimInterface::get_joint_position(const std::string &jointname)
  */
 VectorXd DQ_CoppeliaSimInterface::get_joint_positions(const std::vector<int> &handles) const
 {
-    std::size_t n = handles.size();
+    int n = handles.size();
     VectorXd joint_positions(n);
-    for(std::size_t i=0;i<n;i++)
-    {
+    for(auto i=0;i<n;i++)
         joint_positions(i)=get_joint_position(handles.at(i));
-    }
+
     return joint_positions;
 }
 
@@ -570,12 +575,11 @@ VectorXd DQ_CoppeliaSimInterface::get_joint_positions(const std::vector<int> &ha
  */
 VectorXd DQ_CoppeliaSimInterface::get_joint_positions(const std::vector<std::string> &jointnames)
 {
-    std::size_t n = jointnames.size();
+    int n = jointnames.size();
     VectorXd joint_positions(n);
-    for(std::size_t i=0;i<n;i++)
-    {
+    for(auto i=0;i<n;i++)
         joint_positions(i)=get_joint_position(jointnames[i]);
-    }
+
     return joint_positions;
 }
 
@@ -697,9 +701,9 @@ double DQ_CoppeliaSimInterface::get_joint_velocity(const std::string &jointname)
  */
 VectorXd DQ_CoppeliaSimInterface::get_joint_velocities(const std::vector<int> &handles) const
 {
-    std::size_t n = handles.size();
+    int n = handles.size();
     VectorXd joint_velocities(n);
-    for(std::size_t i=0;i<n;i++)
+    for(auto i=0;i<n;i++)
         joint_velocities(i)=get_joint_velocity(handles.at(i));
 
     return joint_velocities;
@@ -712,12 +716,11 @@ VectorXd DQ_CoppeliaSimInterface::get_joint_velocities(const std::vector<int> &h
  */
 VectorXd DQ_CoppeliaSimInterface::get_joint_velocities(const std::vector<std::string> &jointnames)
 {
-    std::size_t n = jointnames.size();
+    int n = jointnames.size();
     VectorXd joint_velocities(n);
-    for(std::size_t i=0;i<n;i++)
-    {
+    for(auto i=0;i<n;i++)
         joint_velocities(i)=get_joint_velocity(jointnames[i]);
-    }
+
     return joint_velocities;
 }
 
@@ -776,12 +779,10 @@ void DQ_CoppeliaSimInterface::set_joint_torque(const int &handle, const double &
     _check_client();
     double angle_dot_rad_max = 10000.0;
     if (torque==0)
-    {
         angle_dot_rad_max = 0.0;
-    }else if (torque<0)
-    {
+    else if (torque<0)
         angle_dot_rad_max = -10000.0;
-    }
+
     //simxSetJointTargetVelocity(clientid_,handle,angle_dot_rad_max,_remap_op_mode(opmode));
     //simxSetJointForce(clientid_,handle,abs(torque_f),_remap_op_mode(opmode));
     sim_->setJointTargetVelocity(handle, angle_dot_rad_max);
@@ -850,9 +851,9 @@ double DQ_CoppeliaSimInterface::get_joint_torque(const std::string &jointname)
  */
 VectorXd DQ_CoppeliaSimInterface::get_joint_torques(const std::vector<int> &handles) const
 {
-    std::size_t n = handles.size();
+    int n = handles.size();
     VectorXd joint_torques(n);
-    for(std::size_t i=0;i<n;i++)
+    for(auto i=0;i<n;i++)
         joint_torques(i)=get_joint_torque(handles.at(i));
 
     return joint_torques;
@@ -865,12 +866,11 @@ VectorXd DQ_CoppeliaSimInterface::get_joint_torques(const std::vector<int> &hand
  */
 VectorXd DQ_CoppeliaSimInterface::get_joint_torques(const std::vector<std::string> &jointnames)
 {
-    std::size_t n = jointnames.size();
+    int n = jointnames.size();
     VectorXd joint_torques(n);
-    for(std::size_t i=0;i<n;i++)
-    {
+    for(auto i=0;i<n;i++)
         joint_torques(i)=get_joint_torque(jointnames[i]);
-    }
+
     return joint_torques;
 }
 
@@ -894,12 +894,11 @@ std::string DQ_CoppeliaSimInterface::get_object_name(const int &handle)
  */
 std::vector<std::string> DQ_CoppeliaSimInterface::get_object_names(const auto &handles)
 {
-    std::size_t n = handles.size();
+    int n = handles.size();
     std::vector<std::string> objectnames(n);
-    for(std::size_t i=0;i<n;i++)
-    {
+    for(auto i=0;i<n;i++)
         objectnames.at(i)=get_object_name(handles.at(i));
-    }
+
     return objectnames;
 }
 
