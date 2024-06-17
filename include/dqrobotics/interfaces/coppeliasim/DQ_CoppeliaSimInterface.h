@@ -220,7 +220,7 @@ public:
                                        const bool& load_model_only_if_missing = true,
                                        const bool& remove_child_script = true);
 
-    void remove_child_script_from_object(const std::string& objectname);
+    void remove_child_script_from_object(const std::string& objectname, const std::string& script_name = "/Script");
     bool object_exist_on_scene(const std::string& objectname) const;
 
     void set_object_name(const int& handle,
@@ -306,13 +306,14 @@ public:
                          const std::vector<double>& color = {1,0,0},
                          const int& max_item_count = 1000);
 
-    int add_child_script(const std::string& objectname);
+   // int add_child_script(const std::string& objectname);
 
-    // Not working!
+/*
     void draw_trajectory(const std::string& objectname,
                          const double& size = 2,
                          const std::vector<double>& color = {1,0,0},
                          const int& max_item_count = 1000);
+*/
 
 
     //----------------------------------------------------------------------------------------

@@ -1351,15 +1351,18 @@ bool DQ_CoppeliaSimInterface::load_from_model_browser(const std::string &path_to
 
 /**
  * @brief DQ_CoppeliaSimInterface::remove_child_script_from_object
+ *        The script must be located at objectname/script_name
  * @param objectname
+ * @param script_name
  */
-void DQ_CoppeliaSimInterface::remove_child_script_from_object(const std::string &objectname)
+void DQ_CoppeliaSimInterface::remove_child_script_from_object(const std::string &objectname, const std::string &script_name)
 {
     _check_client();
-    auto script_handle = sim_->getScript(sim_->scripttype_childscript,
-                                         _get_handle_from_map(objectname));
-    if (script_handle != -1)
-        sim_->removeScript(script_handle);
+    if (object_exist_on_scene(_get_standard_name(objectname)+script_name))
+    {
+        int handle = _get_handle_from_map(_get_standard_name(objectname)+script_name);
+        sim_->removeObjects({handle}, false);
+    }
 }
 
 /**
@@ -1722,10 +1725,7 @@ void DQ_CoppeliaSimInterface::draw_permanent_trajectory(const DQ &point, const d
         );
 }
 
-/**
- * @brief DQ_CoppeliaSimInterface::add_child_script
- * @param objectname
- */
+/*
 int DQ_CoppeliaSimInterface::add_child_script(const std::string &objectname)
 {
     _check_client();
@@ -1733,7 +1733,9 @@ int DQ_CoppeliaSimInterface::add_child_script(const std::string &objectname)
     sim_->associateScriptWithObject(scriptHandle, _get_handle_from_map(objectname));
     return scriptHandle;
 }
+*/
 
+/*
 void DQ_CoppeliaSimInterface::draw_trajectory(const std::string &objectname, const double &size, const std::vector<double> &color, const int &max_item_count)
 {
     _check_client();
@@ -1753,6 +1755,7 @@ void DQ_CoppeliaSimInterface::draw_trajectory(const std::string &objectname, con
     //sim_->executeScriptString(stringToExecute, scriptHandle);
 
 }
+*/
 
 /*
  *
@@ -1780,7 +1783,7 @@ end
 double DQ_CoppeliaSimInterface::get_mass(const int &handle) const
 {
    _check_client();
-   return sim_->getShapeMassAndInertia(handle);
+   return sim_->getShapeMass(handle);
 }
 
 /**
