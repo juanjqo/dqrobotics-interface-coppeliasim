@@ -15,7 +15,10 @@ int main()
     try {
         vi1->connect("localhost", 23000, 200);//
         vi1->close_scene();
-        vi1->load_from_model_browser("/robots/non-mobile/UR5.ttm", "/UR5", true, true);
+        vi1->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm",
+                                     "/Franka", true, false);
+        //vi1->remove_child_script_from_object("/Franka");
+        vi1->draw_trajectory("/Franka/connection", 4, {1,0,0}, 100);
 
         vi1->start_simulation();
 

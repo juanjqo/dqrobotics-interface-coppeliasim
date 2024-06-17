@@ -306,14 +306,15 @@ public:
                          const std::vector<double>& color = {1,0,0},
                          const int& max_item_count = 1000);
 
-   // int add_child_script(const std::string& objectname);
+   int add_simulation_lua_script(const std::string& script_name,
+                                 const std::string& script_code);
 
-/*
+
     void draw_trajectory(const std::string& objectname,
                          const double& size = 2,
-                         const std::vector<double>& color = {1,0,0},
+                         const std::vector<double>& color = {1,0,1},
                          const int& max_item_count = 1000);
-*/
+
 
 
     //----------------------------------------------------------------------------------------
