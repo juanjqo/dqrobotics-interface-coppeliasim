@@ -74,8 +74,7 @@ DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
 
 DQ_CoppeliaSimInterface::~DQ_CoppeliaSimInterface()
 {
-    if (cronometer_thread_.joinable())
-        cronometer_thread_.join();
+    _join_if_joinable_chronometer_thread();
 }
 
 //-------------------Private components-----------------------//
@@ -112,6 +111,12 @@ void _create_client(const std::string& host = "localhost",
     }
 }
 
+void DQ_CoppeliaSimInterface::_join_if_joinable_chronometer_thread()
+{
+    if (chronometer_thread_.joinable())
+        chronometer_thread_.join();
+}
+
 void DQ_CoppeliaSimInterface::_start_chronometer()
 {
     auto initial_time_ = std::chrono::steady_clock::now();
@@ -127,16 +132,22 @@ void DQ_CoppeliaSimInterface::_start_chronometer()
 
 void DQ_CoppeliaSimInterface::_check_connection()
 {
-    if (client_created_ == false)
+    if (!client_created_)
     {
         std::cerr<<"Unestablished connection at "+ host_
                          + " in port " + std::to_string(rpcPort_)<<std::endl;
         std::cerr<<"You used a wait time of "+std::to_string(MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_) + "ms. Is enough time for your system?"<<std::endl;
-        std::cerr<<"is CoppeliaSim running with the port "<<std::to_string(rpcPort_)<<" enabled?"<<std::endl;
-        std::cerr<<""<<std::endl;
-        std::cerr<<"Example: using the terminal, open CoppeliaSim with arguments:"<<std::endl;
-        std::cerr<<""<<std::endl;
-        std::cerr<<"coppeliasim -GzmqRemoteApi.rpcPort="+std::to_string(rpcPort_)<<std::endl;
+        if(rpcPort_ != 23000)
+        {
+            std::cerr<<""<<std::endl;
+            std::cerr<<"is CoppeliaSim running with the port "<<std::to_string(rpcPort_)<<" enabled?"<<std::endl;
+            std::cerr<<""<<std::endl;
+            std::cerr<<"Example: using the terminal, open CoppeliaSim with arguments:"<<std::endl;
+            std::cerr<<"----------------------------------------"<<std::endl;
+            std::cerr<<"coppeliasim -GzmqRemoteApi.rpcPort="+std::to_string(rpcPort_)<<std::endl;
+            std::cerr<<"----------------------------------------"<<std::endl;
+        }
+
         std::cerr<<""<<std::endl;
 
         throw std::runtime_error("Unestablished connection.");
@@ -156,7 +167,6 @@ void DQ_CoppeliaSimInterface::_check_connection()
  */
 bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPort, const int &MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION, const int &cntPort, const int &verbose)
 {
-    bool rtn = false;
     try
     {
         host_ = host;
@@ -165,17 +175,14 @@ bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
         verbose_ = verbose;
         MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_ = MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION;
 
-        if (cronometer_thread_.joinable())
-            cronometer_thread_.join();
-        cronometer_thread_ = std::thread(&DQ_CoppeliaSimInterface::_start_chronometer, this);
+        _join_if_joinable_chronometer_thread();
+        chronometer_thread_ = std::thread(&DQ_CoppeliaSimInterface::_start_chronometer, this);
 
 
         _create_client(host, rpcPort, cntPort, verbose, client_created_);
         client_created_ = true;
 
-        if (cronometer_thread_.joinable())
-            cronometer_thread_.join();
-        rtn = true;
+        _join_if_joinable_chronometer_thread();
         set_status_bar_message("       ");
         _set_status_bar_message("DQ_CoppeliaSimInterface "
                                 "is brought to you by Juan Jose Quiroz Omana",
@@ -186,7 +193,7 @@ bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
         std::cerr << "Runtime error in DQ_CoppeliaSimInterface::connect. "
                   << e.what() << std::endl;
     }
-    return rtn;
+    return client_created_;
 }
 
 /**
@@ -1360,7 +1367,7 @@ void DQ_CoppeliaSimInterface::remove_child_script_from_object(const std::string 
  * @param objectname
  * @return
  */
-bool DQ_CoppeliaSimInterface::object_exist_on_scene(const std::string &objectname)
+bool DQ_CoppeliaSimInterface::object_exist_on_scene(const std::string &objectname) const
 {
     std::optional<json> options = {{"noError", false}};
     try {
@@ -1373,7 +1380,7 @@ bool DQ_CoppeliaSimInterface::object_exist_on_scene(const std::string &objectnam
 
 }
 
-void DQ_CoppeliaSimInterface::set_object_name(const int &handle, const std::string &new_object_name)
+void DQ_CoppeliaSimInterface::set_object_name(const int &handle, const std::string &new_object_name) const
 {
     _check_client();
     sim_->setObjectAlias(handle, new_object_name);
@@ -1391,7 +1398,7 @@ void DQ_CoppeliaSimInterface::set_object_name(const std::string &current_object_
 
 
 void DQ_CoppeliaSimInterface::set_object_color(const int &handle,
-                                               const std::vector<double> rgba_color)
+                                               const std::vector<double> rgba_color) const
 {
     _check_client();
     sim_->setShapeColor(handle, "", sim_->colorcomponent_ambient_diffuse, {rgba_color.at(0), rgba_color.at(1),rgba_color.at(2)});
@@ -1403,7 +1410,7 @@ void DQ_CoppeliaSimInterface::set_object_color(const std::string &objectname, co
     set_object_color(_get_handle_from_map(objectname), rgba_color);
 }
 
-void DQ_CoppeliaSimInterface::set_object_as_respondable(const int &handle, const bool &respondable_object)
+void DQ_CoppeliaSimInterface::set_object_as_respondable(const int &handle, const bool &respondable_object) const
 {
     _check_client();
     sim_->setObjectInt32Param(handle,
@@ -1417,7 +1424,7 @@ void DQ_CoppeliaSimInterface::set_object_as_respondable(const std::string &objec
     set_object_as_respondable(_get_handle_from_map(objectname), respondable_object);
 }
 
-void DQ_CoppeliaSimInterface::set_object_as_static(const int &handle, const bool &static_object)
+void DQ_CoppeliaSimInterface::set_object_as_static(const int &handle, const bool &static_object) const
 {
     _check_client();
     sim_->setObjectInt32Param(handle,
@@ -1432,12 +1439,12 @@ void DQ_CoppeliaSimInterface::set_object_as_static(const std::string &objectname
 
 
 void DQ_CoppeliaSimInterface::add_primitive(const PRIMITIVE &primitive, const std::string &name,
-                                            const std::vector<double> &sizes)
+                                            const std::vector<double> &sizes) const
 {
     if (!object_exist_on_scene(name))
     {
         _check_client();
-        int shapeHandle = sim_->createPrimitiveShape(get_primitive(primitive), sizes, 0);
+        int shapeHandle = sim_->createPrimitiveShape(get_primitive_identifier(primitive), sizes, 0);
         set_object_name(shapeHandle, _remove_first_slash_from_string(name));
     }
 
@@ -1473,7 +1480,7 @@ void DQ_CoppeliaSimInterface::set_object_parent(const std::string &objectname,
  * @param handle2
  * @return
  */
-bool DQ_CoppeliaSimInterface::check_collision(const int &handle1, const int &handle2)
+bool DQ_CoppeliaSimInterface::check_collision(const int &handle1, const int &handle2) const
 {
     _check_client();
     auto [result, collidingObjectHandles] = sim_->checkCollision(handle1, handle2);
@@ -1498,7 +1505,7 @@ bool DQ_CoppeliaSimInterface::check_collision(const std::string &objectname1, co
  * @param threshold
  * @return
  */
-std::tuple<double, DQ, DQ> DQ_CoppeliaSimInterface::check_distance(const int &handle1, const int &handle2, const double &threshold)
+std::tuple<double, DQ, DQ> DQ_CoppeliaSimInterface::check_distance(const int &handle1, const int &handle2, const double &threshold) const
 {
     _check_client();
     auto [result, data, objectHandlePair] = sim_->checkDistance(handle1, handle2, threshold);
@@ -1528,7 +1535,7 @@ std::tuple<double, DQ, DQ> DQ_CoppeliaSimInterface::check_distance(const std::st
  * @param threshold
  * @return
  */
-double DQ_CoppeliaSimInterface::compute_distance(const int &handle1, const int &handle2, const double &threshold)
+double DQ_CoppeliaSimInterface::compute_distance(const int &handle1, const int &handle2, const double &threshold) const
 {
     return std::get<0>(check_distance(handle1, handle2, threshold));
 }
@@ -1897,7 +1904,7 @@ int DQ_CoppeliaSimInterface::wait_for_simulation_step_to_end(){return 0;}
 
 
 //---------------Private methods-----------------------------
-std::string DQ_CoppeliaSimInterface::_remove_first_slash_from_string(const std::string &str)
+std::string DQ_CoppeliaSimInterface::_remove_first_slash_from_string(const std::string &str) const
 {
     std::string new_str = str;
     size_t found = str.find('/');
@@ -1911,7 +1918,7 @@ std::string DQ_CoppeliaSimInterface::_remove_first_slash_from_string(const std::
     return new_str;
 }
 
-bool DQ_CoppeliaSimInterface::_start_with_slash(const std::string &str)
+bool DQ_CoppeliaSimInterface::_start_with_slash(const std::string &str) const
 {
     /*
     size_t found = str.find('/');
@@ -1930,7 +1937,7 @@ bool DQ_CoppeliaSimInterface::_start_with_slash(const std::string &str)
  * @param str
  * @return
  */
-std::string DQ_CoppeliaSimInterface::_get_standard_name(const std::string &str)
+std::string DQ_CoppeliaSimInterface::_get_standard_name(const std::string &str) const
 {
     std::string standard_str = str;
     if (!_start_with_slash(str) && enable_deprecated_name_compatibility_ == true)
@@ -2094,7 +2101,7 @@ void DQ_CoppeliaSimInterface::_set_static_object_properties(const std::string &n
     set_object_parent(name, parent_name, false);
 }
 
-int DQ_CoppeliaSimInterface::get_primitive(const PRIMITIVE &primitive)
+int DQ_CoppeliaSimInterface::get_primitive_identifier(const PRIMITIVE &primitive) const
 {
     switch (primitive)
     {
@@ -2128,6 +2135,7 @@ void DQ_CoppeliaSimInterface::_throw_runtime_error(const std::string &msg)
     std::cerr<<"Something went wrong. I stopped the simulation!"<<std::endl;
     throw std::runtime_error(msg);
 }
+
 
 /**
  * @brief DQ_CoppeliaSimInterface::get_center_of_mass_and_inertia_matrix

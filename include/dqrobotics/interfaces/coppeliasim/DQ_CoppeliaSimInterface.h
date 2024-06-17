@@ -221,36 +221,36 @@ public:
                                        const bool& remove_child_script = true);
 
     void remove_child_script_from_object(const std::string& objectname);
-    bool object_exist_on_scene(const std::string& objectname);
+    bool object_exist_on_scene(const std::string& objectname) const;
 
     void set_object_name(const int& handle,
-                         const std::string& new_object_name);
+                         const std::string& new_object_name) const;
     void set_object_name(const std::string& current_object_name,
                          const std::string& new_object_name);
 
     //-------- Methods to be implemented on Matlab---------------
 
     void set_object_color(const int& handle,
-                          const std::vector<double> rgba_color);
+                          const std::vector<double> rgba_color) const;
 
     void set_object_color(const std::string& objectname,
                           const std::vector<double> rgba_color);
 
     void set_object_as_respondable(const int& handle,
-                                   const bool& respondable_object = true);
+                                   const bool& respondable_object = true) const;
 
     void set_object_as_respondable(const std::string& objectname,
                                    const bool& respondable_object = true);
 
     void set_object_as_static(const int& handle,
-                              const bool& static_object = true);
+                              const bool& static_object = true) const;
 
     void set_object_as_static(const std::string& objectname,
                               const bool& static_object = true);
 
     void add_primitive(const PRIMITIVE& primitive,
                        const std::string& name,
-                       const std::vector<double>& sizes);
+                       const std::vector<double>& sizes) const;
 
     void set_object_parent(const int& handle,
                            const int& parent_handle,
@@ -260,19 +260,19 @@ public:
                            const bool& move_child_to_parent_pose = true);
 
     bool check_collision(const int& handle1,
-                         const int& handle2);
+                         const int& handle2) const;
     bool check_collision(const std::string& objectname1,
                          const std::string& objectname2);
     std::tuple<double, DQ, DQ> check_distance(const int& handle1,
                                                 const int& handle2,
-                                                const double& threshold = 0);
+                                                const double& threshold = 0) const;
     std::tuple<double, DQ, DQ> check_distance(const std::string& objectname1,
                                                 const std::string& objectname2,
                                                 const double& threshold = 0);
 
     double compute_distance(const int& handle1,
                             const int& handle2,
-                            const double& threshold = 0);
+                            const double& threshold = 0) const;
     double compute_distance(const std::string& objectname1,
                             const std::string& objectname2,
                             const double& threshold = 0);
@@ -297,6 +297,8 @@ public:
                               const DQ& pose,
                               const double& scale = 1,
                               const std::vector<double>& thickness_and_length = {0.005, 0.1});
+
+    //--------Experimental-----------------------
 
     // To be removed?
     void draw_permanent_trajectory(const DQ& point,
@@ -330,10 +332,9 @@ public:
     int wait_for_simulation_step_to_end();
     //---------------------------------------------------------//
 
-    int get_primitive(const PRIMITIVE& primitive);
+    int get_primitive_identifier(const PRIMITIVE& primitive) const;
 
-
-private:
+protected:
     enum class AXIS{
         i,
         j,
@@ -345,6 +346,8 @@ private:
     int cntPort_ = -1;
     int verbose_ = -1;
 
+private:
+
     std::atomic<bool> client_created_ = false;
     bool enable_deprecated_name_compatibility_ = true;
     void _check_client() const;
@@ -352,7 +355,8 @@ private:
 
     int MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_ = 300;
     double elapsed_time_ = 0;
-    std::thread cronometer_thread_;
+    std::thread chronometer_thread_;
+    void _join_if_joinable_chronometer_thread();
     void _start_chronometer();
     void _check_connection();
     //-------------------map zone--------------------------------------------
@@ -361,9 +365,9 @@ private:
     void _update_map(const std::string& objectname, const int& handle);
     int _get_handle_from_map(const std::string& objectname);
     //------------------------------------------------------------------------
-    std::string _remove_first_slash_from_string(const std::string& str);
-    bool _start_with_slash(const std::string& str);
-    std::string _get_standard_name(const std::string& str);
+    std::string _remove_first_slash_from_string(const std::string& str) const;
+    bool _start_with_slash(const std::string& str) const;
+    std::string _get_standard_name(const std::string& str) const;
 
 
     std::unordered_map<ENGINE, int> engines_ = {{ENGINE::BULLET, 0},
