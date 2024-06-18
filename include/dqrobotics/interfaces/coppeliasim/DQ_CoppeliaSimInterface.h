@@ -348,10 +348,11 @@ protected:
         k
     };
 
+
     std::string host_ = "localhost";
-    int rpcPort_ = 23000;
-    int cntPort_ = -1;
-    int verbose_ = -1;
+    int rpcPort_ {23000};
+    int cntPort_ {-1};
+    int verbose_ {-1};
 
 private:
 
@@ -360,8 +361,8 @@ private:
     void _check_client() const;
     void _throw_runtime_error(const std::string& msg);
 
-    int MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_ = 300;
-    double elapsed_time_ = 0;
+    int MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_{300};
+    double elapsed_time_ {0};
     std::thread chronometer_thread_;
     void _join_if_joinable_chronometer_thread();
     void _start_chronometer();

@@ -142,22 +142,19 @@ void DQ_CoppeliaSimInterface::_check_connection()
 {
     if (!client_created_)
     {
-        std::cerr<<"Unestablished connection at "+ host_
-                         + " in port " + std::to_string(rpcPort_)<<std::endl;
-        std::cerr<<"You used a wait time of "+std::to_string(MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_) + "ms. Is enough time for your system?"<<std::endl;
+        std::cerr<<std::format("Unestablished connection at \"{}\" in port {}", host_, rpcPort_ )<<std::endl;
+        std::cerr<<std::format("You used a wait time of {}ms. Is enough time for your system?", MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_)<<std::endl;
         if(rpcPort_ != 23000)
         {
             std::cerr<<""<<std::endl;
-            std::cerr<<"is CoppeliaSim running with the port "<<std::to_string(rpcPort_)<<" enabled?"<<std::endl;
+            std::cerr<<std::format("is CoppeliaSim running with the port {} enabled?", rpcPort_)<<std::endl;
             std::cerr<<""<<std::endl;
             std::cerr<<"Example: using the terminal, open CoppeliaSim with arguments:"<<std::endl;
             std::cerr<<"----------------------------------------"<<std::endl;
-            std::cerr<<"coppeliasim -GzmqRemoteApi.rpcPort="+std::to_string(rpcPort_)<<std::endl;
+            std::cerr<<std::format("coppeliasim -GzmqRemoteApi.rpcPort={}", rpcPort_)<<std::endl;
             std::cerr<<"----------------------------------------"<<std::endl;
         }
-
         std::cerr<<""<<std::endl;
-
         throw std::runtime_error("Unestablished connection.");
     }
 }
