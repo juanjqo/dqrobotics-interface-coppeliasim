@@ -221,6 +221,7 @@ public:
                                        const bool& remove_child_script = true);
 
     void remove_child_script_from_object(const std::string& objectname, const std::string& script_name = "/Script");
+
     bool object_exist_on_scene(const std::string& objectname) const;
 
     void set_object_name(const int& handle,
@@ -306,8 +307,8 @@ public:
                          const std::vector<double>& color = {1,0,0},
                          const int& max_item_count = 1000);
 
-   int add_simulation_lua_script(const std::string& script_name,
-                                 const std::string& script_code);
+    int add_simulation_lua_script(const std::string& script_name,
+                                  const std::string& script_code);
 
 
     void draw_trajectory(const std::string& objectname,
@@ -315,7 +316,11 @@ public:
                          const std::vector<double>& color = {1,0,1},
                          const int& max_item_count = 1000);
 
-
+    // Soon
+    //void remove_object(const int& handle) const;
+    //void remove_object(const std::string& objectname);
+    //void remove_objects(const std::vector<int>& handles) const;
+    //void remove_objects(const std::vector<std::string>& objectnames);
 
     //----------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------

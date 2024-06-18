@@ -11,7 +11,7 @@ int main()
         sim.startSimulation();
         auto handle = sim.getObject("/Franka");
         std::vector<int64_t> scripthandles = sim.getObjectsInTree(handle,
-                                                                sim.appobj_script_type,
+                                                                sim.object_script_type,
                                                                 0);
         std::cout<<"Number of scripts: "<<scripthandles.size()<<std::endl;
         sim.stopSimulation();
