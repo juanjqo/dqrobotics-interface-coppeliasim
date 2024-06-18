@@ -1593,19 +1593,12 @@ void DQ_CoppeliaSimInterface::plot_plane(const std::string &name,
                 std::vector<double> scaled_size = {rfc*sizes.at(0),rfc* sizes.at(1), 0.2*normal_scale*sizes.at(1)};
                 _create_static_axis_at_origin(name, scaled_size, AXIS::k, 1);
             }
-
-
         }
-        if (!is_pure(location) and !is_quaternion(location))
-            throw std::runtime_error("Location must be a pure quaternion");
-        if (!is_unit(normal_to_the_plane))
-            throw std::runtime_error("The normal must be a unit quaternion");
-
         set_object_pose(name, _get_pose_from_direction(normal_to_the_plane, location));
     }
 
 
-    /**
+/**
  * @brief DQ_CoppeliaSimInterface::plot_line
  * @param name
  * @param line_direction
@@ -1646,11 +1639,6 @@ void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_
                                           {0,0,1,1});
         }
     }
-    if (!is_pure(location) and !is_quaternion(location))
-        throw std::runtime_error("Location must be a pure quaternion");
-    if (!is_unit(line_direction))
-        throw std::runtime_error("The line direction must be a unit quaternion");
-
     set_object_pose(name, _get_pose_from_direction(line_direction, location));
 
 }
@@ -1777,14 +1765,17 @@ void DQ_CoppeliaSimInterface::draw_trajectory(const std::string &objectname,
     }
 }
 
-/*
+
+/**
+ * @brief DQ_CoppeliaSimInterface::remove_object
+ * @param objectname
+ * @param remove_children
+ */
 void DQ_CoppeliaSimInterface::remove_object(const std::string& objectname, const bool &remove_children)
 {
     _check_client();
     auto standard_objectname = _get_standard_name(objectname);
     auto handle = _get_handle_from_map(standard_objectname);
-    //sim_->removeObjects({handle}, false);
-    //_update_map(standard_objectname, handle, UPDATE_MAP::REMOVE);
 
     if (remove_children)
     {
@@ -1798,16 +1789,12 @@ void DQ_CoppeliaSimInterface::remove_object(const std::string& objectname, const
             for (std::size_t i=0; i<objectnames.size();i++)
                 _update_map(_get_standard_name(objectnames.at(i)), handles.at(i), UPDATE_MAP::REMOVE);
         }
+    }else
+    {
+        sim_->removeObjects({handle}, false);
+        _update_map(standard_objectname, handle, UPDATE_MAP::REMOVE);
     }
 }
-*/
-/*
-void DQ_CoppeliaSimInterface::remove_objects(const std::vector<int> &handles) const
-{
-    for (auto& h : handles)
-        remove_object(h);
-}
-*/
 
 
 /**
@@ -2018,6 +2005,7 @@ bool DQ_CoppeliaSimInterface::_load_model(const std::string &path_to_filename,
     if (rtn != -1)
     {
         set_object_name(rtn, _remove_first_slash_from_string(desired_model_name));
+        _get_handle_from_map(_get_standard_name(desired_model_name)); // This is to update the map only.
         if (remove_child_script)
         {
             remove_child_script_from_object(std::string("/")

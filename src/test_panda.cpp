@@ -22,7 +22,7 @@ int main()
         vi1->draw_trajectory("/Franka/connection", 4, {1,0,0}, 100);
         vi1->plot_reference_frame("/x", DQ(1));
         vi1->show_map();
-        vi1->remove_object("/x", true);
+        vi1->remove_object("/Franka", true);
         std::cout<<" "<<std::endl;
         vi1->show_map();
 
