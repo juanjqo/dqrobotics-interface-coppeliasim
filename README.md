@@ -20,6 +20,19 @@ An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on Zer
 ![Static Badge](https://img.shields.io/badge/warning-yellow)
 This project is under active development, incomplete, and experimental/unstable. Therefore, **I highly recommend** the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability, and outstanding technical support.
 
+| Feature  | Status (C++20) | Status (Python) |  Status (Matlab ≥ R2023b) |
+| -------- | -------------- |---------------- |-------------------------- |
+|  Implementation | :construction: under construction | -- | :construction: under construction |
+| Migration to C++23 | :construction_worker: expected at some point | -- | -- |
+| Documentation | :construction: under construction | -- | :pushpin: planned |
+| Unit Testing | :pushpin: planned | -- | :pushpin: planned|
+| Packages | :pushpin: planned | -- | :pushpin: planned |
+
+
+
+
+
+
 
 ## Basic requirements (for C++ users)
 
