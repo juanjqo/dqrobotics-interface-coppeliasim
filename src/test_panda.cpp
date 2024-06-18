@@ -10,11 +10,11 @@ using namespace Eigen;
 
 int main()
 {
-    int x {static_cast<int>(3.0)};
+
     auto vi1 = std::make_shared<DQ_CoppeliaSimInterface>();
 
     try {
-        vi1->connect("localhost", 23001, 200);//
+        vi1->connect("localhost", 23000, 200);//
         vi1->close_scene();
         vi1->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm",
                                      "/Franka", true, false);

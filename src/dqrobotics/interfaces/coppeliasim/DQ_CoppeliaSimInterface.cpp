@@ -97,8 +97,9 @@ void _set_status_bar_message(const std::string &message, const int& verbosity_ty
  * @param cntPort
  * @param verbose_
  * @param client_flag
+ * @return
  */
-void _create_client(const std::string& host = "localhost",
+bool _create_client(const std::string& host = "localhost",
                                              const int& rpcPort = 23000,
                                              const int& cntPort = -1,
                                              const int& verbose_ = -1,
@@ -109,6 +110,7 @@ void _create_client(const std::string& host = "localhost",
          client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
          sim_    = std::make_unique<RemoteAPIObject::sim >(client_->getObject().sim());
     }
+    return true;
 }
 
 /**
@@ -184,8 +186,7 @@ bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
         chronometer_thread_ = std::thread(&DQ_CoppeliaSimInterface::_start_chronometer, this);
 
 
-        _create_client(host, rpcPort, cntPort, verbose, client_created_);
-        client_created_ = true;
+        client_created_ = _create_client(host, rpcPort, cntPort, verbose, client_created_);
 
         _join_if_joinable_chronometer_thread();
         set_status_bar_message("       ");
@@ -2134,7 +2135,7 @@ void DQ_CoppeliaSimInterface::_check_client() const
         throw std::runtime_error("Unestablished connection. Did you use connect()?");
 }
 
-void DQ_CoppeliaSimInterface::_throw_runtime_error(const std::string &msg)
+[[noreturn]] void DQ_CoppeliaSimInterface::_throw_runtime_error(const std::string &msg)
 {
     stop_simulation();
     std::cerr<<"Something went wrong. I stopped the simulation!"<<std::endl;

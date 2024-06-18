@@ -359,7 +359,7 @@ private:
     std::atomic<bool> client_created_ = false;
     bool enable_deprecated_name_compatibility_ = true;
     void _check_client() const;
-    void _throw_runtime_error(const std::string& msg);
+    [[noreturn]] void _throw_runtime_error(const std::string& msg);
 
     int MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_{300};
     double elapsed_time_ {0};
