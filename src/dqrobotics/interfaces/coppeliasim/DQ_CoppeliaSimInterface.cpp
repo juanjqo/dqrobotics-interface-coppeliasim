@@ -332,7 +332,7 @@ int DQ_CoppeliaSimInterface::get_object_handle(const std::string &objectname)
     {
         _check_client();
         auto standard_objectname = _get_standard_name(objectname);
-        handle = sim_->getObject(standard_objectname );
+        handle = sim_->getObject(standard_objectname);
         _update_map(standard_objectname, handle);
     }
     catch(const std::runtime_error& e)
@@ -1777,6 +1777,38 @@ void DQ_CoppeliaSimInterface::draw_trajectory(const std::string &objectname,
     }
 }
 
+/*
+void DQ_CoppeliaSimInterface::remove_object(const std::string& objectname, const bool &remove_children)
+{
+    _check_client();
+    auto standard_objectname = _get_standard_name(objectname);
+    auto handle = _get_handle_from_map(standard_objectname);
+    //sim_->removeObjects({handle}, false);
+    //_update_map(standard_objectname, handle, UPDATE_MAP::REMOVE);
+
+    if (remove_children)
+    {
+        auto handles = sim_->getObjectsInTree(handle, sim_->handle_all, 0);
+        if (handles.size() > 0)
+        {
+            auto objectnames = get_object_names(handles);
+            for (auto& n : objectnames)
+                std::cout<<n<<std::endl;
+            sim_->removeObjects(handles, false);
+            for (std::size_t i=0; i<objectnames.size();i++)
+                _update_map(_get_standard_name(objectnames.at(i)), handles.at(i), UPDATE_MAP::REMOVE);
+        }
+    }
+}
+*/
+/*
+void DQ_CoppeliaSimInterface::remove_objects(const std::vector<int> &handles) const
+{
+    for (auto& h : handles)
+        remove_object(h);
+}
+*/
+
 
 /**
  * @brief DQ_CoppeliaSimInterface::get_mass
@@ -1873,9 +1905,13 @@ MatrixXd DQ_CoppeliaSimInterface::get_inertia_matrix(const std::string &link_nam
  * @param handle
  */
 void DQ_CoppeliaSimInterface::_update_map(const std::string &objectname,
-                                                    const int &handle)
+                                          const int &handle, const UPDATE_MAP &mode)
 {
-    handles_map_.try_emplace(objectname, handle);
+    if (mode == DQ_CoppeliaSimInterface::UPDATE_MAP::ADD)
+        handles_map_.try_emplace(objectname, handle);
+    else
+        handles_map_.erase(objectname);
+
 }
 
 

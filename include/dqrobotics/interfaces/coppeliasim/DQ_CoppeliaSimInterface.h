@@ -316,10 +316,14 @@ public:
                          const std::vector<double>& color = {1,0,1},
                          const int& max_item_count = 1000);
 
-    // Soon
-    //void remove_object(const int& handle) const;
-    //void remove_object(const std::string& objectname);
+    //void remove_object(const std::string& objectname,
+    //                   const bool& remove_children = false);
     //void remove_objects(const std::vector<int>& handles) const;
+
+    // Soon
+    //
+    //void remove_object(const std::string& objectname);
+    //
     //void remove_objects(const std::vector<std::string>& objectnames);
 
     //----------------------------------------------------------------------------------------
@@ -342,11 +346,7 @@ public:
     int get_primitive_identifier(const PRIMITIVE& primitive) const;
 
 protected:
-    enum class AXIS{
-        i,
-        j,
-        k
-    };
+    enum class AXIS{i,j,k};
 
 
     std::string host_ = "localhost";
@@ -355,6 +355,7 @@ protected:
     int verbose_ {-1};
 
 private:
+    enum class UPDATE_MAP{ADD, REMOVE};
 
     std::atomic<bool> client_created_ = false;
     bool enable_deprecated_name_compatibility_ = true;
@@ -370,7 +371,7 @@ private:
     //-------------------map zone--------------------------------------------
     std::string _map_simulation_state(const int& state) const;
     std::unordered_map<std::string, int> handles_map_;
-    void _update_map(const std::string& objectname, const int& handle);
+    void _update_map(const std::string& objectname, const int& handle, const UPDATE_MAP& mode = UPDATE_MAP::ADD);
     int _get_handle_from_map(const std::string& objectname);
     //------------------------------------------------------------------------
     std::string _remove_first_slash_from_string(const std::string& str) const;

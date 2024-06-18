@@ -20,6 +20,11 @@ int main()
                                      "/Franka", true, false);
         //vi1->remove_child_script_from_object("/Franka");
         vi1->draw_trajectory("/Franka/connection", 4, {1,0,0}, 100);
+        vi1->plot_reference_frame("/x", DQ(1));
+        vi1->show_map();
+        vi1->remove_object("/x", true);
+        std::cout<<" "<<std::endl;
+        vi1->show_map();
 
         vi1->start_simulation();
 
