@@ -28,43 +28,10 @@ Contributors:
 #include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
 #include <RemoteAPIClient.h>
 
-std::string DQ_CoppeliaSimInterface::_map_simulation_state(const int &state) const
+std::string DQ_CoppeliaSimInterface::_map_simulation_state(const int &state)
 {
-    std::string str;
-    switch (state)
-    {
-        case 0:
-            str = "simulation_stopped";
-            break;
-        case 8:
-            str = "simulation_paused";
-            break;
-        case 17:
-            str = "simulation_advancing_running";
-            break;
-        case 22:
-            str = " simulation_advancing_lastbeforestop";
-            break;
-        case 19:
-            str = "simulation_advancing_lastbeforepause";
-            break;
-        case 16:
-            str = "simulation_advancing_firstafterstop or simulation_advancing";
-            break;
-        case 20:
-            str = "simulation_advancing_firstafterpause";
-            break;
-        case 21:
-            str = "simulation_advancing_abouttostop";
-            break;
-        default:
-            str = "Unknown status";
-    }
-        return str;
+    return simulation_status_[state];
 }
-
-
-
 
 DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
     :client_created_(false)

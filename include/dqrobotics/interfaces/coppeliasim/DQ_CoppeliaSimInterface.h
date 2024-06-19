@@ -368,7 +368,7 @@ private:
     void _start_chronometer();
     void _check_connection();
     //-------------------map zone--------------------------------------------
-    std::string _map_simulation_state(const int& state) const;
+    std::string _map_simulation_state(const int& state);
     std::unordered_map<std::string, int> handles_map_;
     void _update_map(const std::string& objectname, const int& handle, const UPDATE_MAP& mode = UPDATE_MAP::ADD);
     int _get_handle_from_map(const std::string& objectname);
@@ -389,6 +389,14 @@ private:
                                                 {ENGINE::NEWTON, 3},
                                                 {ENGINE::MUJOCO, 4}};
 
+    std::unordered_map<int, std::string> simulation_status_ = {{0, "simulation stopped"},
+                                                               {8, "simulation paused"},
+                                                               {17,"simulation advancing running"},
+                                                               {22, "simulation advancing last before stop"},
+                                                               {19, "simulation advancing last before pause"},
+                                                               {16, "simulation advancing first after stop or simulation advancing"},
+                                                               {20, "simulation advancing first after pause"},
+                                                               {21, "simulation advancing about to stop"}};
 
     std::vector<int> _get_velocity_const_params() const;
 
