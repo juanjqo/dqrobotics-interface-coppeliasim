@@ -112,7 +112,7 @@ void DQ_CoppeliaSimInterface::_check_connection()
     if (!client_created_)
     {
         std::cerr<<std::format("Unestablished connection at \"{}\" in port {}", host_, rpcPort_ )<<std::endl;
-        std::cerr<<std::format("You used a wait time of {}ms. Is enough time for your system?", MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_)<<std::endl;
+        std::cerr<<std::format("You used a timeout of {}ms. Is enough time for your system?", MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_)<<std::endl;
         if(rpcPort_ != 23000)
         {
             std::cerr<<""<<std::endl;
