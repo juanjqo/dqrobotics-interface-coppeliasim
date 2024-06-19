@@ -135,6 +135,7 @@ void DQ_CoppeliaSimInterface::_check_connection()
  * @param host    eg. 'localhost' if the host is running in the same
  *                machine in which is running the client.
  * @param rpcPort The port to establish a connection. (e.g. 23000, 23001, 23002, 23003...).
+ * @param MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION
  * @param cntPort
  * @param verbose
  * @return
