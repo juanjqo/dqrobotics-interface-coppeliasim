@@ -1694,7 +1694,7 @@ void DQ_CoppeliaSimInterface::remove_plotted_object(const std::string &name)
 {
     _check_client();
     auto standard_objectname = _get_standard_name(name);
-    auto handle = _get_handle_from_map(standard_objectname);
+    //auto handle = _get_handle_from_map(standard_objectname);
 
     auto search = created_handles_map_.find(name);
     if (search != created_handles_map_.end())
@@ -1707,6 +1707,9 @@ void DQ_CoppeliaSimInterface::remove_plotted_object(const std::string &name)
         }
         remove_object(standard_objectname, true);
         _update_map(standard_objectname, 0, UPDATE_MAP::REMOVE);
+    }else{
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The object "+name+" is not a plotted object or is not on the scene.");
     }
 }
 
