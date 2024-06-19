@@ -32,6 +32,7 @@ Contributors:
 #include <source_location>
 #include <thread>
 #include <atomic>
+#include <print> // For future use of C++23 features
 
 using namespace DQ_robotics;
 using namespace Eigen;
@@ -299,6 +300,8 @@ public:
                               const double& scale = 1,
                               const std::vector<double>& thickness_and_length = {0.005, 0.1});
 
+    void remove_plotted_object(const std::string& name);
+
     //--------Experimental-----------------------
 
     // To be removed?
@@ -324,6 +327,7 @@ public:
 
     std::unordered_map<std::string, int> get_map(); //For debug
     void show_map();  // For debug
+    void show_created_handle_map();  // For debug
 
     //-----------Deprecated methods---------------------------//
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
@@ -367,7 +371,10 @@ private:
     void _update_map(const std::string& objectname, const int& handle, const UPDATE_MAP& mode = UPDATE_MAP::ADD);
     int _get_handle_from_map(const std::string& objectname);
 
-    std::unordered_map<int, std::vector<std::string>> created_handles_map_;
+    std::unordered_map<std::string, std::vector<std::string>> created_handles_map_;
+    void _update_created_handles_map(const std::string& base_objectname,
+                                     const std::vector<std::string>& children_objectnames,
+                                     const UPDATE_MAP& mode = UPDATE_MAP::ADD);
     //------------------------------------------------------------------------
     std::string _remove_first_slash_from_string(const std::string& str) const;
     bool _start_with_slash(const std::string& str) const;
@@ -393,10 +400,11 @@ private:
 
     DQ _get_pose_from_direction(const DQ& direction, const DQ& point = DQ(1));
 
-    void _create_static_axis_at_origin(const std::string& parent_name,
-                                       const std::vector<double>& sizes,
-                                       const AXIS& axis,
-                                       const double& alpha_color = 1);
+    [[nodiscard("The created primitives must be added to the created_handles_map")]]
+    std::vector<std::string> _create_static_axis_at_origin(const std::string& parent_name,
+                                                           const std::vector<double>& sizes,
+                                                           const AXIS& axis,
+                                                           const double& alpha_color = 1);
 
     void _set_static_object_properties(const std::string& name,
                                        const std::string& parent_name,

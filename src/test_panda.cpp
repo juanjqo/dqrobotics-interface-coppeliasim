@@ -21,10 +21,16 @@ int main()
         //vi1->remove_child_script_from_object("/Franka");
         vi1->draw_trajectory("/Franka/connection", 4, {1,0,0}, 100);
         vi1->plot_reference_frame("/x", DQ(1));
+        vi1->plot_plane("/plane", k_, k_);
+        vi1->plot_line("/line", k_, k_);
         vi1->show_map();
-        vi1->remove_object("/Franka", true);
-        std::cout<<" "<<std::endl;
+        //vi1->remove_object("/Sphere", true);
+        vi1->remove_plotted_object("/x");
+        vi1->remove_plotted_object("/plane");
+        vi1->remove_plotted_object("/line");
+        std::cout<<""<<std::endl;
         vi1->show_map();
+        vi1->show_created_handle_map();
 
         vi1->start_simulation();
 

@@ -377,6 +377,18 @@ void DQ_CoppeliaSimInterface::show_map()
     }
 }
 
+void DQ_CoppeliaSimInterface::show_created_handle_map()
+{
+    std::cout<<"------------------"<<std::endl;
+    for (const auto& p : created_handles_map_)
+    {
+        std::cout<<"------------------"<<std::endl;
+        std::cout<<std::format("[ {} ]",p.first)<<std::endl;
+        for (const auto& n: p.second)
+            std::cout<<std::format(" --> {}", n)<<std::endl;
+    }
+}
+
 /**
  * @brief DQ_CoppeliaSimInterface::get_object_translation returns the position
  *        of a handle in the CoppeliaSim scene with respect to the absolute frame.
@@ -1586,13 +1598,15 @@ void DQ_CoppeliaSimInterface::plot_plane(const std::string &name,
             set_object_color(name, rgba_color);
             set_object_as_respondable(name, false);
             set_object_as_static(name, true);
+            std::vector<std::string> children_names;
 
             if (add_normal)
             {
                 double rfc = 0.02*normal_scale;
                 std::vector<double> scaled_size = {rfc*sizes.at(0),rfc* sizes.at(1), 0.2*normal_scale*sizes.at(1)};
-                _create_static_axis_at_origin(name, scaled_size, AXIS::k, 1);
+                children_names = _create_static_axis_at_origin(name, scaled_size, AXIS::k, 1);
             }
+            _update_created_handles_map(name, children_names);
         }
         set_object_pose(name, _get_pose_from_direction(normal_to_the_plane, location));
     }
@@ -1625,6 +1639,7 @@ void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_
         set_object_color(name, rgba_color);
         set_object_as_respondable(name, false);
         set_object_as_static(name, true);
+        std::vector<std::string> children_names;
         if (add_arrow)
         {
             // Add the normal
@@ -1633,11 +1648,13 @@ void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_
             std::vector<double> arrow_size = {rfc*thickness_and_length.at(0),rfc*thickness_and_length.at(0), 0.02*arrow_scale*thickness_and_length.at(1)};
             std::string arrow_name = _get_standard_name(name)+std::string("_normal");
             add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
+            children_names.push_back(arrow_name);
             _set_static_object_properties(arrow_name,
                                           name,
                                           1+0.5*E_*0.5*thickness_and_length.at(1)*k_,
                                           {0,0,1,1});
         }
+        _update_created_handles_map(name, children_names);
     }
     set_object_pose(name, _get_pose_from_direction(line_direction, location));
 
@@ -1670,12 +1687,21 @@ void DQ_CoppeliaSimInterface::plot_reference_frame(const std::string &name,
         set_object_color(name, {1,1,1,0.5});
         set_object_as_respondable(name, false);
         set_object_as_static(name, true);
-
+        std::vector<std::string> children_names;
+        std::vector<std::string> auxdest;
 
         std::vector<double> scaled_size = {scale*thickness_and_length.at(0),scale*thickness_and_length.at(0), scale*thickness_and_length.at(1)};
-        _create_static_axis_at_origin(name, scaled_size, AXIS::k, 1);
-        _create_static_axis_at_origin(name, scaled_size, AXIS::i, 1);
-        _create_static_axis_at_origin(name, scaled_size, AXIS::j, 1);
+        auto cnames1 = _create_static_axis_at_origin(name, scaled_size, AXIS::k, 1);
+        auto cnames2 =_create_static_axis_at_origin(name, scaled_size, AXIS::i, 1);
+        auto cnames3 =_create_static_axis_at_origin(name, scaled_size, AXIS::j, 1);
+
+        std::set_union(cnames1.cbegin(), cnames1.cend(),
+                       cnames2.cbegin(), cnames2.cend(),
+                       std::back_inserter(auxdest));
+        std::set_union(auxdest.cbegin(), auxdest.cend(),
+                       cnames3.cbegin(), cnames3.cend(),
+                       std::back_inserter(children_names));
+        _update_created_handles_map(name, children_names);
 
         std::vector<int64_t> shapehandles = sim_->getObjectsInTree(_get_handle_from_map(name),
                                                                    sim_->object_shape_type,
@@ -1686,6 +1712,34 @@ void DQ_CoppeliaSimInterface::plot_reference_frame(const std::string &name,
 
     }
     set_object_pose(name, pose);
+}
+
+
+/**
+ * @brief DQ_CoppeliaSimInterface::remove_plotted_object removes from the
+ *          CoppeliaSim scene planes, lines , reference_frames or all objects
+ *          added with plot-type methods. plot_plane, plot_line, and
+ *          plot_reference_frame are examples of plot-type methods.
+ * @param name The name of the primitive to be removed
+ */
+void DQ_CoppeliaSimInterface::remove_plotted_object(const std::string &name)
+{
+    _check_client();
+    auto standard_objectname = _get_standard_name(name);
+    auto handle = _get_handle_from_map(standard_objectname);
+
+    auto search = created_handles_map_.find(name);
+    if (search != created_handles_map_.end())
+    { //found in map
+        auto children_names = search->second;
+        for (std::size_t i=0; i<children_names.size();i++)
+        {
+            _update_map(_get_standard_name(children_names.at(i)), 0, UPDATE_MAP::REMOVE);
+            _update_created_handles_map(standard_objectname, children_names, UPDATE_MAP::REMOVE);
+        }
+        remove_object(standard_objectname, true);
+        _update_map(standard_objectname, 0, UPDATE_MAP::REMOVE);
+    }
 }
 
 /**
@@ -1783,8 +1837,6 @@ void DQ_CoppeliaSimInterface::remove_object(const std::string& objectname, const
         if (handles.size() > 0)
         {
             auto objectnames = get_object_names(handles);
-            for (auto& n : objectnames)
-                std::cout<<n<<std::endl;
             sim_->removeObjects(handles, false);
             for (std::size_t i=0; i<objectnames.size();i++)
                 _update_map(_get_standard_name(objectnames.at(i)), handles.at(i), UPDATE_MAP::REMOVE);
@@ -1921,6 +1973,16 @@ int DQ_CoppeliaSimInterface::_get_handle_from_map(const std::string &objectname)
         // is updated;
         return get_object_handle(objectname);
     }
+}
+
+void DQ_CoppeliaSimInterface::_update_created_handles_map(const std::string &base_objectname,
+                                                          const std::vector<std::string> &children_objectnames,
+                                                          const UPDATE_MAP &mode)
+{
+    if (mode == DQ_CoppeliaSimInterface::UPDATE_MAP::ADD)
+        created_handles_map_.try_emplace(base_objectname, children_objectnames);
+    else
+        created_handles_map_.erase(base_objectname);
 }
 
 
@@ -2068,11 +2130,12 @@ DQ DQ_CoppeliaSimInterface::_get_pose_from_direction(const DQ& direction, const 
     return r + 0.5*E_*point*r;
 }
 
-void DQ_CoppeliaSimInterface::_create_static_axis_at_origin(const std::string& parent_name,
+std::vector<std::string> DQ_CoppeliaSimInterface::_create_static_axis_at_origin(const std::string& parent_name,
                                                             const std::vector<double> &sizes,
                                                             const AXIS &axis,
                                                             const double &alpha_color)
 {
+    std::vector<std::string> created_primitives{};
     std::string name;
     DQ dqaxis;
     std::vector<double> color;
@@ -2099,12 +2162,8 @@ void DQ_CoppeliaSimInterface::_create_static_axis_at_origin(const std::string& p
         rotation = DQ(1);
         break;
     }
-    //double rfc = 0.02*scale;
-    //std::vector<double> scaled_size = {rfc*sizes.at(0),rfc* sizes.at(1), 0.2*scale*sizes.at(1)};
-
-    add_primitive(PRIMITIVE::CYLINDER,
-                  name,
-                  sizes);
+    add_primitive(PRIMITIVE::CYLINDER,name,sizes);
+    created_primitives.push_back(name);
     _set_static_object_properties(name,
                                   parent_name,
                                   rotation+0.5*E_*0.5*sizes.at(2)*dqaxis*rotation,
@@ -2113,11 +2172,12 @@ void DQ_CoppeliaSimInterface::_create_static_axis_at_origin(const std::string& p
     std::vector<double> arrow_size = {2*sizes.at(0), 2*sizes.at(1), 2*sizes.at(1)};
     std::string arrow_name = _get_standard_name(name)+std::string("_");
     add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
-
+    created_primitives.push_back(arrow_name);
     _set_static_object_properties(arrow_name,
                                   parent_name,
                                   rotation+0.5*E_*sizes.at(2)*dqaxis*rotation,
                                   color);
+    return created_primitives;
 }
 
 void DQ_CoppeliaSimInterface::_set_static_object_properties(const std::string &name,
