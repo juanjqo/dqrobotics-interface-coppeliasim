@@ -49,10 +49,10 @@ INSTALL(TARGETS ${PROJECT_NAME}
     PUBLIC_HEADER DESTINATION "include/dqrobotics/interfaces/coppeliasim"
     PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
 
-if(APPLE)
-    TARGET_LINK_LIBRARIES(${PROJECT_NAME}
-        -ldqrobotics)
-endif()
+#if(APPLE)
+#    TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+#        -ldqrobotics)
+#endif()
 
 if(WIN32)
 INSTALL(TARGETS ${PROJECT_NAME}
@@ -116,5 +116,5 @@ INSTALL(FILES
 
 add_executable(multiple_instances src/test_panda.cpp)
 target_link_libraries(multiple_instances PRIVATE
-                    dqrobotics
+                    #dqrobotics
                     ${PROJECT_NAME})

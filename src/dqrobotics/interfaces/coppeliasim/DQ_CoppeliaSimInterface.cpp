@@ -28,43 +28,10 @@ Contributors:
 #include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
 #include <RemoteAPIClient.h>
 
-std::string DQ_CoppeliaSimInterface::_map_simulation_state(const int &state) const
+std::string DQ_CoppeliaSimInterface::_map_simulation_state(const int &state)
 {
-    std::string str;
-    switch (state)
-    {
-        case 0:
-            str = "simulation_stopped";
-            break;
-        case 8:
-            str = "simulation_paused";
-            break;
-        case 17:
-            str = "simulation_advancing_running";
-            break;
-        case 22:
-            str = " simulation_advancing_lastbeforestop";
-            break;
-        case 19:
-            str = "simulation_advancing_lastbeforepause";
-            break;
-        case 16:
-            str = "simulation_advancing_firstafterstop or simulation_advancing";
-            break;
-        case 20:
-            str = "simulation_advancing_firstafterpause";
-            break;
-        case 21:
-            str = "simulation_advancing_abouttostop";
-            break;
-        default:
-            str = "Unknown status";
-    }
-        return str;
+    return simulation_status_[state];
 }
-
-
-
 
 DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
     :client_created_(false)
@@ -97,8 +64,9 @@ void _set_status_bar_message(const std::string &message, const int& verbosity_ty
  * @param cntPort
  * @param verbose_
  * @param client_flag
+ * @return
  */
-void _create_client(const std::string& host = "localhost",
+bool _create_client(const std::string& host = "localhost",
                                              const int& rpcPort = 23000,
                                              const int& cntPort = -1,
                                              const int& verbose_ = -1,
@@ -109,14 +77,21 @@ void _create_client(const std::string& host = "localhost",
          client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
          sim_    = std::make_unique<RemoteAPIObject::sim >(client_->getObject().sim());
     }
+    return true;
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::_join_if_joinable_chronometer_thread
+ */
 void DQ_CoppeliaSimInterface::_join_if_joinable_chronometer_thread()
 {
     if (chronometer_thread_.joinable())
         chronometer_thread_.join();
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::_start_chronometer
+ */
 void DQ_CoppeliaSimInterface::_start_chronometer()
 {
     auto initial_time_ = std::chrono::steady_clock::now();
@@ -125,31 +100,30 @@ void DQ_CoppeliaSimInterface::_start_chronometer()
         auto end{std::chrono::steady_clock::now()};
         auto elapsed_seconds_ = std::chrono::duration<double>{end - initial_time_};
         elapsed_time_ = elapsed_seconds_.count()*1e3;
-
     }
     _check_connection();
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::_check_connection
+ */
 void DQ_CoppeliaSimInterface::_check_connection()
 {
     if (!client_created_)
     {
-        std::cerr<<"Unestablished connection at "+ host_
-                         + " in port " + std::to_string(rpcPort_)<<std::endl;
-        std::cerr<<"You used a wait time of "+std::to_string(MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_) + "ms. Is enough time for your system?"<<std::endl;
+        std::cerr<<std::format("Unestablished connection at \"{}\" in port {}", host_, rpcPort_ )<<std::endl;
+        std::cerr<<std::format("You used a wait time of {}ms. Is enough time for your system?", MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_)<<std::endl;
         if(rpcPort_ != 23000)
         {
             std::cerr<<""<<std::endl;
-            std::cerr<<"is CoppeliaSim running with the port "<<std::to_string(rpcPort_)<<" enabled?"<<std::endl;
+            std::cerr<<std::format("is CoppeliaSim running with the port {} enabled?", rpcPort_)<<std::endl;
             std::cerr<<""<<std::endl;
             std::cerr<<"Example: using the terminal, open CoppeliaSim with arguments:"<<std::endl;
             std::cerr<<"----------------------------------------"<<std::endl;
-            std::cerr<<"coppeliasim -GzmqRemoteApi.rpcPort="+std::to_string(rpcPort_)<<std::endl;
+            std::cerr<<std::format("coppeliasim -GzmqRemoteApi.rpcPort={}", rpcPort_)<<std::endl;
             std::cerr<<"----------------------------------------"<<std::endl;
         }
-
         std::cerr<<""<<std::endl;
-
         throw std::runtime_error("Unestablished connection.");
     }
 }
@@ -161,6 +135,7 @@ void DQ_CoppeliaSimInterface::_check_connection()
  * @param host    eg. 'localhost' if the host is running in the same
  *                machine in which is running the client.
  * @param rpcPort The port to establish a connection. (e.g. 23000, 23001, 23002, 23003...).
+ * @param MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION
  * @param cntPort
  * @param verbose
  * @return
@@ -179,8 +154,7 @@ bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
         chronometer_thread_ = std::thread(&DQ_CoppeliaSimInterface::_start_chronometer, this);
 
 
-        _create_client(host, rpcPort, cntPort, verbose, client_created_);
-        client_created_ = true;
+        client_created_ = _create_client(host, rpcPort, cntPort, verbose, client_created_);
 
         _join_if_joinable_chronometer_thread();
         set_status_bar_message("       ");
@@ -320,14 +294,13 @@ int DQ_CoppeliaSimInterface::get_object_handle(const std::string &objectname)
     std::string additional_error_message = "";
     if (!_start_with_slash(objectname) && enable_deprecated_name_compatibility_ == false)
     {
-        additional_error_message = std::string("Did you mean \"/" + objectname + "\"? \n");;
-
+        additional_error_message = std::string("Did you mean \"/" + objectname + "\"? \n");
     }
     try
     {
         _check_client();
         auto standard_objectname = _get_standard_name(objectname);
-        handle = sim_->getObject(standard_objectname );
+        handle = sim_->getObject(standard_objectname);
         _update_map(standard_objectname, handle);
     }
     catch(const std::runtime_error& e)
@@ -353,10 +326,9 @@ std::vector<int> DQ_CoppeliaSimInterface::get_object_handles(const std::vector<s
 {
     int n = objectnames.size();
     std::vector<int> handles(n);
-    for(int i=0;i<n;i++)
-    {
+    for(auto i=0;i<n;i++)
         handles[i]=get_object_handle(objectnames[i]);
-    }
+
     return handles;
 }
 
@@ -370,6 +342,18 @@ void DQ_CoppeliaSimInterface::show_map()
     for (const auto& p : handles_map_)
     {
         std::cout << '[' << p.first << "] = " << p.second << '\n';
+    }
+}
+
+void DQ_CoppeliaSimInterface::show_created_handle_map()
+{
+    std::cout<<"------------------"<<std::endl;
+    for (const auto& p : created_handles_map_)
+    {
+        std::cout<<"------------------"<<std::endl;
+        std::cout<<std::format("[ {} ]",p.first)<<std::endl;
+        for (const auto& n: p.second)
+            std::cout<<std::format(" --> {}", n)<<std::endl;
     }
 }
 
@@ -554,12 +538,11 @@ double DQ_CoppeliaSimInterface::get_joint_position(const std::string &jointname)
  */
 VectorXd DQ_CoppeliaSimInterface::get_joint_positions(const std::vector<int> &handles) const
 {
-    std::size_t n = handles.size();
+    int n = handles.size();
     VectorXd joint_positions(n);
-    for(std::size_t i=0;i<n;i++)
-    {
+    for(auto i=0;i<n;i++)
         joint_positions(i)=get_joint_position(handles.at(i));
-    }
+
     return joint_positions;
 }
 
@@ -570,12 +553,11 @@ VectorXd DQ_CoppeliaSimInterface::get_joint_positions(const std::vector<int> &ha
  */
 VectorXd DQ_CoppeliaSimInterface::get_joint_positions(const std::vector<std::string> &jointnames)
 {
-    std::size_t n = jointnames.size();
+    int n = jointnames.size();
     VectorXd joint_positions(n);
-    for(std::size_t i=0;i<n;i++)
-    {
+    for(auto i=0;i<n;i++)
         joint_positions(i)=get_joint_position(jointnames[i]);
-    }
+
     return joint_positions;
 }
 
@@ -697,9 +679,9 @@ double DQ_CoppeliaSimInterface::get_joint_velocity(const std::string &jointname)
  */
 VectorXd DQ_CoppeliaSimInterface::get_joint_velocities(const std::vector<int> &handles) const
 {
-    std::size_t n = handles.size();
+    int n = handles.size();
     VectorXd joint_velocities(n);
-    for(std::size_t i=0;i<n;i++)
+    for(auto i=0;i<n;i++)
         joint_velocities(i)=get_joint_velocity(handles.at(i));
 
     return joint_velocities;
@@ -712,12 +694,11 @@ VectorXd DQ_CoppeliaSimInterface::get_joint_velocities(const std::vector<int> &h
  */
 VectorXd DQ_CoppeliaSimInterface::get_joint_velocities(const std::vector<std::string> &jointnames)
 {
-    std::size_t n = jointnames.size();
+    int n = jointnames.size();
     VectorXd joint_velocities(n);
-    for(std::size_t i=0;i<n;i++)
-    {
+    for(auto i=0;i<n;i++)
         joint_velocities(i)=get_joint_velocity(jointnames[i]);
-    }
+
     return joint_velocities;
 }
 
@@ -776,12 +757,10 @@ void DQ_CoppeliaSimInterface::set_joint_torque(const int &handle, const double &
     _check_client();
     double angle_dot_rad_max = 10000.0;
     if (torque==0)
-    {
         angle_dot_rad_max = 0.0;
-    }else if (torque<0)
-    {
+    else if (torque<0)
         angle_dot_rad_max = -10000.0;
-    }
+
     //simxSetJointTargetVelocity(clientid_,handle,angle_dot_rad_max,_remap_op_mode(opmode));
     //simxSetJointForce(clientid_,handle,abs(torque_f),_remap_op_mode(opmode));
     sim_->setJointTargetVelocity(handle, angle_dot_rad_max);
@@ -850,9 +829,9 @@ double DQ_CoppeliaSimInterface::get_joint_torque(const std::string &jointname)
  */
 VectorXd DQ_CoppeliaSimInterface::get_joint_torques(const std::vector<int> &handles) const
 {
-    std::size_t n = handles.size();
+    int n = handles.size();
     VectorXd joint_torques(n);
-    for(std::size_t i=0;i<n;i++)
+    for(auto i=0;i<n;i++)
         joint_torques(i)=get_joint_torque(handles.at(i));
 
     return joint_torques;
@@ -865,12 +844,11 @@ VectorXd DQ_CoppeliaSimInterface::get_joint_torques(const std::vector<int> &hand
  */
 VectorXd DQ_CoppeliaSimInterface::get_joint_torques(const std::vector<std::string> &jointnames)
 {
-    std::size_t n = jointnames.size();
+    int n = jointnames.size();
     VectorXd joint_torques(n);
-    for(std::size_t i=0;i<n;i++)
-    {
+    for(auto i=0;i<n;i++)
         joint_torques(i)=get_joint_torque(jointnames[i]);
-    }
+
     return joint_torques;
 }
 
@@ -894,12 +872,11 @@ std::string DQ_CoppeliaSimInterface::get_object_name(const int &handle)
  */
 std::vector<std::string> DQ_CoppeliaSimInterface::get_object_names(const auto &handles)
 {
-    std::size_t n = handles.size();
+    int n = handles.size();
     std::vector<std::string> objectnames(n);
-    for(std::size_t i=0;i<n;i++)
-    {
+    for(auto i=0;i<n;i++)
         objectnames.at(i)=get_object_name(handles.at(i));
-    }
+
     return objectnames;
 }
 
@@ -1351,15 +1328,18 @@ bool DQ_CoppeliaSimInterface::load_from_model_browser(const std::string &path_to
 
 /**
  * @brief DQ_CoppeliaSimInterface::remove_child_script_from_object
+ *        The script must be located at objectname/script_name
  * @param objectname
+ * @param script_name
  */
-void DQ_CoppeliaSimInterface::remove_child_script_from_object(const std::string &objectname)
+void DQ_CoppeliaSimInterface::remove_child_script_from_object(const std::string &objectname, const std::string &script_name)
 {
     _check_client();
-    auto script_handle = sim_->getScript(sim_->scripttype_childscript,
-                                         _get_handle_from_map(objectname));
-    if (script_handle != -1)
-        sim_->removeScript(script_handle);
+    if (object_exist_on_scene(_get_standard_name(objectname)+script_name))
+    {
+        int handle = _get_handle_from_map(_get_standard_name(objectname)+script_name);
+        sim_->removeObjects({handle}, false);
+    }
 }
 
 /**
@@ -1586,26 +1566,21 @@ void DQ_CoppeliaSimInterface::plot_plane(const std::string &name,
             set_object_color(name, rgba_color);
             set_object_as_respondable(name, false);
             set_object_as_static(name, true);
+            std::vector<std::string> children_names;
 
             if (add_normal)
             {
                 double rfc = 0.02*normal_scale;
                 std::vector<double> scaled_size = {rfc*sizes.at(0),rfc* sizes.at(1), 0.2*normal_scale*sizes.at(1)};
-                _create_static_axis_at_origin(name, scaled_size, AXIS::k, 1);
+                children_names = _create_static_axis_at_origin(name, scaled_size, AXIS::k, 1);
             }
-
-
+            _update_created_handles_map(name, children_names);
         }
-        if (!is_pure(location) and !is_quaternion(location))
-            throw std::runtime_error("Location must be a pure quaternion");
-        if (!is_unit(normal_to_the_plane))
-            throw std::runtime_error("The normal must be a unit quaternion");
-
         set_object_pose(name, _get_pose_from_direction(normal_to_the_plane, location));
     }
 
 
-    /**
+/**
  * @brief DQ_CoppeliaSimInterface::plot_line
  * @param name
  * @param line_direction
@@ -1632,6 +1607,7 @@ void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_
         set_object_color(name, rgba_color);
         set_object_as_respondable(name, false);
         set_object_as_static(name, true);
+        std::vector<std::string> children_names;
         if (add_arrow)
         {
             // Add the normal
@@ -1640,17 +1616,14 @@ void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_
             std::vector<double> arrow_size = {rfc*thickness_and_length.at(0),rfc*thickness_and_length.at(0), 0.02*arrow_scale*thickness_and_length.at(1)};
             std::string arrow_name = _get_standard_name(name)+std::string("_normal");
             add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
+            children_names.push_back(arrow_name);
             _set_static_object_properties(arrow_name,
                                           name,
                                           1+0.5*E_*0.5*thickness_and_length.at(1)*k_,
                                           {0,0,1,1});
         }
+        _update_created_handles_map(name, children_names);
     }
-    if (!is_pure(location) and !is_quaternion(location))
-        throw std::runtime_error("Location must be a pure quaternion");
-    if (!is_unit(line_direction))
-        throw std::runtime_error("The line direction must be a unit quaternion");
-
     set_object_pose(name, _get_pose_from_direction(line_direction, location));
 
 }
@@ -1682,12 +1655,21 @@ void DQ_CoppeliaSimInterface::plot_reference_frame(const std::string &name,
         set_object_color(name, {1,1,1,0.5});
         set_object_as_respondable(name, false);
         set_object_as_static(name, true);
-
+        std::vector<std::string> children_names;
+        std::vector<std::string> auxdest;
 
         std::vector<double> scaled_size = {scale*thickness_and_length.at(0),scale*thickness_and_length.at(0), scale*thickness_and_length.at(1)};
-        _create_static_axis_at_origin(name, scaled_size, AXIS::k, 1);
-        _create_static_axis_at_origin(name, scaled_size, AXIS::i, 1);
-        _create_static_axis_at_origin(name, scaled_size, AXIS::j, 1);
+        auto cnames1 = _create_static_axis_at_origin(name, scaled_size, AXIS::k, 1);
+        auto cnames2 =_create_static_axis_at_origin(name, scaled_size, AXIS::i, 1);
+        auto cnames3 =_create_static_axis_at_origin(name, scaled_size, AXIS::j, 1);
+
+        std::set_union(cnames1.cbegin(), cnames1.cend(),
+                       cnames2.cbegin(), cnames2.cend(),
+                       std::back_inserter(auxdest));
+        std::set_union(auxdest.cbegin(), auxdest.cend(),
+                       cnames3.cbegin(), cnames3.cend(),
+                       std::back_inserter(children_names));
+        _update_created_handles_map(name, children_names);
 
         std::vector<int64_t> shapehandles = sim_->getObjectsInTree(_get_handle_from_map(name),
                                                                    sim_->object_shape_type,
@@ -1698,6 +1680,37 @@ void DQ_CoppeliaSimInterface::plot_reference_frame(const std::string &name,
 
     }
     set_object_pose(name, pose);
+}
+
+
+/**
+ * @brief DQ_CoppeliaSimInterface::remove_plotted_object removes from the
+ *          CoppeliaSim scene planes, lines , reference_frames or all objects
+ *          added with plot-type methods. plot_plane, plot_line, and
+ *          plot_reference_frame are examples of plot-type methods.
+ * @param name The name of the primitive to be removed
+ */
+void DQ_CoppeliaSimInterface::remove_plotted_object(const std::string &name)
+{
+    _check_client();
+    auto standard_objectname = _get_standard_name(name);
+    //auto handle = _get_handle_from_map(standard_objectname);
+
+    auto search = created_handles_map_.find(name);
+    if (search != created_handles_map_.end())
+    { //found in map
+        auto children_names = search->second;
+        for (std::size_t i=0; i<children_names.size();i++)
+        {
+            _update_map(_get_standard_name(children_names.at(i)), 0, UPDATE_MAP::REMOVE);
+            _update_created_handles_map(standard_objectname, children_names, UPDATE_MAP::REMOVE);
+        }
+        remove_object(standard_objectname, true);
+        _update_map(standard_objectname, 0, UPDATE_MAP::REMOVE);
+    }else{
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The object "+name+" is not a plotted object or is not on the scene.");
+    }
 }
 
 /**
@@ -1723,54 +1736,111 @@ void DQ_CoppeliaSimInterface::draw_permanent_trajectory(const DQ &point, const d
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::add_child_script
- * @param objectname
+ * @brief DQ_CoppeliaSimInterface::add_simulation_lua_script
+ * @param script_name
+ * @param script_code
+ * @return
  */
-int DQ_CoppeliaSimInterface::add_child_script(const std::string &objectname)
+int DQ_CoppeliaSimInterface::add_simulation_lua_script(const std::string &script_name, const std::string& script_code)
 {
     _check_client();
-    auto scriptHandle = sim_->addScript(sim_->scripttype_childscript);
-    sim_->associateScriptWithObject(scriptHandle, _get_handle_from_map(objectname));
+    int scriptHandle = sim_->createScript(sim_->scripttype_simulation,
+                                          script_code, 0, "lua");
+    set_object_name(scriptHandle, _remove_first_slash_from_string(script_name));
     return scriptHandle;
 }
 
-void DQ_CoppeliaSimInterface::draw_trajectory(const std::string &objectname, const double &size, const std::vector<double> &color, const int &max_item_count)
+
+/**
+ * @brief DQ_CoppeliaSimInterface::draw_trajectory
+ * @param objectname
+ * @param size
+ * @param color
+ * @param max_item_count
+ */
+void DQ_CoppeliaSimInterface::draw_trajectory(const std::string &objectname,
+                                              const double &size,
+                                              const std::vector<double> &color,
+                                              const int &max_item_count)
 {
-    _check_client();
-    auto scriptHandle = add_child_script(objectname);
-    //set_object_parent(scriptHandle, _get_handle_from_map(objectname), true);
+    if (!object_exist_on_scene(objectname+"/drawer"))
+    {
+        int r = color.at(0);
+        int g = color.at(1);
+        int b = color.at(2);
 
-    std::string stringToExecute = "function sysCall_init() "
-                                  "h=sim.getObjectHandle(sim.handle_self) "
-                                  "dr=sim.addDrawingObject(sim.drawing_lines|sim.drawing_cyclic,2,0,-1,2500,{1,0,1}) "
-                                  "pt=sim.getObjectPosition(h,-1) "
-                                  "end "
-                                  "function sysCall_init() "
-                                    "h=sim.getObjectHandle(sim.handle_self)"
-                                    "dr=sim.addDrawingObject(sim.drawing_lines|sim.drawing_cyclic,2,0,-1,2500,{1,0,1})"
-                                    "pt=sim.getObjectPosition(h,-1)"
-                                  "end";
-    //sim_->executeScriptString(stringToExecute, scriptHandle);
+        std::string setting_str = "  dr=sim.addDrawingObject(sim.drawing_lines|sim.drawing_cyclic,"+std::to_string(size)+",0,-1,"+std::to_string(max_item_count)+",{"+std::to_string(r)+","+std::to_string(g)+","+std::to_string(b)+"})" + "\n";
 
+        std::string code =
+            "function sysCall_init()" + std::string("\n") +
+            "  h=sim.getObjectHandle(sim.handle_self)" + "\n" +
+            setting_str +
+            "  pt=sim.getObjectPosition(h,-1) " + "\n" +
+            "end" + "\n" +
+            "function sysCall_sensing()" + "\n" +
+            "  local l={pt[1],pt[2],pt[3]} " + "\n" +
+            "  pt=sim.getObjectPosition(h,-1)" + "\n" +
+            "   l[4]=pt[1]" + "\n" +
+            "   l[5]=pt[2]" + "\n" +
+            "   l[6]=pt[3]" + "\n" +
+            "   sim.addDrawingObjectItem(dr,l)" + "\n" +
+            "end                           ";
+        add_simulation_lua_script("/drawer", code);
+        set_object_parent("/drawer", objectname);
+    }
 }
 
-/*
- *
-function sysCall_init()
-    h=sim.getObjectHandle(sim.handle_self)
-    dr=sim.addDrawingObject(sim.drawing_lines|sim.drawing_cyclic,2,0,-1,2500,{1,0,1})
-    pt=sim.getObjectPosition(h,-1)
-end
 
-function sysCall_sensing()
-    local l={pt[1],pt[2],pt[3]}
-    pt=sim.getObjectPosition(h,-1)
-    l[4]=pt[1]
-    l[5]=pt[2]
-    l[6]=pt[3]
-    sim.addDrawingObjectItem(dr,l)
-end
+/**
+ * @brief DQ_CoppeliaSimInterface::remove_object
+ * @param objectname
+ * @param remove_children
  */
+void DQ_CoppeliaSimInterface::remove_object(const std::string& objectname, const bool &remove_children)
+{
+    _check_client();
+    auto standard_objectname = _get_standard_name(objectname);
+    auto handle = _get_handle_from_map(standard_objectname);
+
+    if (remove_children)
+    {
+        auto handles = sim_->getObjectsInTree(handle, sim_->handle_all, 0);
+        if (handles.size() > 0)
+        {
+            auto objectnames = get_object_names(handles);
+            sim_->removeObjects(handles, false);
+            for (std::size_t i=0; i<objectnames.size();i++)
+                _update_map(_get_standard_name(objectnames.at(i)), handles.at(i), UPDATE_MAP::REMOVE);
+        }
+    }else
+    {
+        sim_->removeObjects({handle}, false);
+        _update_map(standard_objectname, handle, UPDATE_MAP::REMOVE);
+    }
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_bounding_box_size
+ * @param handle
+ * @return
+ */
+std::vector<double> DQ_CoppeliaSimInterface::get_bounding_box_size(const int &handle) const
+{
+    _check_client();
+    auto [size, pose] = sim_->getShapeBB(handle);
+    return size;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_bounding_box_size
+ * @param objectname
+ * @return
+ */
+std::vector<double> DQ_CoppeliaSimInterface::get_bounding_box_size(const std::string &objectname)
+{
+    return get_bounding_box_size(_get_handle_from_map(objectname));
+}
+
 
 /**
  * @brief DQ_CoppeliaSimInterface::get_mass
@@ -1780,7 +1850,7 @@ end
 double DQ_CoppeliaSimInterface::get_mass(const int &handle) const
 {
    _check_client();
-   return sim_->getShapeMassAndInertia(handle);
+   return sim_->getShapeMass(handle);
 }
 
 /**
@@ -1867,9 +1937,13 @@ MatrixXd DQ_CoppeliaSimInterface::get_inertia_matrix(const std::string &link_nam
  * @param handle
  */
 void DQ_CoppeliaSimInterface::_update_map(const std::string &objectname,
-                                                    const int &handle)
+                                          const int &handle, const UPDATE_MAP &mode)
 {
-    handles_map_.try_emplace(objectname, handle);
+    if (mode == DQ_CoppeliaSimInterface::UPDATE_MAP::ADD)
+        handles_map_.try_emplace(objectname, handle);
+    else
+        handles_map_.erase(objectname);
+
 }
 
 
@@ -1892,6 +1966,16 @@ int DQ_CoppeliaSimInterface::_get_handle_from_map(const std::string &objectname)
         // is updated;
         return get_object_handle(objectname);
     }
+}
+
+void DQ_CoppeliaSimInterface::_update_created_handles_map(const std::string &base_objectname,
+                                                          const std::vector<std::string> &children_objectnames,
+                                                          const UPDATE_MAP &mode)
+{
+    if (mode == DQ_CoppeliaSimInterface::UPDATE_MAP::ADD)
+        created_handles_map_.try_emplace(base_objectname, children_objectnames);
+    else
+        created_handles_map_.erase(base_objectname);
 }
 
 
@@ -1976,6 +2060,7 @@ bool DQ_CoppeliaSimInterface::_load_model(const std::string &path_to_filename,
     if (rtn != -1)
     {
         set_object_name(rtn, _remove_first_slash_from_string(desired_model_name));
+        _get_handle_from_map(_get_standard_name(desired_model_name)); // This is to update the map only.
         if (remove_child_script)
         {
             remove_child_script_from_object(std::string("/")
@@ -2038,11 +2123,12 @@ DQ DQ_CoppeliaSimInterface::_get_pose_from_direction(const DQ& direction, const 
     return r + 0.5*E_*point*r;
 }
 
-void DQ_CoppeliaSimInterface::_create_static_axis_at_origin(const std::string& parent_name,
+std::vector<std::string> DQ_CoppeliaSimInterface::_create_static_axis_at_origin(const std::string& parent_name,
                                                             const std::vector<double> &sizes,
                                                             const AXIS &axis,
                                                             const double &alpha_color)
 {
+    std::vector<std::string> created_primitives{};
     std::string name;
     DQ dqaxis;
     std::vector<double> color;
@@ -2069,12 +2155,8 @@ void DQ_CoppeliaSimInterface::_create_static_axis_at_origin(const std::string& p
         rotation = DQ(1);
         break;
     }
-    //double rfc = 0.02*scale;
-    //std::vector<double> scaled_size = {rfc*sizes.at(0),rfc* sizes.at(1), 0.2*scale*sizes.at(1)};
-
-    add_primitive(PRIMITIVE::CYLINDER,
-                  name,
-                  sizes);
+    add_primitive(PRIMITIVE::CYLINDER,name,sizes);
+    created_primitives.push_back(name);
     _set_static_object_properties(name,
                                   parent_name,
                                   rotation+0.5*E_*0.5*sizes.at(2)*dqaxis*rotation,
@@ -2083,11 +2165,12 @@ void DQ_CoppeliaSimInterface::_create_static_axis_at_origin(const std::string& p
     std::vector<double> arrow_size = {2*sizes.at(0), 2*sizes.at(1), 2*sizes.at(1)};
     std::string arrow_name = _get_standard_name(name)+std::string("_");
     add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
-
+    created_primitives.push_back(arrow_name);
     _set_static_object_properties(arrow_name,
                                   parent_name,
                                   rotation+0.5*E_*sizes.at(2)*dqaxis*rotation,
                                   color);
+    return created_primitives;
 }
 
 void DQ_CoppeliaSimInterface::_set_static_object_properties(const std::string &name,
@@ -2129,7 +2212,7 @@ void DQ_CoppeliaSimInterface::_check_client() const
         throw std::runtime_error("Unestablished connection. Did you use connect()?");
 }
 
-void DQ_CoppeliaSimInterface::_throw_runtime_error(const std::string &msg)
+[[noreturn]] void DQ_CoppeliaSimInterface::_throw_runtime_error(const std::string &msg)
 {
     stop_simulation();
     std::cerr<<"Something went wrong. I stopped the simulation!"<<std::endl;

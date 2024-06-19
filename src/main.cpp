@@ -9,12 +9,11 @@ int main()
     try
     {
         sim.startSimulation();
-        auto handle = sim.getObject("/Franka/connection");
-        auto scriptHandle = sim.addScript(sim.scripttype_childscript);
-        sim.associateScriptWithObject(scriptHandle, handle);
-        sim.initScript(scriptHandle);
-        sim.executeScriptString("print('Hello there')",
-                                sim.getScript(sim.scripttype_sandboxscript));
+        auto handle = sim.getObject("/Franka");
+        std::vector<int64_t> scripthandles = sim.getObjectsInTree(handle,
+                                                                sim.object_script_type,
+                                                                0);
+        std::cout<<"Number of scripts: "<<scripthandles.size()<<std::endl;
         sim.stopSimulation();
 
     }

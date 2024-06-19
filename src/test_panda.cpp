@@ -10,17 +10,31 @@ using namespace Eigen;
 
 int main()
 {
+
     auto vi1 = std::make_shared<DQ_CoppeliaSimInterface>();
-    auto vi2 = std::make_shared<DQ_CoppeliaSimInterface>();
 
     try {
-        vi1->connect("localhost", 23000, 100);//
-        vi2->connect("localhost", 23000, 100);
+        vi1->connect("localhost", 23000, 200);//
+        vi1->close_scene();
+        vi1->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm",
+                                     "/Franka", true, false);
+        //vi1->remove_child_script_from_object("/Franka");
+        vi1->draw_trajectory("/Franka/connection", 4, {1,0,0}, 100);
+        vi1->plot_reference_frame("/x", DQ(1));
+        vi1->plot_plane("/plane", k_, k_);
+        vi1->plot_line("/line", k_, k_);
+
+        //vi1->remove_object("/Sphere", true);
+        vi1->remove_plotted_object("/x");
+        vi1->remove_plotted_object("/plane");
+        vi1->remove_plotted_object("/line");
+        //auto size_ = vi1->get_bounding_box_size("/line");
+        //std::cout<<std::format("x: {}, y: {}, z: {}", size_.at(0),size_.at(1),size_.at(2))<<std::endl;
+        vi1->show_map();
 
         vi1->start_simulation();
 
-        vi2->plot_reference_frame("/x2", DQ(1));//
-        std::cout<<vi1->get_object_pose("/x2")<<std::endl;;
+
 
 
 

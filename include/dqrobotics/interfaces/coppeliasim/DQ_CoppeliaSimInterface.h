@@ -32,6 +32,7 @@ Contributors:
 #include <source_location>
 #include <thread>
 #include <atomic>
+#include <print> // For future use of C++23 features
 
 using namespace DQ_robotics;
 using namespace Eigen;
@@ -220,7 +221,8 @@ public:
                                        const bool& load_model_only_if_missing = true,
                                        const bool& remove_child_script = true);
 
-    void remove_child_script_from_object(const std::string& objectname);
+    void remove_child_script_from_object(const std::string& objectname, const std::string& script_name = "/Script");
+
     bool object_exist_on_scene(const std::string& objectname) const;
 
     void set_object_name(const int& handle,
@@ -298,6 +300,8 @@ public:
                               const double& scale = 1,
                               const std::vector<double>& thickness_and_length = {0.005, 0.1});
 
+    void remove_plotted_object(const std::string& name);
+
     //--------Experimental-----------------------
 
     // To be removed?
@@ -306,20 +310,26 @@ public:
                          const std::vector<double>& color = {1,0,0},
                          const int& max_item_count = 1000);
 
-    int add_child_script(const std::string& objectname);
+    int add_simulation_lua_script(const std::string& script_name,
+                                  const std::string& script_code);
 
-    // Not working!
+
     void draw_trajectory(const std::string& objectname,
                          const double& size = 2,
-                         const std::vector<double>& color = {1,0,0},
+                         const std::vector<double>& color = {1,0,1},
                          const int& max_item_count = 1000);
 
+    void remove_object(const std::string& objectname,
+                       const bool& remove_children = false);
 
+    std::vector<double> get_bounding_box_size(const int& handle) const;
+    std::vector<double> get_bounding_box_size(const std::string& objectname);
     //----------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------
 
     std::unordered_map<std::string, int> get_map(); //For debug
     void show_map();  // For debug
+    void show_created_handle_map();  // For debug
 
     //-----------Deprecated methods---------------------------//
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
@@ -335,35 +345,38 @@ public:
     int get_primitive_identifier(const PRIMITIVE& primitive) const;
 
 protected:
-    enum class AXIS{
-        i,
-        j,
-        k
-    };
+    enum class AXIS{i,j,k};
+
 
     std::string host_ = "localhost";
-    int rpcPort_ = 23000;
-    int cntPort_ = -1;
-    int verbose_ = -1;
+    int rpcPort_ {23000};
+    int cntPort_ {-1};
+    int verbose_ {-1};
 
 private:
+    enum class UPDATE_MAP{ADD, REMOVE};
 
     std::atomic<bool> client_created_ = false;
     bool enable_deprecated_name_compatibility_ = true;
     void _check_client() const;
-    void _throw_runtime_error(const std::string& msg);
+    [[noreturn]] void _throw_runtime_error(const std::string& msg);
 
-    int MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_ = 300;
-    double elapsed_time_ = 0;
+    int MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_{300};
+    double elapsed_time_ {0};
     std::thread chronometer_thread_;
     void _join_if_joinable_chronometer_thread();
     void _start_chronometer();
     void _check_connection();
     //-------------------map zone--------------------------------------------
-    std::string _map_simulation_state(const int& state) const;
+    std::string _map_simulation_state(const int& state);
     std::unordered_map<std::string, int> handles_map_;
-    void _update_map(const std::string& objectname, const int& handle);
+    void _update_map(const std::string& objectname, const int& handle, const UPDATE_MAP& mode = UPDATE_MAP::ADD);
     int _get_handle_from_map(const std::string& objectname);
+
+    std::unordered_map<std::string, std::vector<std::string>> created_handles_map_;
+    void _update_created_handles_map(const std::string& base_objectname,
+                                     const std::vector<std::string>& children_objectnames,
+                                     const UPDATE_MAP& mode = UPDATE_MAP::ADD);
     //------------------------------------------------------------------------
     std::string _remove_first_slash_from_string(const std::string& str) const;
     bool _start_with_slash(const std::string& str) const;
@@ -376,6 +389,14 @@ private:
                                                 {ENGINE::NEWTON, 3},
                                                 {ENGINE::MUJOCO, 4}};
 
+    std::unordered_map<int, std::string> simulation_status_ = {{0, "simulation stopped"},
+                                                               {8, "simulation paused"},
+                                                               {17,"simulation advancing running"},
+                                                               {22, "simulation advancing last before stop"},
+                                                               {19, "simulation advancing last before pause"},
+                                                               {16, "simulation advancing first after stop or simulation advancing"},
+                                                               {20, "simulation advancing first after pause"},
+                                                               {21, "simulation advancing about to stop"}};
 
     std::vector<int> _get_velocity_const_params() const;
 
@@ -389,10 +410,11 @@ private:
 
     DQ _get_pose_from_direction(const DQ& direction, const DQ& point = DQ(1));
 
-    void _create_static_axis_at_origin(const std::string& parent_name,
-                                       const std::vector<double>& sizes,
-                                       const AXIS& axis,
-                                       const double& alpha_color = 1);
+    [[nodiscard("The created primitives must be added to the created_handles_map")]]
+    std::vector<std::string> _create_static_axis_at_origin(const std::string& parent_name,
+                                                           const std::vector<double>& sizes,
+                                                           const AXIS& axis,
+                                                           const double& alpha_color = 1);
 
     void _set_static_object_properties(const std::string& name,
                                        const std::string& parent_name,
