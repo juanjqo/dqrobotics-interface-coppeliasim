@@ -302,9 +302,7 @@ public:
 
     void remove_plotted_object(const std::string& name);
 
-    //--------Experimental-----------------------
 
-    // To be removed?
     void draw_permanent_trajectory(const DQ& point,
                          const double& size = 2,
                          const std::vector<double>& color = {1,0,0},
