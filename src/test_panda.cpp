@@ -27,7 +27,8 @@ int main()
         //vi1->remove_object("/Sphere", true);
         vi1->remove_plotted_object("/x");
         vi1->remove_plotted_object("/plane");
-        vi1->remove_plotted_object("/line");
+        auto size_ = vi1->get_bounding_box_size("/line");
+        std::cout<<std::format("x: {}, y: {}, z: {}", size_.at(0),size_.at(1),size_.at(2))<<std::endl;
         std::cout<<""<<std::endl;
         vi1->show_map();
         vi1->show_created_handle_map();

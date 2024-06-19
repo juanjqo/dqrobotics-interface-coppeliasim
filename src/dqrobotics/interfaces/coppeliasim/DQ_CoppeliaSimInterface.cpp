@@ -1848,6 +1848,28 @@ void DQ_CoppeliaSimInterface::remove_object(const std::string& objectname, const
     }
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::get_bounding_box_size
+ * @param handle
+ * @return
+ */
+std::vector<double> DQ_CoppeliaSimInterface::get_bounding_box_size(const int &handle) const
+{
+    _check_client();
+    auto [size, pose] = sim_->getShapeBB(handle);
+    return size;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::get_bounding_box_size
+ * @param objectname
+ * @return
+ */
+std::vector<double> DQ_CoppeliaSimInterface::get_bounding_box_size(const std::string &objectname)
+{
+    return get_bounding_box_size(_get_handle_from_map(objectname));
+}
+
 
 /**
  * @brief DQ_CoppeliaSimInterface::get_mass

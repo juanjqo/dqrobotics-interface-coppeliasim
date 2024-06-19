@@ -322,6 +322,8 @@ public:
     void remove_object(const std::string& objectname,
                        const bool& remove_children = false);
 
+    std::vector<double> get_bounding_box_size(const int& handle) const;
+    std::vector<double> get_bounding_box_size(const std::string& objectname);
     //----------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------
 
