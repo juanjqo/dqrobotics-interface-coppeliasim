@@ -22,7 +22,7 @@ This project is under active development, incomplete, and experimental/unstable.
 
 | Feature  | Status (C++20) | Status (Python) |  Status (Matlab ≥ R2023b) |
 | -------- | -------------- |---------------- |-------------------------- |
-|  Implementation | :construction: under construction | -- | :construction: under construction |
+|  Implementation | :construction: under construction :rocket:| -- | :construction: under construction :turtle: |
 | Migration to C++23 | :construction_worker: expected at some point | -- | -- |
 | Documentation | :construction: under construction | -- | :pushpin: planned |
 | Unit Testing | :pushpin: planned | -- | :pushpin: planned|
