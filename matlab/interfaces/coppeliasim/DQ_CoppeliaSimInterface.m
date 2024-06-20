@@ -49,7 +49,7 @@ classdef DQ_CoppeliaSimInterface < handle
             end
         end
 
-        function rtn = string_contain_first_slash_(~, objectname)
+        function rtn = start_with_slash_(~, objectname)
             k = strfind(objectname,'/');
             n = length(k);
             if (n==0)
@@ -64,11 +64,18 @@ classdef DQ_CoppeliaSimInterface < handle
         end
 
         function newstr = remove_first_slash_from_string_(obj, str)            
-            if obj.string_contain_first_slash_(str)
+            if obj.start_with_slash_(str)
                  newstr = erase(str,"/");
             else
                  newstr = str;
             end
+        end
+
+        function standard_str = get_standard_name_(obj, str)
+              standard_str = str;
+              if (~obj.start_with_slash_(str) && obj.enable_deprecated_name_compatibility_ == true)
+                 standard_str = '/'+str;
+              end
         end
 
         function check_sizes_(~, v1, v2, message)
@@ -121,6 +128,11 @@ classdef DQ_CoppeliaSimInterface < handle
                 2*(a*c-w*b), 2*(b*c+w*a),   1-2*(a*a+b*b)];
         end
 
+        function throw_runtime_error_(obj, ME, msg)
+            obj.stop_simulation();
+            disp(msg);
+            rethrow(ME); %ME = MException('sayHello:inputError','Input must be char.');
+        end
 
 
     end
@@ -226,27 +238,22 @@ classdef DQ_CoppeliaSimInterface < handle
             % get_object_handle gets the object handle from CoppeliaSim. 
             % If the handle is not included in the map, then the map is updated.
             additional_error_message = "";
-            if (~obj.string_contain_first_slash_(objectname) && ...
+            if (~obj.start_with_slash_(objectname) && ...
                     obj.enable_deprecated_name_compatibility_ == false)      
                 additional_error_message = "Did you mean   " + char(34) + '/' +objectname +  char(34) + '   ?';
             end
 
 
             try
-                if (~obj.string_contain_first_slash_(objectname) && ...
-                        obj.enable_deprecated_name_compatibility_ == true)
-                    handle = obj.sim_.getObject('/'+objectname);
-                    obj.update_map_('/'+objectname, handle);
-                else
-                    handle = obj.sim_.getObject(objectname);
-                    obj.update_map_(objectname, handle);
-                end
-               
+                standard_objectname = obj.get_standard_name_(objectname);
+                handle = obj.sim_.getObject(standard_objectname);
+                obj.update_map_(standard_objectname, handle);
+
             catch ME
                 
-                disp("The object "  + char(34) + objectname  + char(34) + " does not exist in the " + ...
-                    "current scene in CoppeliaSim. " + additional_error_message);
-                rethrow(ME);
+                msg = "The object "  + char(34) + objectname  + char(34) + " does not exist in the " + ...
+                      "current scene in CoppeliaSim. " + additional_error_message;
+                obj.throw_runtime_error_(ME, msg)
             end            
         end
 

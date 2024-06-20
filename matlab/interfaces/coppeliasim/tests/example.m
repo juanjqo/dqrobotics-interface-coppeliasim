@@ -112,7 +112,7 @@ try
     vi.wait_for_simulation_step_to_end();
     vi.stop_simulation();
     vi.disconnect();
-    show_joint_velocities(u_log, q_dot);
+    %show_joint_velocities(u_log, q_dot);
 
 catch ME
     vi.stop_simulation();

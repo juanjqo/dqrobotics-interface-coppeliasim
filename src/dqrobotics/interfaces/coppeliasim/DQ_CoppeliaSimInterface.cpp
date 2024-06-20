@@ -26,6 +26,9 @@ Contributors:
 
 #include "dqrobotics/DQ.h"
 #include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
+#include <numbers>
+#include <algorithm>
+#include <source_location>
 #include <RemoteAPIClient.h>
 
 std::string DQ_CoppeliaSimInterface::_map_simulation_state(const int &state)
