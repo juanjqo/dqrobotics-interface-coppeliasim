@@ -251,23 +251,14 @@ public:
                        const std::string& name,
                        const std::vector<double>& sizes) const;
 
-    void set_object_parent(const int& handle,
-                           const int& parent_handle,
-                           const bool& move_child_to_parent_pose);
-    void set_object_parent(const std::string& objectname,
-                           const std::string& parent_object_name,
+    void set_object_parent(const int& handle, const int& parent_handle, const bool& move_child_to_parent_pose);
+    void set_object_parent(const std::string& objectname, const std::string& parent_object_name,
                            const bool& move_child_to_parent_pose = true);
 
-    bool check_collision(const int& handle1,
-                         const int& handle2) const;
-    bool check_collision(const std::string& objectname1,
-                         const std::string& objectname2);
-    std::tuple<double, DQ, DQ> check_distance(const int& handle1,
-                                                const int& handle2,
-                                                const double& threshold = 0) const;
-    std::tuple<double, DQ, DQ> check_distance(const std::string& objectname1,
-                                                const std::string& objectname2,
-                                                const double& threshold = 0);
+    bool check_collision(const int& handle1, const int& handle2) const;
+    bool check_collision(const std::string& objectname1, const std::string& objectname2);
+    std::tuple<double, DQ, DQ> check_distance(const int& handle1, const int& handle2, const double& threshold = 0) const;
+    std::tuple<double, DQ, DQ> check_distance(const std::string& objectname1, const std::string& objectname2, const double& threshold = 0);
 
     double compute_distance(const int& handle1,
                             const int& handle2,
