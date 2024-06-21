@@ -1390,6 +1390,10 @@ void DQ_CoppeliaSimInterface::set_object_color(const int &handle,
 
 void DQ_CoppeliaSimInterface::set_object_color(const std::string &objectname, const std::vector<double> rgba_color)
 {
+    if (rgba_color.size() != 4)
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The rgba_color must be a vector of size 4.");
+
     set_object_color(_get_handle_from_map(objectname), rgba_color);
 }
 
@@ -1547,12 +1551,12 @@ double DQ_CoppeliaSimInterface::compute_distance(const std::string &objectname1,
  * @param normal_scale
  */
 void DQ_CoppeliaSimInterface::plot_plane(const std::string &name,
-                                        const DQ &normal_to_the_plane,
-                                        const DQ &location,
-                                        const std::vector<double> sizes,
-                                        const std::vector<double> rgba_color,
-                                        const bool &add_normal,
-                                        const double &normal_scale)
+                                         const DQ &normal_to_the_plane,
+                                         const DQ &location,
+                                         const std::vector<double> &sizes,
+                                         const std::vector<double> &rgba_color,
+                                         const bool &add_normal,
+                                         const double &normal_scale)
 {
     if (!is_unit(normal_to_the_plane) or !is_quaternion(normal_to_the_plane))
         _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
@@ -1561,6 +1565,13 @@ void DQ_CoppeliaSimInterface::plot_plane(const std::string &name,
         _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
                              + ". The location must be a pure quaternion!");
 
+    if (sizes.size() != 2)
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The sizes must be vector of size 2.");
+
+    if (rgba_color.size() != 4)
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The rgba_color must be vector of size 4.");
 
     if (!object_exist_on_scene(name))
         {
@@ -1593,7 +1604,7 @@ void DQ_CoppeliaSimInterface::plot_plane(const std::string &name,
  * @param add_arrow
  * @param arrow_scale
  */
-void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_direction, const DQ &location, const std::vector<double> thickness_and_length, const std::vector<double> rgba_color, const bool &add_arrow, const double &arrow_scale)
+void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_direction, const DQ &location, const std::vector<double> &thickness_and_length, const std::vector<double> &rgba_color, const bool &add_arrow, const double &arrow_scale)
 {
     if (!is_unit(line_direction) or !is_quaternion(line_direction))
         _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
@@ -1602,6 +1613,14 @@ void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_
     if (!is_pure(location) or !is_quaternion(location))
         _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
                              + ". The location must be a pure quaternion!");
+
+    if (thickness_and_length.size() != 2)
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The thickness_and_length must be vector of size 2.");
+
+    if (rgba_color.size() != 4)
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The rgba_color must be vector of size 4.");
 
     if (!object_exist_on_scene(name))
     {
@@ -1631,6 +1650,24 @@ void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_
 
 }
 
+void DQ_CoppeliaSimInterface::plot_sphere(const std::string &name, const DQ &location, const double &size, const std::vector<double> rgba_color)
+{
+
+    if (!is_pure(location) or !is_quaternion(location))
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The location must be a pure quaternion!");
+    if (!object_exist_on_scene(name))
+    {
+        add_primitive(PRIMITIVE::SPHEROID, name,{size, size, size});
+        set_object_color(name, rgba_color);
+        set_object_as_respondable(name, false);
+        set_object_as_static(name, true);
+        std::vector<std::string> children_names;
+        _update_created_handles_map(name, children_names);
+    }
+    set_object_pose(name, 1+0.5*E_*location);
+}
+
 
 /**
  * @brief DQ_CoppeliaSimInterface::plot_reference_frame
@@ -1650,7 +1687,9 @@ void DQ_CoppeliaSimInterface::plot_reference_frame(const std::string &name,
         _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
                              + ". The pose must be a unit dual quaternion!");
 
-
+    if (thickness_and_length.size() != 2)
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The thickness_and_length must be vector of size 2.");
     if (!object_exist_on_scene(name))
     {
         add_primitive(PRIMITIVE::SPHEROID, name,

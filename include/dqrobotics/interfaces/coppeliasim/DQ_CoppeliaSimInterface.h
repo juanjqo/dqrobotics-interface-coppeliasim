@@ -277,20 +277,25 @@ public:
                             const double& threshold = 0);
 
     void plot_plane(const std::string& name,
-                   const DQ& normal_to_the_plane,
-                   const DQ& location,
-                   const std::vector<double> sizes = {0.2,0.2},
-                   const std::vector<double> rgba_color = {1,0,0,0.5},
-                   const bool& add_normal = true,
-                   const double& normal_scale = 1);
+                    const DQ& normal_to_the_plane,
+                    const DQ& location,
+                    const std::vector<double>& sizes = {0.2,0.2},
+                    const std::vector<double>& rgba_color = {1,0,0,0.5},
+                    const bool& add_normal = true,
+                    const double& normal_scale = 1);
 
     void plot_line(const std::string& name,
                    const DQ& line_direction,
                    const DQ& location,
-                   const std::vector<double> thickness_and_length = {0.01,1.5},
-                   const std::vector<double> rgba_color = {1,0,0,0.5},
+                   const std::vector<double>& thickness_and_length = {0.01,1.5},
+                   const std::vector<double>& rgba_color = {1,0,0,0.5},
                    const bool& add_arrow = true,
                    const double& arrow_scale = 1);
+
+    void plot_sphere(const std::string& name,
+                     const DQ& location,
+                     const double& size = 0.2,
+                     const std::vector<double> rgba_color = {1,0,0,0.5});
 
     void plot_reference_frame(const std::string& name,
                               const DQ& pose,
