@@ -427,7 +427,7 @@ private:
 
     void _check_sizes(const auto &v1,
                       const auto &v2,
-                      const std::string error_message) const
+                      const std::string& error_message) const
     {
         if (static_cast<std::size_t>(v1.size()) != static_cast<std::size_t>(v2.size()))
             throw std::runtime_error(error_message);
