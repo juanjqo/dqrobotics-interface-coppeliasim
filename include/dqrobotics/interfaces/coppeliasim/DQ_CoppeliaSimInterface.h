@@ -315,7 +315,7 @@ public:
 
     void draw_trajectory(const std::string& objectname,
                          const double& size = 2,
-                         const std::vector<double>& color = {1,0,1},
+                         const std::vector<double>& rgb_color = {1,0,1},
                          const int& max_item_count = 1000);
 
     void remove_object(const std::string& objectname,

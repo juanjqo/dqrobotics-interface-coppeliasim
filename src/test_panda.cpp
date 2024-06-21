@@ -16,9 +16,9 @@ int main()
     try {
         vi1->connect("localhost", 23000, 200);//
         vi1->close_scene();
-        //vi1->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm","/Franka", true, false);
+        vi1->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm","/Franka", true, false);
         //vi1->remove_child_script_from_object("/Franka");
-        //vi1->draw_trajectory("/Franka/connection", 4, {1,0,0}, 100);
+        vi1->draw_trajectory("/Franka/connection", 4, {1,0,0}, 100);
         vi1->plot_reference_frame("/x", DQ(1));
 
         vi1->plot_plane("/plane", k_, k_,{0.2,0.2}, {1,0,0,0.5}, true);

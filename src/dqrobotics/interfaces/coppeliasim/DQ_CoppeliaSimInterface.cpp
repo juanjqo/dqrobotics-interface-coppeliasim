@@ -1721,6 +1721,10 @@ void DQ_CoppeliaSimInterface::plot_sphere(const std::string &name, const DQ &loc
     if (!is_pure(location) or !is_quaternion(location))
         _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
                              + ". The location must be a pure quaternion!");
+    if (rgba_color.size() != 4)
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The rgba_color must be vector of size 4.");
+
     if (!object_exist_on_scene(name))
     {
         add_primitive(PRIMITIVE::SPHEROID, name,{size, size, size});
@@ -1862,19 +1866,27 @@ int DQ_CoppeliaSimInterface::add_simulation_lua_script(const std::string &script
  * @brief DQ_CoppeliaSimInterface::draw_trajectory
  * @param objectname
  * @param size
- * @param color
+ * @param rgb_color
  * @param max_item_count
  */
 void DQ_CoppeliaSimInterface::draw_trajectory(const std::string &objectname,
                                               const double &size,
-                                              const std::vector<double> &color,
+                                              const std::vector<double> &rgb_color,
                                               const int &max_item_count)
 {
+
+    if (!object_exist_on_scene(objectname))
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The object " +objectname+ " is not on the scene.");
+
     if (!object_exist_on_scene(objectname+"/drawer"))
     {
-        int r = color.at(0);
-        int g = color.at(1);
-        int b = color.at(2);
+        if (rgb_color.size() != 3)
+            _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                                 + ". The rgb_color must be vector of size 3.");
+        int r = rgb_color.at(0);
+        int g = rgb_color.at(1);
+        int b = rgb_color.at(2);
 
         std::string setting_str = "  dr=sim.addDrawingObject(sim.drawing_lines|sim.drawing_cyclic,"+std::to_string(size)+",0,-1,"+std::to_string(max_item_count)+",{"+std::to_string(r)+","+std::to_string(g)+","+std::to_string(b)+"})" + "\n";
 
