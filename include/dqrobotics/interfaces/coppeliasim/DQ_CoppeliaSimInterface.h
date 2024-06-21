@@ -295,7 +295,7 @@ public:
     void plot_cylinder(const std::string& name,
                        const DQ& direction,
                        const DQ& location,
-                       const std::vector<double>& thickness_and_length = {0.2,1.0},
+                       const std::vector<double>& width_and_length = {0.2,1.0},
                        const std::vector<double>& rgba_color = {1,0,0,0.5},
                        const bool& add_line = true,
                        const double& line_scale = 1);

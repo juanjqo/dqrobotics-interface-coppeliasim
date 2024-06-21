@@ -1650,6 +1650,16 @@ void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_
 
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::plot_cylinder
+ * @param name
+ * @param direction
+ * @param location
+ * @param width_and_length
+ * @param rgba_color
+ * @param add_line
+ * @param line_scale
+ */
 void DQ_CoppeliaSimInterface::plot_cylinder(const std::string &name, const DQ &direction, const DQ &location, const std::vector<double> &width_and_length, const std::vector<double> &rgba_color, const bool &add_line, const double &line_scale)
 {
     if (!is_unit(direction) or !is_quaternion(direction))
