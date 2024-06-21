@@ -1650,6 +1650,61 @@ void DQ_CoppeliaSimInterface::plot_line(const std::string &name, const DQ &line_
 
 }
 
+void DQ_CoppeliaSimInterface::plot_cylinder(const std::string &name, const DQ &direction, const DQ &location, const std::vector<double> &thickness_and_length, const std::vector<double> &rgba_color, const bool &add_line, const double &line_scale)
+{
+    if (!is_unit(direction) or !is_quaternion(direction))
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The line direction must be a unit quaternion!");
+
+    if (!is_pure(location) or !is_quaternion(location))
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The location must be a pure quaternion!");
+
+    if (thickness_and_length.size() != 2)
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The thickness_and_length must be vector of size 2.");
+
+    if (rgba_color.size() != 4)
+        _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())
+                             + ". The rgba_color must be vector of size 4.");
+
+    if (!object_exist_on_scene(name))
+    {
+        add_primitive(PRIMITIVE::CYLINDER, name,
+                      {thickness_and_length.at(0), thickness_and_length.at(0), thickness_and_length.at(1)});
+        set_object_color(name, rgba_color);
+        set_object_as_respondable(name, false);
+        set_object_as_static(name, true);
+        std::vector<std::string> children_names;
+        std::string line_name = _get_standard_name(name)+std::string("_line");
+        if (add_line)
+        {
+            double wscale = 0.05*line_scale;
+            double lscale = 1.1*line_scale;
+            add_primitive(PRIMITIVE::CYLINDER, line_name,
+                          {wscale*thickness_and_length.at(0), wscale*thickness_and_length.at(0), lscale*thickness_and_length.at(1)});
+            children_names.push_back(line_name);
+            _set_static_object_properties(line_name,
+                                          name,
+                                          DQ(1),
+                                          {0,0,1,1});
+
+            double rfc = 2*wscale*line_scale;
+            std::vector<double> arrow_size = {rfc*thickness_and_length.at(0),rfc*thickness_and_length.at(0), 0.02*line_scale*thickness_and_length.at(1)};
+            std::string arrow_name = _get_standard_name(name)+std::string("_normal");
+            add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
+            _set_static_object_properties(arrow_name,
+                                          name,
+                                          1+0.5*E_*0.5*lscale*thickness_and_length.at(1)*k_,
+                                          {0,0,1,1});
+            children_names.push_back(arrow_name);
+
+        }
+        _update_created_handles_map(name, children_names);
+    }
+    set_object_pose(name, _get_pose_from_direction(direction, location));
+}
+
 void DQ_CoppeliaSimInterface::plot_sphere(const std::string &name, const DQ &location, const double &size, const std::vector<double> rgba_color)
 {
 
