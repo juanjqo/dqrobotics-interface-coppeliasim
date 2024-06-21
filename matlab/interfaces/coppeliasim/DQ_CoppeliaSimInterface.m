@@ -103,7 +103,8 @@ classdef DQ_CoppeliaSimInterface < handle
                  status = true;
              else
                 status = false;
-             end
+            end
+
         end
 
         function [COM_body_frame, Inertia_maxtrix_body_frame] = get_center_of_mass_and_inertia_matrix_(obj, objectname)
@@ -132,6 +133,13 @@ classdef DQ_CoppeliaSimInterface < handle
             obj.stop_simulation();
             disp(msg);
             rethrow(ME); %ME = MException('sayHello:inputError','Input must be char.');
+        end
+
+
+        function check_client_(obj)
+            if (~obj.client_created_)
+                throw(MException('DQ_CoppeliaSimInterface:UnestablishedConnection', 'Unestablished connection. Did you use connect()?'));
+            end
         end
 
 
@@ -177,39 +185,46 @@ classdef DQ_CoppeliaSimInterface < handle
 
         function start_simulation(obj)
             % This method starts the CoppeliaSim simulation.
+            obj.check_client_();
             obj.sim_.startSimulation();
         end
 
         function pause_simulation(obj)
             % This method pauses the CoppeliaSim simulation.
+            obj.check_client_();
             obj.sim_.pauseSimulation();
         end
 
         function stop_simulation(obj)
             % This method stops the CoppeliaSim simulation.
+            obj.check_client_();
             obj.sim_.stopSimulation()
         end
 
         function set_stepping_mode(obj, flag)
             % This method enables or disables the stepping mode
             % (formerly known as synchronous mode).
+            obj.check_client_();
             obj.sim_.setStepping(flag);
         end
 
         function simulation_time = get_simulation_time(obj)
             % This method returns the simulation time.
+            obj.check_client_();
             simulation_time =obj.sim_.getSimulationTime();
         end
 
         function trigger_next_simulation_step(obj) 
             % This method sends a trigger signal to the CoppeliaSim scene, 
             % which performs a simulation step when the stepping mode is used.
+            obj.check_client_();
             obj.sim_.step();
         end
 
         function rtn = is_simulation_running(obj)
             % checks if the simulation is running. Returns true if the simulation 
             % is running. False otherwise.
+            obj.check_client_();
            rtn = (obj.sim_.getSimulationState() > obj.sim_.simulation_paused);        
         end
  
@@ -225,12 +240,14 @@ classdef DQ_CoppeliaSimInterface < handle
             % simulation_advancing_running = 17
             % simulation_paused = 8
             % simulation_stopped = 0
+            obj.check_client_();
             rtn = obj.sim_.getSimulationState();
         end
 
         function set_status_bar_message(obj, message) 
             % This method sends a message to CoppeliaSim to be displayed 
-            % in the status bar.    
+            % in the status bar.   
+            obj.check_client_();
             obj.set_status_bar_message_(message, obj.sim_.verbosity_undecorated);         
         end
 
@@ -245,6 +262,7 @@ classdef DQ_CoppeliaSimInterface < handle
 
 
             try
+                obj.check_client_();
                 standard_objectname = obj.get_standard_name_(objectname);
                 handle = obj.sim_.getObject(standard_objectname);
                 obj.update_map_(standard_objectname, handle);
@@ -280,7 +298,8 @@ classdef DQ_CoppeliaSimInterface < handle
           arguments 
                 obj
                 objectname string
-           end
+          end
+          obj.check_client_();
              position = obj.sim_.getObjectPosition(obj.get_handle_from_map_(objectname), ...
                  obj.sim_.handle_world);
              t = DQ(double([position{1},position{2},position{3}]));
@@ -292,6 +311,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 objectname string
                 t DQ
            end 
+           obj.check_client_();
             vec_t = vec3(t);
             position = {vec_t(1), vec_t(2), vec_t(3)};
             obj.sim_.setObjectPosition(obj.get_handle_from_map_(objectname), ...
@@ -303,6 +323,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 obj
                 objectname string
            end
+           obj.check_client_();
            rotation = obj.sim_.getObjectQuaternion(obj.get_handle_from_map_(objectname) ...
                         + obj.sim_.handleflag_wxyzquat, obj.sim_.handle_world);
 
@@ -315,6 +336,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 objectname string
                 r DQ
            end
+           obj.check_client_();
            vec_r = vec4(r);
            rotation = {vec_r(1), vec_r(2), vec_r(3), vec_r(4)};
            obj.sim_.setObjectQuaternion(obj.get_handle_from_map_(objectname) ...
@@ -337,6 +359,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 objectname string
                 h DQ
            end 
+           obj.check_client_();
            vec_r = h.P().vec4();
            vec_t = h.translation().vec3(); 
            pose = {vec_t(1), vec_t(2), vec_t(3),vec_r(1), vec_r(2), vec_r(3), vec_r(4)};
@@ -349,6 +372,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 obj
                 jointname string
            end  
+           obj.check_client_();
            theta = double(obj.sim_.getJointPosition(obj.get_handle_from_map_(jointname)));
 
         end
@@ -370,7 +394,8 @@ classdef DQ_CoppeliaSimInterface < handle
                 obj
                 jointname string
                 angle_rad double
-           end            
+           end   
+           obj.check_client_();
            obj.sim_.setJointPosition(obj.get_handle_from_map_(jointname), angle_rad);
         end
 
@@ -395,6 +420,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 jointname string
                 angle_rad double
            end
+           obj.check_client_();
            obj.sim_.setJointTargetPosition(obj.get_handle_from_map_(jointname), angle_rad);
         end
 
@@ -418,6 +444,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 obj
                 jointname string
            end 
+           obj.check_client_();
             theta_dot = obj.sim_.getObjectFloatParam(obj.get_handle_from_map_(jointname), ...
                         obj.sim_.jointfloatparam_velocity);
         end
@@ -440,6 +467,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 jointname string
                 angle_rad_dot double
            end   
+           obj.check_client_();
            obj.sim_.setJointTargetVelocity(obj.get_handle_from_map_(jointname), angle_rad_dot);
         end
 
@@ -470,6 +498,7 @@ classdef DQ_CoppeliaSimInterface < handle
            elseif (torque<0)
                 angle_dot_rad_max = -10000.0;
            end
+           obj.check_client_();
            handle = obj.get_handle_from_map_(jointname);
            obj.sim_.setJointTargetVelocity(handle, angle_dot_rad_max);
            obj.sim_.setJointTargetForce(handle, abs(torque));
@@ -540,10 +569,11 @@ classdef DQ_CoppeliaSimInterface < handle
                 obj
                 base_objectname string
            end
-            base_handle = obj.get_handle_from_map_(base_objectname);
-            jointhandles = obj.sim_.getObjectsInTree(base_handle,...
+           obj.check_client_();
+           base_handle = obj.get_handle_from_map_(base_objectname);
+           jointhandles = obj.sim_.getObjectsInTree(base_handle,...
                                                 obj.sim_.object_joint_type,0);
-            jointnames = obj.get_object_names(jointhandles);
+           jointnames = obj.get_object_names(jointhandles);
         end
 
         function linknames = get_linknames_from_base_objectname(obj, base_objectname)
@@ -551,6 +581,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 obj
                 base_objectname string
            end  
+           obj.check_client_();
            base_handle = obj.get_handle_from_map_(base_objectname);
            shapehandles = obj.sim_.getObjectsInTree(base_handle,obj.sim_.object_shape_type, 0);
            linknames = obj.get_object_names(shapehandles);
@@ -602,6 +633,7 @@ classdef DQ_CoppeliaSimInterface < handle
                  v = [w_a.vec3();
                      p_dot_a.vec3()];
            end
+           obj.check_client_();
            handle = obj.get_handle_from_map_(objectname);
            obj.sim_.resetDynamicObject(handle);
            for i=1:n
@@ -701,6 +733,7 @@ classdef DQ_CoppeliaSimInterface < handle
                case DQ_CoppeliaSimInterface_JOINT_CONTROL_MODE.TORQUE
                     control_mode = obj.sim_.jointdynctrl_velocity;
            end
+           obj.check_client_();
            obj.sim_.setObjectInt32Param(obj.get_handle_from_map_(jointname),...
                               obj.sim_.jointintparam_dynctrlmode, ...
                               control_mode);
@@ -724,22 +757,27 @@ classdef DQ_CoppeliaSimInterface < handle
                 obj
                 flag logical
             end
+            obj.check_client_();
             obj.sim_.setBoolParam(obj.sim_.boolparam_dynamics_handling_enabled, flag);
         end 
 
         function t = get_simulation_time_step(obj)
+            obj.check_client_();
             t = obj.sim_.getFloatParam(obj.sim_.floatparam_simulation_time_step);
         end
 
         function set_simulation_time_step(obj, time_step)
+            obj.check_client_();
             obj.sim_.setFloatParam(obj.sim_.floatparam_simulation_time_step, time_step);
         end
 
         function t = get_physics_time_step(obj)
+            obj.check_client_();
             t = obj.sim_.getFloatParam(obj.sim_.floatparam_physicstimestep);
         end
 
         function set_physics_time_step(obj, time_step) 
+            obj.check_client_();
             obj.sim_.setFloatParam(obj.sim_.floatparam_physicstimestep, time_step);
         end
 
@@ -748,6 +786,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 obj
                 engine DQ_CoppeliaSimInterface_ENGINE
             end
+            obj.check_client_();
             obj.sim_.setInt32Param(obj.sim_.intparam_dynamic_engine, engine);
         end 
 
@@ -762,6 +801,7 @@ classdef DQ_CoppeliaSimInterface < handle
         end
 
         function gravity = get_gravity(obj) 
+            obj.check_client_();
             g = obj.sim_.getArrayParam(obj.sim_.arrayparam_gravity);
             gravity = DQ([0, g{1}, g{2}, g{3}]);
         end
@@ -779,14 +819,17 @@ classdef DQ_CoppeliaSimInterface < handle
                 obj
                 path_to_filename string
             end
+            obj.check_client_();
             obj.sim_.loadScene(path_to_filename);
         end
 
         function save_scene(obj, path_to_filename) 
+            obj.check_client_();
             obj.sim_.saveScene(path_to_filename);
         end
 
         function close_scene(obj)
+            obj.check_client_();
             obj.sim_.closeScene();
         end
 
@@ -856,21 +899,28 @@ classdef DQ_CoppeliaSimInterface < handle
         end
         
 
-        function remove_child_script_from_object(obj, objectname)
-            arguments
-                obj
-                objectname string
+        function remove_child_script_from_object(obj, objectname, script_name)
+ 
+            if nargin==2
+                script_name = "/Script";
             end
-            script_handle = obj.sim_.getScript(obj.sim_.scripttype_childscript,...
-                                         obj.get_handle_from_map_(objectname));
-            if (script_handle ~= -1)
-                obj.sim_.removeScript(script_handle);
+            % script_handle = obj.sim_.getScript(obj.sim_.scripttype_childscript,...
+            %                              obj.get_handle_from_map_(objectname));
+            % if (script_handle ~= -1)
+            %     obj.sim_.removeScript(script_handle);
+            % end
+
+            obj.check_client_();
+            if (obj.object_exist_on_scene(obj.get_standard_name_(objectname)+script_name))
+            
+                handle = obj.get_handle_from_map_(obj.get_standard_name_(objectname)+script_name);
+                obj.sim_.removeObjects({handle}, false);
             end
         end
 
 
         function status = object_exist_on_scene(obj, objectname)
-
+            obj.check_client_();
             options = {{"noError", false}};
             try 
                 rtn = obj.sim_.getObject(objectname, options);
@@ -890,6 +940,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 current_object_name string
                 new_object_name string
             end
+            obj.check_client_();
             obj.sim_.setObjectAlias(obj.get_handle_from_map_(current_object_name), new_object_name);
         end
 
@@ -898,6 +949,7 @@ classdef DQ_CoppeliaSimInterface < handle
                 obj
                 objectname string
             end
+            obj.check_client_();
             mass = obj.sim_.getShapeMassAndInertia(obj.get_handle_from_map_(objectname));
         end
 
@@ -936,16 +988,6 @@ classdef DQ_CoppeliaSimInterface < handle
                 com = translation((x_0_bodyFrame*x_bodyFrame_com));
             end
         end
-
-
-
-
-        % 
-        % function get_center_of_mass
-        % end
-        % 
-        % function get_inertia_matrix()
-        % end
 
 
 

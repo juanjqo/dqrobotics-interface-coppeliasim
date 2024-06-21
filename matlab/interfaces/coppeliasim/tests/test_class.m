@@ -5,11 +5,11 @@ clc
 
 vi = DQ_CoppeliaSimInterface();
 vi.connect();
+vi.close_scene();
+
+vi.load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm", "/Franka");
 
 vi.start_simulation()
-
-
-com = vi.get_center_of_mass("/Sphere", "BODY_FRAME");
 
 
 vi.stop_simulation();
