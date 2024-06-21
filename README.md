@@ -6,7 +6,7 @@
 
 # dqrobotics-interface-coppeliasim (Matlab ≥ 2023b, C++20, and CoppeliaSim ≥ v4.7.0-rev0)
 
-An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API. This API provides more functionalities when compared to the legacy remote API (the one used by the [DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep)). However, unlike DQ Robotics, dqrobotics-interface-coppeliasim is experimental and lacks official support. **The C++20 version is the baseline, and you can expect to be the most stable, reliable, and better-supported version.**
+An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API. This API provides more functionalities when compared to the legacy remote API (the one used by the [DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep)). However, unlike DQ Robotics, dqrobotics-interface-coppeliasim is experimental and lacks official support. 
 
 | CoppeliaSim  | SO | Status (C++20) | Status (Python) |  Status (Matlab ≥ R2023b) |
 | ------------- | ------------- |------------- |------------- |------------- |
@@ -18,7 +18,7 @@ An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on Zer
 # Don't use this interface for your project! :warning:
 
 ![Static Badge](https://img.shields.io/badge/warning-yellow)
-This project is under active development, incomplete, and experimental/unstable. Therefore, **I highly recommend** the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability, and outstanding technical support.
+This project is under active development, incomplete, and experimental/unstable. Therefore, **I highly recommend** the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability and outstanding technical support. **The C++20 version is the baseline, and you can expect to be the most stable, reliable, and better-supported version.**
 
 | Feature  | Status (C++20) | Status (Python) |  Status (Matlab ≥ R2023b) |
 | -------- | -------------- |---------------- |-------------------------- |
