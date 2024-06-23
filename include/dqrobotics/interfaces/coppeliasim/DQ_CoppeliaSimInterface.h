@@ -347,16 +347,16 @@ protected:
     enum class AXIS{i,j,k};
 
 
-    std::string host_ = "localhost";
-    int rpcPort_ {23000};
-    int cntPort_ {-1};
-    int verbose_ {-1};
+    std::string host_{"localhost"};
+    int rpcPort_{23000};
+    int cntPort_{-1};
+    int verbose_{-1};
 
 private:
     enum class UPDATE_MAP{ADD, REMOVE};
 
-    std::atomic<bool> client_created_ = false;
-    bool enable_deprecated_name_compatibility_ = true;
+    std::atomic<bool> client_created_{false};
+    bool enable_deprecated_name_compatibility_{true};
     void _check_client() const;
     [[noreturn]] void _throw_runtime_error(const std::string& msg);
 

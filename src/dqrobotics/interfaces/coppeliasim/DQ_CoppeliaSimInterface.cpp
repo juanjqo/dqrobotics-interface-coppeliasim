@@ -31,34 +31,20 @@ Contributors:
 #include <source_location>
 #include <RemoteAPIClient.h>
 
-std::string DQ_CoppeliaSimInterface::_map_simulation_state(const int &state)
-{
-    return simulation_status_[state];
-}
-
-DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
-    :client_created_(false)
-{
-
-}
-
-DQ_CoppeliaSimInterface::~DQ_CoppeliaSimInterface()
-{
-    _join_if_joinable_chronometer_thread();
-}
 
 //-------------------Private components-----------------------//
 std::unique_ptr<RemoteAPIClient> client_;
 std::unique_ptr<RemoteAPIObject::sim> sim_;
 
-
+/**
+ * @brief _set_status_bar_message
+ * @param message
+ * @param verbosity_type
+ */
 void _set_status_bar_message(const std::string &message, const int& verbosity_type)
 {
     sim_->addLog(verbosity_type, message);
 }
-
-
-//-------------------------------------------------------------//
 
 /**
  * @brief _create_client
@@ -70,18 +56,40 @@ void _set_status_bar_message(const std::string &message, const int& verbosity_ty
  * @return
  */
 bool _create_client(const std::string& host = "localhost",
-                                             const int& rpcPort = 23000,
-                                             const int& cntPort = -1,
-                                             const int& verbose_ = -1,
-                                             const bool& client_flag = false)
+                    const int& rpcPort = 23000,
+                    const int& cntPort = -1,
+                    const int& verbose_ = -1,
+                    const bool& client_flag = false)
 {
     if (!client_flag)
     {
-         client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
-         sim_    = std::make_unique<RemoteAPIObject::sim >(client_->getObject().sim());
+        client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
+        sim_    = std::make_unique<RemoteAPIObject::sim >(client_->getObject().sim());
     }
     return true;
 }
+//-------------------------------------------------------------//
+
+
+/**
+ * @brief DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface
+ */
+DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
+    :client_created_{false}
+{
+
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::~DQ_CoppeliaSimInterface
+ */
+DQ_CoppeliaSimInterface::~DQ_CoppeliaSimInterface()
+{
+    _join_if_joinable_chronometer_thread();
+}
+
+
+
 
 /**
  * @brief DQ_CoppeliaSimInterface::_join_if_joinable_chronometer_thread
@@ -171,6 +179,16 @@ bool DQ_CoppeliaSimInterface::connect(const std::string &host, const int &rpcPor
                   << e.what() << std::endl;
     }
     return client_created_;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::_map_simulation_state
+ * @param state
+ * @return
+ */
+std::string DQ_CoppeliaSimInterface::_map_simulation_state(const int &state)
+{
+    return simulation_status_[state];
 }
 
 /**
