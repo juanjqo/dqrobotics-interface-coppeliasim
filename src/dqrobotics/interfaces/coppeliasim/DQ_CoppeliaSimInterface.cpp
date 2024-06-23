@@ -86,6 +86,8 @@ DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
 DQ_CoppeliaSimInterface::~DQ_CoppeliaSimInterface()
 {
     _join_if_joinable_chronometer_thread();
+    if (is_simulation_running())
+        stop_simulation();
 }
 
 
@@ -2125,6 +2127,11 @@ int DQ_CoppeliaSimInterface::wait_for_simulation_step_to_end(){return 0;}
 
 
 //---------------Private methods-----------------------------
+/**
+ * @brief DQ_CoppeliaSimInterface::_remove_first_slash_from_string
+ * @param str
+ * @return
+ */
 std::string DQ_CoppeliaSimInterface::_remove_first_slash_from_string(const std::string &str) const
 {
     std::string new_str = str;
@@ -2134,6 +2141,11 @@ std::string DQ_CoppeliaSimInterface::_remove_first_slash_from_string(const std::
     return new_str;
 }
 
+/**
+ * @brief DQ_CoppeliaSimInterface::_start_with_slash
+ * @param str
+ * @return
+ */
 bool DQ_CoppeliaSimInterface::_start_with_slash(const std::string &str) const
 {
     /*

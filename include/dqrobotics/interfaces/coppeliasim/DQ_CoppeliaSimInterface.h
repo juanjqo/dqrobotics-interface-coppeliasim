@@ -78,6 +78,16 @@ public:
 
     DQ_CoppeliaSimInterface();
     ~DQ_CoppeliaSimInterface();
+
+    // Explicitly Deleted Assignment Operator
+    // DQ_CoppeliaSimInterface& operator=(const DQ_CoppeliaSimInterface&) = delete;
+
+    // Explicitly Deleted Copy Constructor
+    // DQ_CoppeliaSimInterface(const DQ_CoppeliaSimInterface&) = delete;
+
+    // Explicitly Deleted Default Constructors
+    // DQ_CoppeliaSimInterface() = delete;
+
     bool connect(const std::string& host = "localhost",
                  const int& rpcPort = 23000,
                  const int& MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION = 300,
