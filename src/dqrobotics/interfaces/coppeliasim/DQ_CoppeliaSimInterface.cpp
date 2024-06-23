@@ -2128,14 +2128,9 @@ int DQ_CoppeliaSimInterface::wait_for_simulation_step_to_end(){return 0;}
 std::string DQ_CoppeliaSimInterface::_remove_first_slash_from_string(const std::string &str) const
 {
     std::string new_str = str;
-    size_t found = str.find('/');
-    if (found != std::string::npos)
-    {
-        if(found == 0) // The string containt the '/'
-        {
+    auto found = str.find('/');
+    if (found != std::string::npos && found == 0) // The string containt the '/' in the first position
             new_str.erase(0,1); // remove the '/'
-        }
-    }
     return new_str;
 }
 
