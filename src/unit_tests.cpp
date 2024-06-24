@@ -24,7 +24,7 @@ namespace My{
     }
 
     std::vector<std::string> load_panda(const ROBOT_MODE& robot_mode){
-        vi_->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm","/Franka", true, false);
+        vi_->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm","/Franka", true, true);
         auto jointnames = vi_->get_jointnames_from_base_objectname("/Franka");
         switch (robot_mode){
 
@@ -118,7 +118,13 @@ namespace My{
     }
 
     TEST_F(InterfaceUnitTests, target_joint_positions){
-
+        auto jointnames = load_panda(ROBOT_MODE::POSITION);
+        vi_->start_simulation();
+        vi_->set_joint_target_positions(jointnames, q_panda_home_);
+        delay(800);
+        auto qr = vi_->get_joint_positions(jointnames);
+        for (auto i=0;i<q_panda_home_.size();i++)
+            EXPECT_NEAR(q_panda_home_(i), qr(i), 1e-3);
     }
 
 
