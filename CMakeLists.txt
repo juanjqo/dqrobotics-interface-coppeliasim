@@ -114,7 +114,13 @@ INSTALL(FILES
 #                      dqrobotics
 #                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
-add_executable(multiple_instances src/test_panda.cpp)
-target_link_libraries(multiple_instances PRIVATE
-                    #dqrobotics
-                    ${PROJECT_NAME})
+#add_executable(multiple_instances src/test_panda.cpp)
+#target_link_libraries(multiple_instances PRIVATE
+#                    #dqrobotics
+#                    ${PROJECT_NAME})
+
+
+# Now simply link against gtest or gtest_main as needed. Eg
+add_executable(unit_tests unit_tests.cpp)
+target_link_libraries(unit_tests gtest_main ${PROJECT_NAME})
+#add_test(NAME example_test COMMAND example)

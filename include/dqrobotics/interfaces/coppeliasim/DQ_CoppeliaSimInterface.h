@@ -85,7 +85,7 @@ public:
     // Explicitly Deleted Copy Constructor
     // DQ_CoppeliaSimInterface(const DQ_CoppeliaSimInterface&) = delete;
 
-    // Explicitly Deleted Default Constructors
+    // Explicitly Deleted Default Constructor
     // DQ_CoppeliaSimInterface() = delete;
 
     bool connect(const std::string& host = "localhost",
