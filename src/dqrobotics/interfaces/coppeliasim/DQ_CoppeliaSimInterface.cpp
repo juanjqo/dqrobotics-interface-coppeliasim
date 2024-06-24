@@ -86,8 +86,8 @@ DQ_CoppeliaSimInterface::DQ_CoppeliaSimInterface()
 DQ_CoppeliaSimInterface::~DQ_CoppeliaSimInterface()
 {
     _join_if_joinable_chronometer_thread();
-    if (is_simulation_running())
-        stop_simulation();
+    //if (is_simulation_running())
+    //    stop_simulation();
 }
 
 

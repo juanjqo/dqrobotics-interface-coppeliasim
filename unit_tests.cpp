@@ -34,6 +34,7 @@ namespace My{
         vi.start_simulation();
         EXPECT_NE(vi.get_simulation_state(),8);
         EXPECT_NE(vi.get_simulation_state(),0);
+        vi.stop_simulation();
     };
 
     TEST_F(InterfaceUnitTests, get_object_pose) {
@@ -44,6 +45,7 @@ namespace My{
         DQ p = 0.5*i_ + 0.4*j_ + 0.9*k_;
         DQ x = r + 0.5*E_*p*r;
         vi.plot_reference_frame("/x", x);
+        vi.stop_simulation();
 
         EXPECT_EQ(vi.get_object_pose("/x"), x);
     }
