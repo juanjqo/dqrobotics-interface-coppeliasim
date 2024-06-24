@@ -9,7 +9,9 @@ namespace My{
     class InterfaceUnitTests : public testing::Test {
 
     protected:
+        enum class ROBOT_MODE{KINEMATIC, POSITION, VELOCITY, TORQUE};
         std::unique_ptr<DQ_CoppeliaSimInterface> vi_;
+        VectorXd q_panda_home_ = (VectorXd(7)<<0, -M_PI_4, 0, -3 * M_PI_4, 0, M_PI_2, M_PI_4).finished();
     InterfaceUnitTests() {
         vi_ = std::make_unique<DQ_CoppeliaSimInterface>();
         vi_->connect("localhost", 23000, 1000);
@@ -17,6 +19,40 @@ namespace My{
 
     ~InterfaceUnitTests() override {
         vi_->stop_simulation();
+        delay();
+        vi_->close_scene();
+    }
+
+    std::vector<std::string> load_panda(const ROBOT_MODE& robot_mode){
+        vi_->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm","/Franka", true, false);
+        auto jointnames = vi_->get_jointnames_from_base_objectname("/Franka");
+        switch (robot_mode){
+
+        case ROBOT_MODE::KINEMATIC:
+            vi_->set_joint_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_MODE::KINEMATIC);
+            vi_->enable_dynamics(false);
+            break;
+        case ROBOT_MODE::POSITION:
+            vi_->set_joint_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_MODE::DYNAMIC);
+            vi_->set_joint_control_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::POSITION);
+            vi_->enable_dynamics(true);
+            break;
+        case ROBOT_MODE::VELOCITY:
+            vi_->set_joint_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_MODE::DYNAMIC);
+            vi_->set_joint_control_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::VELOCITY);
+            vi_->enable_dynamics(true);
+            break;
+        case ROBOT_MODE::TORQUE:
+            vi_->set_joint_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_MODE::DYNAMIC);
+            vi_->set_joint_control_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::TORQUE);
+            vi_->enable_dynamics(true);
+            break;
+        }
+        return jointnames;
+    }
+
+    void delay(const int& time_ms = 100){
+       std::this_thread::sleep_for(std::chrono::milliseconds(time_ms));
     }
 
     void SetUp() override {
@@ -38,11 +74,11 @@ namespace My{
     //----------------------TESTS HERE----------------------------------------
     TEST_F(InterfaceUnitTests, start_stop_simulation){
         vi_->start_simulation();
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        delay();
         EXPECT_NE(vi_->get_simulation_state(),8);
         EXPECT_NE(vi_->get_simulation_state(),0);
         vi_->stop_simulation();
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        delay();
         EXPECT_EQ(vi_->get_simulation_state(),0)<<"Error in start_simulation() or stop_simulation()";
     };
 
@@ -70,6 +106,21 @@ namespace My{
         vi_->plot_reference_frame("/x", x);
         EXPECT_EQ(vi_->get_object_pose("/x"), x)<<"Error in get_object_pose()";
     }
+
+    TEST_F(InterfaceUnitTests, joint_positions){
+        auto jointnames = load_panda(ROBOT_MODE::KINEMATIC);
+        vi_->set_joint_positions(jointnames, q_panda_home_);
+        delay();
+        auto qr = vi_->get_joint_positions(jointnames);
+        for (auto i=0;i<q_panda_home_.size();i++)
+            EXPECT_EQ(q_panda_home_(i), qr(i));
+        vi_->enable_dynamics(true);
+    }
+
+    TEST_F(InterfaceUnitTests, target_joint_positions){
+
+    }
+
 
     //-----------------------------------------------------------------------
 
