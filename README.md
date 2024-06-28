@@ -122,11 +122,11 @@ sudo xargs rm < install_manifest.txt
 using namespace DQ_robotics;
 using namespace Eigen;
 
-VectorXd compute_control_signal(const MatrixXd J,
+VectorXd compute_control_signal(const MatrixXd& J,
                                 const VectorXd& q,
                                 const double& damping,
                                 const double& gain,
-                                const VectorXd task_error);
+                                const VectorXd& task_error);
 
 int main()
 {
@@ -166,11 +166,11 @@ int main()
     vi->stop_simulation();
 }
 
-VectorXd compute_control_signal(const MatrixXd J,
+VectorXd compute_control_signal(const MatrixXd& J,
                                 const VectorXd& q,
                                 const double& damping,
                                 const double& gain,
-                                const VectorXd task_error)
+                                const VectorXd& task_error)
 {
     VectorXd u = (J.transpose()*J + damping*damping*MatrixXd::Identity(q.size(), q.size())).inverse()*
         J.transpose()*(-gain*task_error);
