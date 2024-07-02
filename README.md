@@ -4,7 +4,7 @@
 
 
 
-# dqrobotics-interface-coppeliasim (Matlab ≥ 2023b, C++20, and CoppeliaSim ≥ v4.7.0-rev2)
+# dqrobotics-interface-coppeliasim (Matlab ≥ 2023b, C++20, and CoppeliaSim ≥ v4.7.0-rev0)
 
 An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API. This API provides more functionalities when compared to the legacy remote API (the one used by the [DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep)). However, unlike DQ Robotics, dqrobotics-interface-coppeliasim is experimental and lacks official support. 
 
@@ -67,7 +67,7 @@ Required vcpkg packages:
 ```
 
 
-#### Download and install CoppeliaSim ≥ v4.7.0-rev2 (Use CoppeliaSim arm64 for Apple Silicon Macs)
+#### Download and install CoppeliaSim ≥ v4.7.0-rev0 (Use CoppeliaSim arm64 for Apple Silicon Macs)
 
 #### Build and Install (UNIX)
 
