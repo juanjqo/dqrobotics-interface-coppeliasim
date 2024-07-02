@@ -4,7 +4,7 @@
 
 
 
-# dqrobotics-interface-coppeliasim (Matlab ≥ 2023b, C++20, and CoppeliaSim ≥ v4.7.0-rev0)
+# dqrobotics-interface-coppeliasim (Matlab ≥ 2023b, C++20, and CoppeliaSim ≥ v4.7.0-rev2)
 
 An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API. This API provides more functionalities when compared to the legacy remote API (the one used by the [DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep)). However, unlike DQ Robotics, dqrobotics-interface-coppeliasim is experimental and lacks official support. 
 
@@ -27,7 +27,7 @@ This project is under active development, incomplete, and experimental/unstable.
 | Unit Testing | :construction: under construction :rocket: | -- | :pushpin: planned|
 | Packages | :pushpin: planned | -- | :pushpin: planned |
 
-**The C++20 version is the baseline, and you could expect to be the most stable, reliable, and better-supported version.**
+**The C++20 version is the baseline, and you could expect it to be the most stable, reliable, and better-supported version.**
 
 
 
@@ -67,16 +67,16 @@ Required vcpkg packages:
 ```
 
 
-#### Download and install CoppeliaSim ≥ v4.7.0-rev0 (Use CoppeliaSim arm64 for Apple Silicon Macs)
+#### Download and install CoppeliaSim ≥ v4.7.0-rev2 (Use CoppeliaSim arm64 for Apple Silicon Macs)
 
 #### Build and Install (UNIX)
 
-Example for coppeliasim-v4.7.0-rev0. Note: :warning: replace coppeliasim-v4.7.0-rev0 with the actual CoppeliaSim version you have (≥ v4.7.0-rev0). 
+Example for coppeliasim-v4.7.0-rev2. Note: :warning: replace coppeliasim-v4.7.0-rev2 with the actual CoppeliaSim version you have (≥ v4.7.0-rev0). 
 
 ```shell
 git clone https://github.com/juanjqo/dqrobotics-interface-coppeliasim --recursive
 cd dqrobotics-interface-coppeliasim/coppeliarobotics/zmqRemoteApi
-git checkout coppeliasim-v4.7.0-rev0
+git checkout coppeliasim-v4.7.0-rev4
 cd ../.. && mkdir build && cd build
 cmake ..
 make -j16
