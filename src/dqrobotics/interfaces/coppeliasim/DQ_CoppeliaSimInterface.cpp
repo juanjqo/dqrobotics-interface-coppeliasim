@@ -1401,14 +1401,14 @@ void DQ_CoppeliaSimInterface::set_object_name(const std::string &current_object_
 
 
 void DQ_CoppeliaSimInterface::set_object_color(const int &handle,
-                                               const std::vector<double> rgba_color) const
+                                               const std::vector<double> &rgba_color) const
 {
     _check_client();
     sim_->setShapeColor(handle, "", sim_->colorcomponent_ambient_diffuse, {rgba_color.at(0), rgba_color.at(1),rgba_color.at(2)});
     sim_->setShapeColor(handle, "", sim_->colorcomponent_transparency, {rgba_color.at(3)});
 }
 
-void DQ_CoppeliaSimInterface::set_object_color(const std::string &objectname, const std::vector<double> rgba_color)
+void DQ_CoppeliaSimInterface::set_object_color(const std::string &objectname, const std::vector<double>& rgba_color)
 {
     if (rgba_color.size() != 4)
         _throw_runtime_error(static_cast<std::string>(std::source_location::current().function_name())

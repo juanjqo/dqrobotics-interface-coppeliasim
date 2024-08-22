@@ -240,10 +240,10 @@ public:
     //-------- Methods to be implemented on Matlab---------------
 
     void set_object_color(const int& handle,
-                          const std::vector<double> rgba_color) const;
+                          const std::vector<double>& rgba_color) const;
 
     void set_object_color(const std::string& objectname,
-                          const std::vector<double> rgba_color);
+                          const std::vector<double>& rgba_color);
 
     void set_object_as_respondable(const int& handle,
                                    const bool& respondable_object = true) const;
