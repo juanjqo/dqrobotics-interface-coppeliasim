@@ -12,7 +12,8 @@ int main()
         vi.set_engine(DQ_CoppeliaSimInterface::ENGINE::MUJOCO);
 
         vi.set_mujoco_global_impratio(1);
-        vi.set_mujoco_global_wind({1000,0,0});
+        vi.set_mujoco_global_wind({0,0,0});
+        vi.set_mujoco_global_overridesolimp({1,2,3,4,5});
         vi.set_gravity(DQ(0));
 
 

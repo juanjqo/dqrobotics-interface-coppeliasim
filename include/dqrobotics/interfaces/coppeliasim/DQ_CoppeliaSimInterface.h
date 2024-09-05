@@ -341,11 +341,22 @@ public:
     bool mujoco_is_used();
     void set_mujoco_global_impratio(const double& impratio);
     void set_mujoco_global_wind(const std::vector<double>& wind);
-    void set_mujoco_density(const double& density);
+    void set_mujoco_global_density(const double& density);
     void set_mujoco_global_viscosity(const double& viscosity);
-
-
-
+    void set_mujoco_global_boundmass(const double& boundmass);
+    void set_mujoco_global_boundinertia(const double& boundinertia);
+    void set_mujoco_global_overridemargin(const double& overridemargin);
+    void set_mujoco_global_overridesolref(const std::vector<double>& overridesolref);
+    void set_mujoco_global_overridesolimp(const std::vector<double>& overridesolimp);
+    void set_mujoco_global_iterations(const int& iterations);
+    void set_mujoco_global_integrator(const int& integrator);
+    void set_mujoco_global_solver(const int& solver);
+    void set_mujoco_global_njmax(const int& njmax);
+    void set_mujoco_global_nstack(const int& nstack);
+    void set_mujoco_global_nconmax(const int& nconmax);
+    void set_mujoco_global_cone(const int& cone);
+    void set_mujoco_global_overridekin(const int& overridekin);
+    void set_mujoco_global_rebuildcondition(const int& rebuildcondition);
 
     //----------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------

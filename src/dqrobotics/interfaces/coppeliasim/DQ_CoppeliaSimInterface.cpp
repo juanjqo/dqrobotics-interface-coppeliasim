@@ -2029,22 +2029,22 @@ void DQ_CoppeliaSimInterface::set_mujoco_global_impratio(const double &impratio)
  */
 void DQ_CoppeliaSimInterface::set_mujoco_global_wind(const std::vector<double> &wind)
 {
-    std::vector<int64_t> mujoco_global_wind = {sim_->mujoco_global_wind1,
+    std::vector<int64_t> mujoco_global_param= {sim_->mujoco_global_wind1,
                                                sim_->mujoco_global_wind2,
                                                sim_->mujoco_global_wind3};
-    _check_sizes(wind, mujoco_global_wind, "Error in DQ_CoppeliaSimInterface::set_mujoco_global_wind: "
-                                           "wind must be a vector of size 3");
+    _check_sizes(wind, mujoco_global_param, "Error in DQ_CoppeliaSimInterface::set_mujoco_global_wind: "
+                                            "argument must be a vector of size "+std::to_string(mujoco_global_param.size()));
     for (size_t i=0;i<wind.size();i++)
-        sim_->setEngineFloatParam(mujoco_global_wind.at(i),-1, wind.at(i));
+        sim_->setEngineFloatParam(mujoco_global_param.at(i),-1, wind.at(i));
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::set_mujoco_density Density of the medium, not to be confused with the geom density used to infer masses and inertias.
+ * @brief DQ_CoppeliaSimInterface::set_mujoco_global_density Density of the medium, not to be confused with the geom density used to infer masses and inertias.
  *                                 This parameter is used to simulate lift and drag forces, which scale quadratically with velocity.
  *                                 In SI units the density of air is around 1.2 while the density of water is around 1000 depending on temperature. Setting density to 0 disables lift and drag forces.
  * @param density
  */
-void DQ_CoppeliaSimInterface::set_mujoco_density(const double &density)
+void DQ_CoppeliaSimInterface::set_mujoco_global_density(const double &density)
 {
     sim_->setEngineFloatParam(sim_->mujoco_global_density,-1, density);
 }
@@ -2068,6 +2068,92 @@ void DQ_CoppeliaSimInterface::set_mujoco_global_viscosity(const double &viscosit
 {
     sim_->setEngineFloatParam(sim_->mujoco_global_viscosity,-1, viscosity);
 }
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_boundmass(const double &boundmass)
+{
+    sim_->setEngineFloatParam(sim_->mujoco_global_boundmass,-1, boundmass);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_boundinertia(const double &boundinertia)
+{
+    sim_->setEngineFloatParam(sim_->mujoco_global_boundinertia,-1, boundinertia);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_overridemargin(const double &overridemargin)
+{
+    sim_->setEngineFloatParam(sim_->mujoco_global_overridemargin,-1, overridemargin);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_overridesolref(const std::vector<double> &overridesolref)
+{
+    std::vector<int64_t> mujoco_global_param = {sim_->mujoco_global_overridesolref1,
+                                                sim_->mujoco_global_overridesolref2};
+    _check_sizes(overridesolref, mujoco_global_param, "Error in DQ_CoppeliaSimInterface::set_mujoco_global_overridesolref: "
+                                                      "argument must be a vector of size "+std::to_string(mujoco_global_param.size()));
+    for (size_t i=0;i<overridesolref.size();i++)
+        sim_->setEngineFloatParam(mujoco_global_param.at(i),-1, overridesolref.at(i));
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_overridesolimp(const std::vector<double> &overridesolimp)
+{
+    std::vector<int64_t> mujoco_global_param = {sim_->mujoco_global_overridesolimp1,
+                                                sim_->mujoco_global_overridesolimp2,
+                                                sim_->mujoco_global_overridesolimp3,
+                                                sim_->mujoco_global_overridesolimp4,
+                                                sim_->mujoco_global_overridesolimp5,
+                                                };
+    _check_sizes(overridesolimp, mujoco_global_param, "Error in DQ_CoppeliaSimInterface::set_mujoco_global_overridesolimp: "
+                                                      "argument must be a vector of size "+std::to_string(mujoco_global_param.size()));
+    for (size_t i=0;i<overridesolimp.size();i++)
+        sim_->setEngineFloatParam(mujoco_global_param.at(i),-1, overridesolimp.at(i));
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_iterations(const int &iterations)
+{
+    sim_->setEngineInt32Param(sim_->mujoco_global_iterations,-1, iterations);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_integrator(const int &integrator)
+{
+    sim_->setEngineInt32Param(sim_->mujoco_global_integrator,-1, integrator);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_solver(const int &solver)
+{
+    sim_->setEngineInt32Param(sim_->mujoco_global_solver,-1, solver);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_njmax(const int &njmax)
+{
+    sim_->setEngineInt32Param(sim_->mujoco_global_njmax,-1, njmax);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_nstack(const int &nstack)
+{
+    sim_->setEngineInt32Param(sim_->mujoco_global_nstack,-1, nstack);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_nconmax(const int &nconmax)
+{
+    sim_->setEngineInt32Param(sim_->mujoco_global_nconmax,-1, nconmax);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_cone(const int &cone)
+{
+    sim_->setEngineInt32Param(sim_->mujoco_global_cone,-1, cone);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_overridekin(const int &overridekin)
+{
+    sim_->setEngineInt32Param(sim_->mujoco_global_overridekin,-1, overridekin);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_rebuildcondition(const int &rebuildcondition)
+{
+   // sim_->setEngineInt32Param(sim_->mujoco_global_rebuildcondition,-1, rebuildcondition);
+}
+
+
 
 
 /**
