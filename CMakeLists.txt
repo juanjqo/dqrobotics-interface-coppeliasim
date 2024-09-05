@@ -105,8 +105,8 @@ INSTALL(FILES
 #add_executable(example src/main.cpp)
 #target_link_libraries(example PRIVATE ${PROJECT_NAME})
 
-#add_executable(example2 src/test_library.cpp)
-#target_link_libraries(example2 PRIVATE ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
+add_executable(example2 src/test_library.cpp)
+target_link_libraries(example2 PRIVATE ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
 
 #add_executable(example3 src/test_new_methods.cpp)

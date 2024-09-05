@@ -211,7 +211,9 @@ public:
     void   set_simulation_time_step(const double& time_step);
     double get_physics_time_step() const;
     void   set_physics_time_step(const double& time_step) const;
-    void   set_dynamic_engine(const ENGINE& engine);
+    void   set_engine(const ENGINE& engine);
+
+    std::string get_engine();
     void   set_gravity(const DQ& gravity=-9.81*k_);
     DQ     get_gravity() const;
 
@@ -333,6 +335,18 @@ public:
 
     std::vector<double> get_bounding_box_size(const int& handle) const;
     std::vector<double> get_bounding_box_size(const std::string& objectname);
+    //-----------------------------------------------------------------------
+    // Mujoco settings
+
+    bool mujoco_is_used();
+    void set_mujoco_global_impratio(const double& impratio);
+    void set_mujoco_global_wind(const std::vector<double>& wind);
+    void set_mujoco_density(const double& density);
+    void set_mujoco_global_viscosity(const double& viscosity);
+
+
+
+
     //----------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------
 
@@ -391,12 +405,18 @@ private:
     bool _start_with_slash(const std::string& str) const;
     std::string _get_standard_name(const std::string& str) const;
 
-
+    ENGINE _get_engine();
     std::unordered_map<ENGINE, int> engines_ = {{ENGINE::BULLET, 0},
                                                 {ENGINE::ODE,    1},
                                                 {ENGINE::VORTEX, 2},
                                                 {ENGINE::NEWTON, 3},
                                                 {ENGINE::MUJOCO, 4}};
+    std::unordered_map<int,ENGINE> engines_invmap = {{0,ENGINE::BULLET},
+                                                     {1,ENGINE::ODE},
+                                                     {2,ENGINE::VORTEX},
+                                                     {3,ENGINE::NEWTON},
+                                                     {4,ENGINE::MUJOCO}};
+
 
     std::unordered_map<int, std::string> simulation_status_ = {{0, "simulation stopped"},
                                                                {8, "simulation paused"},

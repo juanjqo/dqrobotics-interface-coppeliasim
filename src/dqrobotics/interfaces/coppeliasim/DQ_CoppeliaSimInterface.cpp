@@ -1224,10 +1224,26 @@ void DQ_CoppeliaSimInterface::set_physics_time_step(const double &time_step) con
  * @brief DQ_CoppeliaSimInterface::set_dynamic_engine
  * @param engine
  */
-void DQ_CoppeliaSimInterface::set_dynamic_engine(const ENGINE &engine)
+void DQ_CoppeliaSimInterface::set_engine(const ENGINE &engine)
 {
     _check_client();
-    sim_->setInt32Param(sim_->intparam_dynamic_engine, engines_[engine]);
+    sim_->setInt32Param(sim_->intparam_dynamic_engine, engines_.at(engine));
+}
+
+std::string DQ_CoppeliaSimInterface::get_engine()
+{
+    switch (_get_engine()){
+    case ENGINE::BULLET:
+        return "BULLET";
+    case ENGINE::ODE:
+        return "ODE";
+    case ENGINE::VORTEX:
+        return "VORTEX";
+    case ENGINE::NEWTON:
+        return "NEWTON";
+    case ENGINE::MUJOCO:
+        return "MUJOCO";
+    }
 }
 
 /**
@@ -1980,6 +1996,79 @@ std::vector<double> DQ_CoppeliaSimInterface::get_bounding_box_size(const std::st
     return get_bounding_box_size(_get_handle_from_map(objectname));
 }
 
+bool DQ_CoppeliaSimInterface::mujoco_is_used()
+{
+    return _get_engine() == ENGINE::MUJOCO ? true : false;
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_mujoco_global_impratio This attribute determines the ratio of
+ *        frictional-to-normal constraint impedance for elliptic friction cones.
+ *        The setting of solimp determines a single impedance value for
+ *        all contact dimensions, which is then modulated by this attribute.
+ *        Settings larger than 1 cause friction forces to be “harder” than
+ *        normal forces, having the general effect of preventing slip,
+ *        without increasing the actual friction coefficient.
+ *        For pyramidal friction cones the situation is more complex because
+ *        the pyramidal approximation mixes normal and frictional dimensions
+ *        within each basis vector; it is not recommended to use high impratio
+ *        values with pyramidal cones.
+ *
+ * @param impratio
+ */
+void DQ_CoppeliaSimInterface::set_mujoco_global_impratio(const double &impratio)
+{
+    sim_->setEngineFloatParam(sim_->mujoco_global_impratio,-1, impratio);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_mujoco_global_wind Velocity vector of the medium (i.e., wind).
+ *                      This vector is subtracted from the 3D translational velocity of each body,
+ *                      and the result is used to compute viscous, lift and drag forces acting on the body;
+ * @param wind
+ */
+void DQ_CoppeliaSimInterface::set_mujoco_global_wind(const std::vector<double> &wind)
+{
+    std::vector<int64_t> mujoco_global_wind = {sim_->mujoco_global_wind1,
+                                               sim_->mujoco_global_wind2,
+                                               sim_->mujoco_global_wind3};
+    _check_sizes(wind, mujoco_global_wind, "Error in DQ_CoppeliaSimInterface::set_mujoco_global_wind: "
+                                           "wind must be a vector of size 3");
+    for (size_t i=0;i<wind.size();i++)
+        sim_->setEngineFloatParam(mujoco_global_wind.at(i),-1, wind.at(i));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_mujoco_density Density of the medium, not to be confused with the geom density used to infer masses and inertias.
+ *                                 This parameter is used to simulate lift and drag forces, which scale quadratically with velocity.
+ *                                 In SI units the density of air is around 1.2 while the density of water is around 1000 depending on temperature. Setting density to 0 disables lift and drag forces.
+ * @param density
+ */
+void DQ_CoppeliaSimInterface::set_mujoco_density(const double &density)
+{
+    sim_->setEngineFloatParam(sim_->mujoco_global_density,-1, density);
+}
+
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_mujoco_global_viscosity Viscosity of the medium. This parameter is used to simulate viscous forces,
+ *                      which scale linearly with velocity.
+ *                      In SI units the viscosity of air is around 0.00002 while the viscosity of water is around 0.0009 depending on temperature.
+ *                      Setting viscosity to 0 disables viscous forces.
+ *                      Note that the default Euler integrator handles damping in
+ *                      the joints implicitly – which improves stability and accuracy.
+ *                      It does not presently do this with body viscosity.
+ *                      Therefore, if the goal is merely to create a damped simulation
+ *                      (as opposed to modeling the specific effects of viscosity),
+ *                      we recommend using joint damping rather than body viscosity,
+ *                      or switching to the implicit or implicitfast integrators.
+ * @param viscosity
+ */
+void DQ_CoppeliaSimInterface::set_mujoco_global_viscosity(const double &viscosity)
+{
+    sim_->setEngineFloatParam(sim_->mujoco_global_viscosity,-1, viscosity);
+}
+
 
 /**
  * @brief DQ_CoppeliaSimInterface::get_mass
@@ -2171,6 +2260,13 @@ std::string DQ_CoppeliaSimInterface::_get_standard_name(const std::string &str) 
     if (!_start_with_slash(str) && enable_deprecated_name_compatibility_ == true)
         standard_str = std::string("/")+str;
     return standard_str;
+}
+
+DQ_CoppeliaSimInterface::ENGINE DQ_CoppeliaSimInterface::_get_engine()
+{
+    _check_client();
+    int64_t eng = sim_->getInt32Param(sim_->intparam_dynamic_engine);
+    return engines_invmap.at(eng);
 }
 
 
