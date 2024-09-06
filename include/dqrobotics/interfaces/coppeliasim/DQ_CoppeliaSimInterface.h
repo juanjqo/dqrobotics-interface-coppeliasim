@@ -356,7 +356,29 @@ public:
     void set_mujoco_global_nconmax(const int& nconmax);
     void set_mujoco_global_cone(const int& cone);
     void set_mujoco_global_overridekin(const int& overridekin);
-    void set_mujoco_global_rebuildcondition(const int& rebuildcondition);
+    //void set_mujoco_global_rebuildcondition(const int& rebuildcondition);
+    void set_mujoco_global_computeinertias(const bool& computeinertias);
+    void set_mujoco_global_multithreaded(const bool& multithreaded);
+    void set_mujoco_global_multiccd(const bool& multiccd);
+    void set_mujoco_global_balanceinertias(const bool& balanceinertias);
+    void set_mujoco_global_overridecontacts(const bool& overridecontacts);
+
+
+    void set_mujoco_joint_stiffness(const std::string& jointname, const double& stiffness);
+    void set_mujoco_joint_stiffnesses(const std::vector<std::string>& jointnames,
+                                    const VectorXd& stiffness_vector);
+
+    void set_mujoco_joint_damping(const std::string& jointname, const double& damping);
+    void set_mujoco_joint_dampings(const std::vector<std::string>& jointnames,
+                                   const VectorXd& damping_vector);
+
+    void set_mujoco_joint_armature(const std::string& jointname, const double& armature);
+    void set_mujoco_joint_armatures(const std::vector<std::string>& jointnames,
+                                    const VectorXd& armature_vector);
+
+    void set_mujoco_body_friction(const std::string& bodyname, const std::vector<double>& friction);
+    void set_mujoco_body_frictions(const std::vector<std::string>& bodynames,
+                                   const std::vector<double>& friction);
 
     //----------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------

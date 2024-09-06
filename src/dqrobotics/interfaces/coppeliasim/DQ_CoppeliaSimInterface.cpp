@@ -2148,9 +2148,128 @@ void DQ_CoppeliaSimInterface::set_mujoco_global_overridekin(const int &overridek
     sim_->setEngineInt32Param(sim_->mujoco_global_overridekin,-1, overridekin);
 }
 
+/*
 void DQ_CoppeliaSimInterface::set_mujoco_global_rebuildcondition(const int &rebuildcondition)
 {
-   // sim_->setEngineInt32Param(sim_->mujoco_global_rebuildcondition,-1, rebuildcondition);
+   sim_->setEngineInt32Param(sim_->mujoco_global_rebuildcondition,-1, rebuildcondition);
+}
+*/
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_computeinertias(const bool &computeinertias)
+{
+   sim_->setEngineBoolParam(sim_->mujoco_global_computeinertias,-1, computeinertias);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_multithreaded(const bool &multithreaded)
+{
+   sim_->setEngineBoolParam(sim_->mujoco_global_multithreaded,-1, multithreaded);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_multiccd(const bool &multiccd)
+{
+   sim_->setEngineBoolParam(sim_->mujoco_global_multiccd,-1, multiccd);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_balanceinertias(const bool &balanceinertias)
+{
+   sim_->setEngineBoolParam(sim_->mujoco_global_balanceinertias,-1, balanceinertias);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_global_overridecontacts(const bool &overridecontacts)
+{
+    sim_->setEngineBoolParam(sim_->mujoco_global_overridecontacts,-1, overridecontacts);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_mujoco_joint_stiffness
+ *                         Joint stiffness.
+ *                         If this value is positive, a spring will be created with equilibrium position
+ *                         given by springref below.
+ *                         The spring force is computed along with the other passive forces.
+ * @param jointname
+ * @param stiffness
+ */
+void DQ_CoppeliaSimInterface::set_mujoco_joint_stiffness(const std::string &jointname, const double &stiffness)
+{
+   sim_->setEngineFloatParam(sim_->mujoco_joint_stiffness,_get_handle_from_map(jointname), stiffness);
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_mujoco_joint_stiffness
+ *                         Joint stiffness.
+ *                         If this value is positive, a spring will be created with equilibrium position
+ *                         given by springref below.
+ *                         The spring force is computed along with the other passive forces.
+ * @param jointnames
+ * @param stiffness_vector
+ */
+void DQ_CoppeliaSimInterface::set_mujoco_joint_stiffnesses(const std::vector<std::string> &jointnames,
+                                                         const VectorXd &stiffness_vector)
+{
+    _check_sizes(jointnames, stiffness_vector, "Error in DQ_CoppeliaSimInterface::set_mujoco_joint_stiffnesses: "
+                                                "Incompatible sizes between the arguments.");
+    for (size_t i=0;i<jointnames.size();i++)
+        set_mujoco_joint_stiffness(jointnames.at(i), stiffness_vector(i));
+
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_joint_damping(const std::string &jointname, const double &damping)
+{
+    sim_->setEngineFloatParam(sim_->mujoco_joint_damping, _get_handle_from_map(jointname), damping);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_joint_dampings(const std::vector<std::string> &jointnames,
+                                                        const VectorXd &damping_vector)
+{
+    _check_sizes(jointnames, damping_vector, "Error in DQ_CoppeliaSimInterface::set_mujoco_joint_dampings: "
+                                               "Incompatible sizes between the arguments.");
+    for (size_t i=0;i<jointnames.size();i++)
+        set_mujoco_joint_damping(jointnames.at(i), damping_vector(i));
+}
+
+/**
+ * @brief DQ_CoppeliaSimInterface::set_mujoco_joint_armature Armature inertia (or rotor inertia, or reflected inertia)
+ *                      of all degrees of freedom created by this joint. These are constants added to the
+ *                      diagonal of the inertia matrix in generalized coordinates.
+ *                      They make the simulation more stable, and often increase physical realism.
+ *                      This is because when a motor is attached to the system with a transmission
+ *                      that amplifies the motor force by c, the inertia of the rotor
+ *                      (i.e., the moving part of the motor) is amplified by c*c.
+ *                      The same holds for gears in the early stages of planetary gear boxes.
+ *                      These extra inertias often dominate the inertias of the robot parts that are
+ *                      represented explicitly in the model, and the armature attribute is the way to model them.
+ * @param jointname
+ * @param armature
+ */
+void DQ_CoppeliaSimInterface::set_mujoco_joint_armature(const std::string &jointname, const double &armature)
+{
+   sim_->setEngineFloatParam(sim_->mujoco_joint_armature,_get_handle_from_map(jointname), armature);
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_joint_armatures(const std::vector<std::string> &jointnames,
+                                                         const VectorXd &armature_vector)
+{
+    _check_sizes(jointnames, armature_vector, "Error in DQ_CoppeliaSimInterface::set_mujoco_joint_armatures: "
+                                               "Incompatible sizes between the arguments.");
+    for (size_t i=0;i<jointnames.size();i++)
+        set_mujoco_joint_armature(jointnames.at(i), armature_vector(i));
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_body_friction(const std::string &bodyname, const std::vector<double> &friction)
+{
+    std::vector<int64_t> mujoco_body_param = {sim_->mujoco_body_friction1,
+                                              sim_->mujoco_body_friction2,
+                                              sim_->mujoco_body_friction3};
+    _check_sizes(friction, mujoco_body_param, "Error in DQ_CoppeliaSimInterface::set_mujoco_body_friction: "
+                                              "friction must be a vector of size "+std::to_string(mujoco_body_param.size()));
+    for (size_t i=0;i<mujoco_body_param.size();i++)
+        sim_->setEngineFloatParam(mujoco_body_param.at(i), _get_handle_from_map(bodyname),friction.at(i));
+}
+
+void DQ_CoppeliaSimInterface::set_mujoco_body_frictions(const std::vector<std::string> &bodynames, const std::vector<double> &friction)
+{
+    for (auto& bodyname : bodynames)
+        set_mujoco_body_friction(bodyname, friction);
 }
 
 

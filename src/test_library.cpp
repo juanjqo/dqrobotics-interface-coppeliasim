@@ -15,7 +15,8 @@ int main()
         vi.set_mujoco_global_wind({0,0,0});
         vi.set_mujoco_global_overridesolimp({1,2,3,4,5});
         vi.set_gravity(DQ(0));
-
+        vi.set_mujoco_joint_stiffness("Revolute_joint", 0.45);
+        vi.set_mujoco_joint_armature("Revolute_joint", 0.1);
 
         std::cout<<" Engine: "<<vi.get_engine()<<std::endl;
         vi.set_simulation_time_step(0.05);
