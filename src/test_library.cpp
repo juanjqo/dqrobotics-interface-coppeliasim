@@ -11,16 +11,18 @@ int main()
         vi.set_stepping_mode(true);
         vi.set_engine(DQ_CoppeliaSimInterface::ENGINE::MUJOCO);
 
-        vi.set_mujoco_global_impratio(1);
-        vi.set_mujoco_global_wind({0,0,0});
-        vi.set_mujoco_global_overridesolimp({1,2,3,4,5});
-        vi.set_gravity(DQ(0));
-        vi.set_mujoco_joint_stiffness("Revolute_joint", 0.45);
-        vi.set_mujoco_joint_armature("Revolute_joint", 0.1);
+        //vi.set_mujoco_global_impratio(1);
+        //vi.set_mujoco_global_wind({0,0,0});
+        //vi.set_mujoco_global_overridesolimp({1,2,3,4,5});
+        //vi.set_gravity(DQ(0));
+        //vi.set_mujoco_joint_stiffness("Revolute_joint", 0.45);
+        //vi.set_mujoco_joint_armature("Revolute_joint", 0.1);
+
+        vi.set_mujoco_body_friction("RR_calf_respondable", {0.4, 0.005, 0.0001});
 
         std::cout<<" Engine: "<<vi.get_engine()<<std::endl;
-        vi.set_simulation_time_step(0.05);
-        vi.set_physics_time_step(0.005);
+        //vi.set_simulation_time_step(0.05);
+        //vi.set_physics_time_step(0.005);
         std::cout<<"Simulation time step: "<<vi.get_simulation_time_step()
                   <<" Physics time step: "<<vi.get_physics_time_step()<<std::endl;
 
