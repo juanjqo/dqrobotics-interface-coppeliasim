@@ -366,15 +366,15 @@ public:
 
     void set_mujoco_joint_stiffness(const std::string& jointname, const double& stiffness);
     void set_mujoco_joint_stiffnesses(const std::vector<std::string>& jointnames,
-                                    const VectorXd& stiffness_vector);
+                                      const double& stiffness);
 
     void set_mujoco_joint_damping(const std::string& jointname, const double& damping);
     void set_mujoco_joint_dampings(const std::vector<std::string>& jointnames,
-                                   const VectorXd& damping_vector);
+                                   const double& damping);
 
     void set_mujoco_joint_armature(const std::string& jointname, const double& armature);
     void set_mujoco_joint_armatures(const std::vector<std::string>& jointnames,
-                                    const VectorXd& armature_vector);
+                                    const double& armature);
 
     void set_mujoco_body_friction(const std::string& bodyname, const std::vector<double>& friction);
     void set_mujoco_body_frictions(const std::vector<std::string>& bodynames,

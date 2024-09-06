@@ -2201,15 +2201,13 @@ void DQ_CoppeliaSimInterface::set_mujoco_joint_stiffness(const std::string &join
  *                         given by springref below.
  *                         The spring force is computed along with the other passive forces.
  * @param jointnames
- * @param stiffness_vector
+ * @param stiffness
  */
 void DQ_CoppeliaSimInterface::set_mujoco_joint_stiffnesses(const std::vector<std::string> &jointnames,
-                                                         const VectorXd &stiffness_vector)
+                                                           const double &stiffness)
 {
-    _check_sizes(jointnames, stiffness_vector, "Error in DQ_CoppeliaSimInterface::set_mujoco_joint_stiffnesses: "
-                                                "Incompatible sizes between the arguments.");
     for (size_t i=0;i<jointnames.size();i++)
-        set_mujoco_joint_stiffness(jointnames.at(i), stiffness_vector(i));
+        set_mujoco_joint_stiffness(jointnames.at(i), stiffness);
 
 }
 
@@ -2219,12 +2217,10 @@ void DQ_CoppeliaSimInterface::set_mujoco_joint_damping(const std::string &jointn
 }
 
 void DQ_CoppeliaSimInterface::set_mujoco_joint_dampings(const std::vector<std::string> &jointnames,
-                                                        const VectorXd &damping_vector)
+                                                        const double &damping)
 {
-    _check_sizes(jointnames, damping_vector, "Error in DQ_CoppeliaSimInterface::set_mujoco_joint_dampings: "
-                                               "Incompatible sizes between the arguments.");
     for (size_t i=0;i<jointnames.size();i++)
-        set_mujoco_joint_damping(jointnames.at(i), damping_vector(i));
+        set_mujoco_joint_damping(jointnames.at(i), damping);
 }
 
 /**
@@ -2247,12 +2243,10 @@ void DQ_CoppeliaSimInterface::set_mujoco_joint_armature(const std::string &joint
 }
 
 void DQ_CoppeliaSimInterface::set_mujoco_joint_armatures(const std::vector<std::string> &jointnames,
-                                                         const VectorXd &armature_vector)
+                                                         const double &armature)
 {
-    _check_sizes(jointnames, armature_vector, "Error in DQ_CoppeliaSimInterface::set_mujoco_joint_armatures: "
-                                               "Incompatible sizes between the arguments.");
     for (size_t i=0;i<jointnames.size();i++)
-        set_mujoco_joint_armature(jointnames.at(i), armature_vector(i));
+        set_mujoco_joint_armature(jointnames.at(i), armature);
 }
 
 void DQ_CoppeliaSimInterface::set_mujoco_body_friction(const std::string &bodyname, const std::vector<double> &friction)
