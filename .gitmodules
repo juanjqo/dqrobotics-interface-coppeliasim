@@ -3,7 +3,7 @@
 	url = https://github.com/CoppeliaRobotics/zmqRemoteApi.git
 [submodule "jsoncons"]
 	path = jsoncons
-	url = https://github.com/danielaparker/jsoncons
+	url = https://github.com/danielaparker/jsoncons.git
 [submodule "cppzmq"]
 	path = cppzmq
 	url = https://github.com/zeromq/cppzmq
