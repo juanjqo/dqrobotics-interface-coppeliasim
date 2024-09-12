@@ -1996,6 +1996,7 @@ std::vector<double> DQ_CoppeliaSimInterface::get_bounding_box_size(const std::st
     return get_bounding_box_size(_get_handle_from_map(objectname));
 }
 
+
 bool DQ_CoppeliaSimInterface::mujoco_is_used()
 {
     return _get_engine() == ENGINE::MUJOCO ? true : false;

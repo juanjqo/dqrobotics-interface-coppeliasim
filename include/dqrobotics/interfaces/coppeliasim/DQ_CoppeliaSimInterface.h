@@ -335,6 +335,9 @@ public:
 
     std::vector<double> get_bounding_box_size(const int& handle) const;
     std::vector<double> get_bounding_box_size(const std::string& objectname);
+
+
+
     //-----------------------------------------------------------------------
     // Mujoco settings
 
