@@ -23,7 +23,7 @@ int main()
     vi->set_object_pose("/x", 1+0.5*E_*+0.025*i_);
 
     csmodels.load_panda("/Franka");
-*/
+
 
     csmodels.load_primitive(DQ_CoppeliaSimInterface::PRIMITIVE::SPHEROID,
                             "/cone",
@@ -34,6 +34,13 @@ int main()
                             "/cone2",
                             1+0.5*E_*0.5*k_,
                             {0.1,0.1,0.1},{0,1,0,0.5},false, true);
+*/
+
+    auto bodynames = vi->get_shapenames_from_parent_object("FR_hip_rotor_joint", DQ_CoppeliaSimInterface::SHAPE_TYPE::ANY);
+    for (auto &n:bodynames)
+    {
+        std::cout<<n<<std::endl;
+    }
 
 
 
@@ -54,7 +61,7 @@ int main()
    //               plane.P(),
    //               xd.translation(), {2,2}, {1,0,0,0.5}, true, 0.5);
 
-    vi->plot_line("lineTest", 1.*k_, 0.5*k_, {0.01,0.5}, {1,0,0,0.5}, true, 1);
+   // vi->plot_line("lineTest", 1.*k_, 0.5*k_, {0.01,0.5}, {1,0,0,0.5}, true, 1);
 
     //vi->plot_reference_frame("/xpose", DQ(1), 1,{0.005, 0.1});
 

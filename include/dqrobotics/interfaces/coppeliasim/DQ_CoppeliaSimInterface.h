@@ -75,6 +75,11 @@ public:
         CONE,
         CAPSULE
     };
+    enum class SHAPE_TYPE{
+        DYNAMIC,
+        STATIC,
+        ANY
+    };
 
     DQ_CoppeliaSimInterface();
     ~DQ_CoppeliaSimInterface();
@@ -165,8 +170,9 @@ public:
 
     std::vector<std::string> get_object_names(const auto& handles);
 
-    std::vector<std::string> get_jointnames_from_base_objectname(const std::string& base_objectname);
-    std::vector<std::string> get_linknames_from_base_objectname(const std::string& base_objectname);
+    std::vector<std::string> get_jointnames_from_parent_object(const std::string& parent_objectname);
+    std::vector<std::string> get_shapenames_from_parent_object(const std::string& parent_objectname,
+                                                               const SHAPE_TYPE& shape_type = SHAPE_TYPE::ANY);
 
     VectorXd get_angular_and_linear_velocities(const int& handle,
                                            const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;

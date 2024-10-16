@@ -25,7 +25,7 @@ namespace My{
 
     std::vector<std::string> load_panda(const ROBOT_MODE& robot_mode){
         vi_->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm","/Franka", true, true);
-        auto jointnames = vi_->get_jointnames_from_base_objectname("/Franka");
+        auto jointnames = vi_->get_jointnames_from_parent_object("/Franka");
         switch (robot_mode){
 
         case ROBOT_MODE::KINEMATIC:

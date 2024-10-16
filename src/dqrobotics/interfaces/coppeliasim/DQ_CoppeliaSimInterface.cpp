@@ -905,13 +905,14 @@ std::vector<std::string> DQ_CoppeliaSimInterface::get_object_names(const auto &h
 
 
 /**
- * @brief DQ_CoppeliaSimInterface::get_jointnames_from_base_objectname
- * @param base_objectname
- * @return
+ * @brief DQ_CoppeliaSimInterface::get_jointnames_from_parent_object returns a vector containing all the joint names
+ *                                  in which a specified object is its parent.
+ * @param parent_objectname The name of the object on CoppeliaSim that is the parent of the desired joints.
+ * @return a vector containing the desired joint names
  */
-std::vector<std::string> DQ_CoppeliaSimInterface::get_jointnames_from_base_objectname(const std::string &base_objectname)
+std::vector<std::string> DQ_CoppeliaSimInterface::get_jointnames_from_parent_object(const std::string &parent_objectname)
 {
-    int base_handle = _get_handle_from_map(base_objectname);
+    int base_handle = _get_handle_from_map(parent_objectname);
     _check_client();
     std::vector<int64_t> jointhandles = sim_->getObjectsInTree(base_handle,
                                         sim_->object_joint_type,
@@ -920,14 +921,44 @@ std::vector<std::string> DQ_CoppeliaSimInterface::get_jointnames_from_base_objec
 
 }
 
-std::vector<std::string> DQ_CoppeliaSimInterface::get_linknames_from_base_objectname(const std::string &base_objectname)
+/**
+ * @brief DQ_CoppeliaSimInterface::get_shapenames_from_parent_object returns a vector containing all the shape names
+ *                                  in which a specified object is its parent.
+ * @param parent_objectname The name of the object on CoppeliaSim that is the parent of the desired shapes.
+ * @param shape_type
+ * @return a vector containing the desired shape names
+ */
+std::vector<std::string> DQ_CoppeliaSimInterface::get_shapenames_from_parent_object(const std::string &parent_objectname,
+                                                                                    const SHAPE_TYPE &shape_type)
 {
-    int base_handle = _get_handle_from_map(base_objectname);
+    int base_handle = _get_handle_from_map(parent_objectname);
     _check_client();
     std::vector<int64_t> shapehandles = sim_->getObjectsInTree(base_handle,
                                                                sim_->object_shape_type,
                                                                0);
-    return get_object_names(shapehandles);
+    size_t handlesizes = shapehandles.size();
+    std::vector<int64_t> dynamic_features(handlesizes, 0);
+
+    for (size_t i=0; i<handlesizes;i++) // 0 is dynamic.  1 is static
+        dynamic_features.at(i) = sim_->getObjectInt32Param(shapehandles.at(i), sim_->shapeintparam_static);
+
+    std::vector<int64_t> aux_shapehandles;
+    switch (shape_type) {
+    case SHAPE_TYPE::DYNAMIC:
+        for (size_t i=0; i<handlesizes; i++)
+            if (dynamic_features.at(i) == 0)
+                aux_shapehandles.push_back(shapehandles.at(i));
+        return get_object_names(aux_shapehandles);
+    case SHAPE_TYPE::STATIC:
+        for (size_t i=0; i<handlesizes; i++)
+            if (dynamic_features.at(i) == 1)
+                aux_shapehandles.push_back(shapehandles.at(i));
+        return get_object_names(aux_shapehandles);
+    case SHAPE_TYPE::ANY:
+        return get_object_names(shapehandles);
+    }
+
+
 }
 
 /**

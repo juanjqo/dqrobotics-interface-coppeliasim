@@ -35,7 +35,7 @@ namespace DQ_robotics
  */
 void DQ_SerialCoppeliaSimRobot::_initialize_jointnames_from_coppeliasim()
 {
-    jointnames_ = _get_interface_sptr()->get_jointnames_from_base_objectname(robot_name_);
+    jointnames_ = _get_interface_sptr()->get_jointnames_from_parent_object(robot_name_);
     base_frame_name_ = jointnames_.at(0);
 }
 
