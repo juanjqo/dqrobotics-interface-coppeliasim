@@ -38,6 +38,8 @@ std::string DQ_CoppeliaSimModels::_get_string_from_others(const COMPONENTS &mode
         return std::string("/robots/non-mobile/UR5.ttm");
     case COMPONENTS::UR10:
         return std::string("/robots/non-mobile/UR10.ttm");
+    default: // This line is required in GNU/Linux
+        return std::string("");
     }
 }
 

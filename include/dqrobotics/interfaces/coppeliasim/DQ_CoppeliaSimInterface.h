@@ -29,7 +29,7 @@ Contributors:
 #include <unordered_map>
 #include <thread>
 #include <atomic>
-#include <print> // For future use of C++23 features
+//#include <print> // For future use of C++23 features
 
 using namespace DQ_robotics;
 using namespace Eigen;
@@ -424,7 +424,7 @@ private:
     std::atomic<bool> client_created_{false};
     bool enable_deprecated_name_compatibility_{true};
     void _check_client() const;
-    [[noreturn]] void _throw_runtime_error(const std::string& msg);
+    [[noreturn]] void _throw_runtime_error(const std::string& msg) const;
 
     int MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_{300};
     double elapsed_time_ {0};

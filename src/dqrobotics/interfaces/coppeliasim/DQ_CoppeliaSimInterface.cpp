@@ -956,6 +956,8 @@ std::vector<std::string> DQ_CoppeliaSimInterface::get_shapenames_from_parent_obj
         return get_object_names(aux_shapehandles);
     case SHAPE_TYPE::ANY:
         return get_object_names(shapehandles);
+    default: // This line is required in GNU/Linux
+        _throw_runtime_error("wrong argument!");
     }
 
 
@@ -1274,6 +1276,8 @@ std::string DQ_CoppeliaSimInterface::get_engine()
         return "NEWTON";
     case ENGINE::MUJOCO:
         return "MUJOCO";
+    default: // This line is required in GNU/Linux
+        _throw_runtime_error("wrong argument");
     }
 }
 
@@ -2673,6 +2677,8 @@ int DQ_CoppeliaSimInterface::get_primitive_identifier(const PRIMITIVE &primitive
         return sim_->primitiveshape_cone;
     case PRIMITIVE::CAPSULE:
         return sim_->primitiveshape_capsule;
+    default: // This line is required in GNU/Linux
+        _throw_runtime_error("wrong argument");
 
     }
 }
@@ -2683,7 +2689,7 @@ void DQ_CoppeliaSimInterface::_check_client() const
         throw std::runtime_error("Unestablished connection. Did you use connect()?");
 }
 
-[[noreturn]] void DQ_CoppeliaSimInterface::_throw_runtime_error(const std::string &msg)
+[[noreturn]] void DQ_CoppeliaSimInterface::_throw_runtime_error(const std::string &msg) const
 {
     stop_simulation();
     std::cerr<<"Something went wrong. I stopped the simulation!"<<std::endl;
