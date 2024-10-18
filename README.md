@@ -38,6 +38,7 @@ This project is under active development, incomplete, and experimental/unstable.
 - [DQ Robotics](https://github.com/dqrobotics/cpp) for C++
 - MacOS users require [Homebrew](https://brew.sh/)
 - Windows users require [vcpkg](https://vcpkg.io/en/index.html) (C:\vcpkg)
+- Download and install CoppeliaSim ≥ v4.7.0-rev0 (Use CoppeliaSim arm64 for Apple Silicon Macs)
 
 
 ### MacOS (Apple Silicon)
@@ -67,9 +68,7 @@ Required vcpkg packages:
 ```
 
 
-#### Download and install CoppeliaSim ≥ v4.7.0-rev0 (Use CoppeliaSim arm64 for Apple Silicon Macs)
-
-#### Build and Install (UNIX)
+## Build and Install (UNIX)
 
 Example for coppeliasim-v4.7.0-rev2. Note: :warning: replace coppeliasim-v4.7.0-rev2 with the actual CoppeliaSim version you have (≥ v4.7.0-rev0). 
 
@@ -88,7 +87,13 @@ Additional step for Ubuntu users:
 sudo ldconfig
 ```
 
-#### Build and Install (Windows)
+### To Uninstall 
+
+```shell
+sudo xargs rm < install_manifest.txt
+```
+
+## Build and Install (Windows)
 
 Run powershell as administrator:
 
@@ -100,14 +105,10 @@ cmake --build . --config Release
 cmake --install .
 ```
 
-#### To Uninstall 
-
-```shell
-sudo xargs rm < install_manifest.txt
-```
 
 
-#### Example (Find more examples [here](https://github.com/juanjqo/dqrobotics-interface-coppeliasim-examples))
+
+# Example (Find more examples [here](https://github.com/juanjqo/dqrobotics-interface-coppeliasim-examples))
 
 1) Open CoppeliaSim. (You do not need to load a specific scene).
 2) Run and enjoy!
