@@ -89,6 +89,8 @@ sudo ldconfig
 
 ### To Uninstall 
 
+Go to the build folder, open a run:
+
 ```shell
 sudo xargs rm < install_manifest.txt
 ```
