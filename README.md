@@ -76,7 +76,8 @@ Example for coppeliasim-v4.7.0-rev2. Note: :warning: replace coppeliasim-v4.7.0-
 git clone https://github.com/juanjqo/dqrobotics-interface-coppeliasim --recursive
 cd dqrobotics-interface-coppeliasim/coppeliarobotics/zmqRemoteApi
 git checkout coppeliasim-v4.7.0-rev2
-cd ../.. && mkdir build && cd build
+cd ../.. 
+mkdir build && cd build
 cmake ..
 make -j16
 sudo make install
