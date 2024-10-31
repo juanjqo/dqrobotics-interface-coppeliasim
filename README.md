@@ -70,12 +70,12 @@ Required vcpkg packages:
 
 ## Build and Install (UNIX)
 
-Example for coppeliasim-v4.7.0-rev2. Note: :warning: replace coppeliasim-v4.7.0-rev2 with the actual CoppeliaSim version you have (≥ v4.7.0-rev0). 
+Example for coppeliasim-v4.8.0-rev0. Note: :warning: replace coppeliasim-v4.8.0-rev0 with the actual CoppeliaSim version you have (≥ v4.7.0-rev0). 
 
 ```shell
 git clone https://github.com/juanjqo/dqrobotics-interface-coppeliasim --recursive
 cd dqrobotics-interface-coppeliasim/coppeliarobotics/zmqRemoteApi
-git checkout coppeliasim-v4.7.0-rev2
+git checkout coppeliasim-v4.8.0-rev0
 cd ../.. 
 mkdir build && cd build
 cmake ..
