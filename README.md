@@ -8,11 +8,11 @@
 
 An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API. This API provides more functionalities when compared to the legacy remote API (the one used by the [DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep)). However, unlike DQ Robotics, dqrobotics-interface-coppeliasim is experimental and lacks official support. 
 
-| CoppeliaSim  | SO | Status (C++20) | Status (Python) |  Status (Matlab ≥ R2023b) |
+|  ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.8.0--rev0-orange)  | SO | Status (C++20) | Status (Python) |  Status (Matlab ≥ R2023b) |
 | ------------- | ------------- |------------- |------------- |------------- |
-| ![Static Badge](https://img.shields.io/badge/CS-4.8.0--rev0-orange)![Static Badge](https://img.shields.io/badge/arm64-blue)| macOS (Apple Silicon) | ![Static Badge](https://img.shields.io/badge/beta-yellow)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/pre--alpha-red)|
-| ![Static Badge](https://img.shields.io/badge/CS-4.8.0--rev0-orange)![Static Badge](https://img.shields.io/badge/x64-blue)   | Ubuntu 22.04 LTS (arm64, x64) |  ![Static Badge](https://img.shields.io/badge/beta-yellow)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/pre--alpha-red)|
-| ![Static Badge](https://img.shields.io/badge/CS-4.8.0--rev0-orange)![Static Badge](https://img.shields.io/badge/x64-blue)   | Windows 11 (arm64, x64)  |  ![Static Badge](https://img.shields.io/badge/pre--alpha-red) | ![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/pre--alpha-red)|
+| ![Static Badge](https://img.shields.io/badge/Apple_silicon-magenta)| macOS ![Static Badge](https://img.shields.io/badge/Apple_silicon-magenta) | ![Static Badge](https://img.shields.io/badge/beta-yellow)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/pre--alpha-red)|
+| ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)   | Ubuntu 22.04 LTS ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)  |  ![Static Badge](https://img.shields.io/badge/beta-yellow)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/pre--alpha-red)|
+| ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)   | Windows 11 ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)   |  ![Static Badge](https://img.shields.io/badge/pre--alpha-red) | ![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/pre--alpha-red)|
 
 
 # Don't use this interface for your project! :warning:
