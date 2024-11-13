@@ -84,9 +84,13 @@ endif()
 
 #include(boost_dependencies.cmake)
 
+
 find_package(Boost)
 
 if(Boost_FOUND)
+    if (UNIX AND APPLE)
+        set(CMAKE_CXX_STANDARD 20)
+    endif()
     include_directories(${Boost_INCLUDE_DIRS})
     #add_executable(progname file1.cxx file2.cxx)
     #target_link_libraries(progname ${Boost_LIBRARIES})
