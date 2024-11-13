@@ -27,7 +27,7 @@ This project is under active development, incomplete, and experimental/unstable.
 | Unit Testing | :construction: under construction :rocket: | -- | :pushpin: planned|
 | Packages | :pushpin: planned | -- | :pushpin: planned |
 
-**The C++20 version is the baseline, and you could expect it to be the most stable, reliable, and better-supported version.**
+**The C++17 version is the baseline, and you could expect it to be the most stable, reliable, and better-supported version.**
 
 
 
