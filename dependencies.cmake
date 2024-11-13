@@ -87,7 +87,7 @@ endif()
 
 find_package(Boost)
 if(Boost_FOUND)
-    if (Boost_VERSION_MAJOR LESS_EQUAL 1 AND Boost_VERSION_MINOR LESS_EQUAL 8 AND Boost_VERSION_COUNT LESS_EQUAL 1)
+    if (Boost_VERSION_MAJOR LESS_EQUAL 1 AND Boost_VERSION_MINOR LESS_EQUAL 81)
             include_directories(${Boost_INCLUDE_DIRS})
             #add_executable(progname file1.cxx file2.cxx)
             #target_link_libraries(progname ${Boost_LIBRARIES})
