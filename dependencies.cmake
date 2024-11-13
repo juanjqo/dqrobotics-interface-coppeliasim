@@ -23,6 +23,7 @@ if(UNIX AND NOT APPLE)
         FetchContent_Populate(cppzmq)
         add_subdirectory(${cppzmq_SOURCE_DIR} ${cppzmq_BINARY_DIR} EXCLUDE_FROM_ALL)
     endif()
+
 endif()
 
 if(APPLE) #APPLE
@@ -82,24 +83,30 @@ endif()
 #FetchContent_MakeAvailable(Boost)
 #-----------------------------------------------
 
+#include(boost_dependencies.cmake)
+
+find_package(Boost)
+if(Boost_FOUND)
+    if (Boost_VERSION_MAJOR LESS_EQUAL 1 AND Boost_VERSION_MINOR LESS_EQUAL 8 AND Boost_VERSION_COUNT LESS_EQUAL 1)
+            include_directories(${Boost_INCLUDE_DIRS})
+            #add_executable(progname file1.cxx file2.cxx)
+            #target_link_libraries(progname ${Boost_LIBRARIES})
+            message(AUTHOR_WARNING "Local Boost ${Boost_VERSION_MAJOR}.${Boost_VERSION_MINOR}.${Boost_VERSION_COUNT} found!")
+            set(CUSTOM_BOOST_COMPONENTS
+                ${Boost_PROGRAM_FILESYTEM_LIBRARY}
+                ${Boost_PROGRAM_FORMAT_LIBRARY}
+                ${Boost_PROGRAM_OPTIONS_LIBRARY}
+                )
+    else()
+        message(AUTHOR_WARNING "Local Boost ${Boost_VERSION_MAJOR}.${Boost_VERSION_MINOR}.${Boost_VERSION_COUNT} is not compatible. I'm going to download a compatible one!")
+    endif()
+else()
+    message(AUTHOR_WARNING "Local Boost not found. I'm going to download it!")
+    include(boost_dependencies.cmake)
+endif()
 
 
-# Add boost lib sources
-set(BOOST_INCLUDE_LIBRARIES thread format filesystem system program_options)
-set(BOOST_ENABLE_CMAKE ON)
 
-# Download and extract the boost library from GitHub
-message(STATUS "Downloading dependencies. This will take some time...")
-include(FetchContent)
-Set(FETCHCONTENT_QUIET FALSE) # Needed to print downloading progress
-FetchContent_Declare(
-    Boost
-    URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.gz
-    USES_TERMINAL_DOWNLOAD FALSE
-    GIT_PROGRESS FALSE
-    DOWNLOAD_NO_EXTRACT FALSE
-)
-FetchContent_MakeAvailable(Boost)
 
 
 include(FetchContent)
