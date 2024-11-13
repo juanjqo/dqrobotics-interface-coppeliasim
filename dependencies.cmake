@@ -82,24 +82,48 @@ endif()
 #FetchContent_MakeAvailable(Boost)
 #-----------------------------------------------
 
+#include(boost_dependencies.cmake)
+
+find_package(Boost)
+
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+    #add_executable(progname file1.cxx file2.cxx)
+    #target_link_libraries(progname ${Boost_LIBRARIES})
+    message(AUTHOR_WARNING "Local Boost found!")
+    set(CUSTOM_BOOST_COMPONENTS
+        ${Boost_PROGRAM_FILESYTEM_LIBRARY}
+        ${Boost_PROGRAM_FORMAT_LIBRARY}
+        ${Boost_PROGRAM_OPTIONS_LIBRARY}
+        )
+else()
+    message(AUTHOR_WARNING "Local Boost not found. I'm going to download it!")
+
+    # Download and extract the boost library from GitHub
+    # Add boost lib sources
+    set(BOOST_INCLUDE_LIBRARIES thread format filesystem system program_options)
+    set(BOOST_ENABLE_CMAKE ON)
+
+    message(STATUS "Downloading dependencies. This will take some time...")
+    include(FetchContent)
+    Set(FETCHCONTENT_QUIET FALSE) # Needed to print downloading progress
+    FetchContent_Declare(
+        Boost
+        URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.gz
+        USES_TERMINAL_DOWNLOAD FALSE
+        GIT_PROGRESS FALSE
+        DOWNLOAD_NO_EXTRACT FALSE
+    )
+    FetchContent_MakeAvailable(Boost)
+
+    set(CUSTOM_BOOST_COMPONENTS
+        Boost::filesystem
+        Boost::format
+        Boost::program_options
+    )
+endif()
 
 
-# Add boost lib sources
-set(BOOST_INCLUDE_LIBRARIES thread format filesystem system program_options)
-set(BOOST_ENABLE_CMAKE ON)
-
-# Download and extract the boost library from GitHub
-message(STATUS "Downloading dependencies. This will take some time...")
-include(FetchContent)
-Set(FETCHCONTENT_QUIET FALSE) # Needed to print downloading progress
-FetchContent_Declare(
-    Boost
-    URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.gz
-    USES_TERMINAL_DOWNLOAD FALSE
-    GIT_PROGRESS FALSE
-    DOWNLOAD_NO_EXTRACT FALSE
-)
-FetchContent_MakeAvailable(Boost)
 
 
 include(FetchContent)
