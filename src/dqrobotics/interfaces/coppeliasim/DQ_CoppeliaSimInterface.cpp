@@ -26,11 +26,12 @@ Contributors:
 
 #include "dqrobotics/DQ.h"
 #include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
-#include <numbers>
 #include <algorithm>
-#include <source_location>
 #include <RemoteAPIClient.h>
 
+//For C++20
+// #include <numbers>
+// #include <source_location>
 
 //-------------------Private components-----------------------//
 std::unique_ptr<RemoteAPIClient> client_;
@@ -124,16 +125,23 @@ void DQ_CoppeliaSimInterface::_check_connection()
 {
     if (!client_created_)
     {
-        std::cerr<<std::format("Unestablished connection at \"{}\" in port {}", host_, rpcPort_ )<<std::endl;
-        std::cerr<<std::format("You used a timeout of {}ms. Is enough time for your system?", MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_)<<std::endl;
+        //For C++20
+        //std::cerr<<std::format("Unestablished connection at \"{}\" in port {}", host_, rpcPort_ )<<std::endl;
+        //std::cerr<<std::format("You used a timeout of {}ms. Is enough time for your system?", MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_)<<std::endl;
+        std::cerr<<"Unestablished connection at \""+ host_ +"\" in port "<<rpcPort_<<std::endl;
+        std::cerr<<"You used a timeout of "<<MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION_<<"ms. Is enough time for your system?"<<std::endl;
         if(rpcPort_ != 23000)
         {
             std::cerr<<""<<std::endl;
-            std::cerr<<std::format("is CoppeliaSim running with the port {} enabled?", rpcPort_)<<std::endl;
+            //For C++20
+            //std::cerr<<std::format("is CoppeliaSim running with the port {} enabled?", rpcPort_)<<std::endl;
+            std::cerr<<"is CoppeliaSim running with the port "<<rpcPort_<<" enabled?"<<std::endl;
             std::cerr<<""<<std::endl;
             std::cerr<<"Example: using the terminal, open CoppeliaSim with arguments:"<<std::endl;
             std::cerr<<"----------------------------------------"<<std::endl;
-            std::cerr<<std::format("coppeliasim -GzmqRemoteApi.rpcPort={}", rpcPort_)<<std::endl;
+            //For C++20
+            //std::cerr<<std::format("coppeliasim -GzmqRemoteApi.rpcPort={}", rpcPort_)<<std::endl;
+            std::cerr<<"coppeliasim -GzmqRemoteApi.rpcPort="<<rpcPort_<<std::endl;
             std::cerr<<"----------------------------------------"<<std::endl;
         }
         std::cerr<<""<<std::endl;
@@ -888,11 +896,12 @@ std::string DQ_CoppeliaSimInterface::get_object_name(const int &handle)
     return objectname;
 }
 
-/**
- * @brief DQ_CoppeliaSimInterface::get_object_names
- * @param handles
- * @return
- */
+
+
+
+/*
+ * ---------------------------------------------------------------------------------------
+for C++20
 std::vector<std::string> DQ_CoppeliaSimInterface::get_object_names(const auto &handles)
 {
     int n = handles.size();
@@ -902,7 +911,23 @@ std::vector<std::string> DQ_CoppeliaSimInterface::get_object_names(const auto &h
 
     return objectnames;
 }
+*/
+/**
+ * @brief DQ_CoppeliaSimInterface::get_object_names
+ * @param handles
+ * @return
+ */
+template<typename T>
+std::vector<std::string> DQ_CoppeliaSimInterface::get_object_names(const T &handles)
+{
+    int n = handles.size();
+    std::vector<std::string> objectnames(n);
+    for(auto i=0;i<n;i++)
+        objectnames.at(i)=get_object_name(handles.at(i));
 
+    return objectnames;
+}
+//-----------------------------------------------------------------------------------------
 
 /**
  * @brief DQ_CoppeliaSimInterface::get_jointnames_from_parent_object returns a vector containing all the joint names
