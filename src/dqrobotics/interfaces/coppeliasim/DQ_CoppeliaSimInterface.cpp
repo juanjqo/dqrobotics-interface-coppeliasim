@@ -398,10 +398,10 @@ void DQ_CoppeliaSimInterface::show_created_handle_map()
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::get_object_translation returns the position
- *        of a handle in the CoppeliaSim scene with respect to the absolute frame.
+ * @brief DQ_CoppeliaSimInterface::get_object_translation returns a pure quaternion that represents the position
+ *        of an object in the CoppeliaSim scene with respect to the absolute frame.
  * @param handle The handle of the object.
- * @return the absolute position of the handle.
+ * @return The position of the handle.
  */
 DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle) const
 {
@@ -413,10 +413,10 @@ DQ DQ_CoppeliaSimInterface::get_object_translation(const int &handle) const
 
 
 /**
- * @brief DQ_CoppeliaSimInterface::get_object_translation returns the position
+ * @brief DQ_CoppeliaSimInterface::get_object_translation returns a pure quaternion that represents the position
  *        of an object in the CoppeliaSim scene with respect to the absolute frame.
  * @param objectname The name of the object.
- * @return the absolute position of the object.
+ * @return The position of the object.
  */
 DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname)
 {
@@ -425,10 +425,10 @@ DQ DQ_CoppeliaSimInterface::get_object_translation(const std::string &objectname
 
 
 /**
- * @brief DQ_CoppeliaSimInterface::set_object_translation sets the translation of a handle
- *        in the CoppeliaSim scene.
- * @param handle
- * @param t desired position.
+ * @brief DQ_CoppeliaSimInterface::set_object_translation sets the translation of an object
+ *        in the CoppeliaSim scene..
+ * @param handle the object handle
+ * @param t The pure quaternion that represents the desired position with respect to the absolute frame..
  */
 void DQ_CoppeliaSimInterface::set_object_translation(const int &handle, const DQ &t)
 {
@@ -439,9 +439,10 @@ void DQ_CoppeliaSimInterface::set_object_translation(const int &handle, const DQ
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::set_object_translation
- * @param objectname
- * @param t
+ * @brief DQ_CoppeliaSimInterface::set_object_translation sets the translation of an object
+ *        in the CoppeliaSim scene.
+ * @param objectname the name of the object
+ * @param t The pure quaternion that represents the desired position with respect to the absolute frame..
  */
 void DQ_CoppeliaSimInterface::set_object_translation(const std::string &objectname, const DQ &t)
 {
@@ -449,9 +450,10 @@ void DQ_CoppeliaSimInterface::set_object_translation(const std::string &objectna
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::get_object_rotation
- * @param handle
- * @return the object rotation
+ * @brief DQ_CoppeliaSimInterface::get_object_rotation returns a unit quaternion that represents the rotation
+ *        of an object in the CoppeliaSim scene with respect to the absolute frame.
+ * @param handle the object handle
+ * @return The object rotation.
  */
 DQ DQ_CoppeliaSimInterface::get_object_rotation(const int &handle) const
 {
@@ -464,9 +466,10 @@ DQ DQ_CoppeliaSimInterface::get_object_rotation(const int &handle) const
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::get_object_rotation
- * @param objectname
- * @return
+ * @brief DQ_CoppeliaSimInterface::get_object_rotation returns a unit quaternion that represents the rotation
+ *        of an object in the CoppeliaSim scene with respect to the absolute frame.
+ * @param objectname the name of the object.
+ * @return The object rotation
  */
 DQ DQ_CoppeliaSimInterface::get_object_rotation(const std::string &objectname)
 {
@@ -474,9 +477,9 @@ DQ DQ_CoppeliaSimInterface::get_object_rotation(const std::string &objectname)
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::set_object_rotation
- * @param handle
- * @param r
+ * @brief DQ_CoppeliaSimInterface::set_object_rotation sets the rotation of an object in the CoppeliaSim scene.
+ * @param handle the object handle
+ * @param r A unit quaternion that represents the desired rotation with respect to the absolute frame..
  */
 void DQ_CoppeliaSimInterface::set_object_rotation(const int &handle, const DQ &r)
 {
@@ -488,9 +491,9 @@ void DQ_CoppeliaSimInterface::set_object_rotation(const int &handle, const DQ &r
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::set_object_rotation
- * @param objectname
- * @param r
+ * @brief DQ_CoppeliaSimInterface::set_object_rotation sets the rotation of an object in the CoppeliaSim scene.
+ * @param objectname the name of the object
+ * @param r A unit quaternion that represents the desired rotation with respect to the absolute frame.
  */
 void DQ_CoppeliaSimInterface::set_object_rotation(const std::string &objectname, const DQ &r)
 {
@@ -498,9 +501,10 @@ void DQ_CoppeliaSimInterface::set_object_rotation(const std::string &objectname,
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::get_object_pose
- * @param handle
- * @return
+ * @brief DQ_CoppeliaSimInterface::get_object_pose returns a unit dual quaternion that represents
+ *        the object pose in the CoppeliaSim scene with respect to the absolute frame..
+ * @param handle The object handle
+ * @return The desired object pose.
  */
 DQ DQ_CoppeliaSimInterface::get_object_pose(const int &handle) const
 {
@@ -510,9 +514,10 @@ DQ DQ_CoppeliaSimInterface::get_object_pose(const int &handle) const
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::get_object_pose
- * @param objectname
- * @return
+ * @brief DQ_CoppeliaSimInterface::get_object_pose returns a unit dual quaternion that represents
+ *        the object pose in the CoppeliaSim scene with respect to the absolute frame.
+ * @param objectname The name of the object in the CoppeliaSim scene.
+ * @return the desired object pose
  */
 DQ DQ_CoppeliaSimInterface::get_object_pose(const std::string &objectname)
 {
@@ -521,9 +526,9 @@ DQ DQ_CoppeliaSimInterface::get_object_pose(const std::string &objectname)
 
 
 /**
- * @brief DQ_CoppeliaSimInterface::set_object_pose
- * @param handle
- * @param h
+ * @brief DQ_CoppeliaSimInterface::set_object_pose sets the pose of an object in the CoppeliaSim scene.
+ * @param handle the object handle
+ * @param h A unit dual qualternion that represents the desired object pose with respect to the absolute frame.
  */
 void DQ_CoppeliaSimInterface::set_object_pose(const int &handle, const DQ &h) const
 {
@@ -536,9 +541,9 @@ void DQ_CoppeliaSimInterface::set_object_pose(const int &handle, const DQ &h) co
 }
 
 /**
- * @brief DQ_CoppeliaSimInterface::set_object_pose
- * @param objectname
- * @param h
+ * @brief DQ_CoppeliaSimInterface::set_object_pose sets the pose of an object in the CoppeliaSim scene.
+ * @param objectname The name of the object.
+ * @param h A unit dual qualternion that represents the desired object pose with respect to the absolute frame.
  */
 void DQ_CoppeliaSimInterface::set_object_pose(const std::string &objectname, const DQ &h)
 {
