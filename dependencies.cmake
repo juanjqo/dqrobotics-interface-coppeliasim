@@ -23,6 +23,7 @@ if(UNIX AND NOT APPLE)
         FetchContent_Populate(cppzmq)
         add_subdirectory(${cppzmq_SOURCE_DIR} ${cppzmq_BINARY_DIR} EXCLUDE_FROM_ALL)
     endif()
+
 endif()
 
 if(APPLE) #APPLE
@@ -84,48 +85,26 @@ endif()
 
 #include(boost_dependencies.cmake)
 
-
 find_package(Boost)
-
 if(Boost_FOUND)
-    if (UNIX AND APPLE)
-        set(CMAKE_CXX_STANDARD 20)
+    if (Boost_VERSION_MAJOR LESS_EQUAL 1.81)
+        include_directories(${Boost_INCLUDE_DIRS})
+        #add_executable(progname file1.cxx file2.cxx)
+        #target_link_libraries(progname ${Boost_LIBRARIES})
+        message(AUTHOR_WARNING "Local Boost ${Boost_VERSION_MAJOR}.${Boost_VERSION_MINOR}.${Boost_VERSION_COUNT} found!")
+        set(CUSTOM_BOOST_COMPONENTS
+            ${Boost_PROGRAM_FILESYTEM_LIBRARY}
+            ${Boost_PROGRAM_FORMAT_LIBRARY}
+            ${Boost_PROGRAM_OPTIONS_LIBRARY}
+            )
+    else()
+        message(AUTHOR_WARNING "Local Boost ${Boost_VERSION_MAJOR}.${Boost_VERSION_MINOR}.${Boost_VERSION_COUNT} is not compatible. I'm going to download a compatible one!")
     endif()
-    include_directories(${Boost_INCLUDE_DIRS})
-    #add_executable(progname file1.cxx file2.cxx)
-    #target_link_libraries(progname ${Boost_LIBRARIES})
-    message(AUTHOR_WARNING "Local Boost found!")
-    set(CUSTOM_BOOST_COMPONENTS
-        ${Boost_PROGRAM_FILESYTEM_LIBRARY}
-        ${Boost_PROGRAM_FORMAT_LIBRARY}
-        ${Boost_PROGRAM_OPTIONS_LIBRARY}
-        )
 else()
     message(AUTHOR_WARNING "Local Boost not found. I'm going to download it!")
-
-    # Download and extract the boost library from GitHub
-    # Add boost lib sources
-    set(BOOST_INCLUDE_LIBRARIES thread format filesystem system program_options)
-    set(BOOST_ENABLE_CMAKE ON)
-
-    message(STATUS "Downloading dependencies. This will take some time...")
-    include(FetchContent)
-    Set(FETCHCONTENT_QUIET FALSE) # Needed to print downloading progress
-    FetchContent_Declare(
-        Boost
-        URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.gz
-        USES_TERMINAL_DOWNLOAD FALSE
-        GIT_PROGRESS FALSE
-        DOWNLOAD_NO_EXTRACT FALSE
-    )
-    FetchContent_MakeAvailable(Boost)
-
-    set(CUSTOM_BOOST_COMPONENTS
-        Boost::filesystem
-        Boost::format
-        Boost::program_options
-    )
+    include(boost_dependencies.cmake)
 endif()
+
 
 
 
