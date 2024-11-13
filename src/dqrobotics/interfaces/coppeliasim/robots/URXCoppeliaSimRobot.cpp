@@ -27,6 +27,11 @@ Contributors:
 namespace DQ_robotics
 {
 
+MatrixXd _get_dh_matrix(const URXCoppeliaSimRobot::MODEL& model);
+
+
+
+
 /**
  * @brief _get_dh_matrix returns a matrix related to the D-H parameters of the
  *                        Universal Robot {}, which is

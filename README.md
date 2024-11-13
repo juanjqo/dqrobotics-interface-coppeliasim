@@ -1,14 +1,14 @@
-![Static Badge](https://img.shields.io/badge/status-experimental-critical)![Static Badge](https://img.shields.io/badge/Platform-Apple_silicon-magenta)![Static Badge](https://img.shields.io/badge/Tested-Apple)![Static Badge](https://img.shields.io/badge/Platform-Ubuntu_x64-orange)![Static Badge](https://img.shields.io/badge/tested-green)![Static Badge](https://img.shields.io/badge/Platform-Windows_11-blue)![Static Badge](https://img.shields.io/badge/tested-green)![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.8.0--rev0-orange)![Static Badge](https://img.shields.io/badge/Written_in-C%2B%2B20-blue)![GitHub License](https://img.shields.io/github/license/juanjqo/cpp-interface-coppeliasim)![Static Badge](https://img.shields.io/badge/based_on-ZeroMQ_remote_API-blue)
+![Static Badge](https://img.shields.io/badge/status-experimental-critical)![Static Badge](https://img.shields.io/badge/Platform-Apple_silicon-magenta)![Static Badge](https://img.shields.io/badge/Tested-Apple)![Static Badge](https://img.shields.io/badge/Platform-Ubuntu_x64-orange)![Static Badge](https://img.shields.io/badge/tested-green)![Static Badge](https://img.shields.io/badge/Platform-Windows_11-blue)![Static Badge](https://img.shields.io/badge/tested-green)![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.8.0--rev0-orange)![Static Badge](https://img.shields.io/badge/Written_in-C%2B%2B17-blue)![GitHub License](https://img.shields.io/github/license/juanjqo/cpp-interface-coppeliasim)![Static Badge](https://img.shields.io/badge/based_on-ZeroMQ_remote_API-blue)
 
 
 
 
 
-# dqrobotics-interface-coppeliasim (Matlab ≥ 2023b, C++20, and CoppeliaSim ≥ v4.7.0-rev0)
+# dqrobotics-interface-coppeliasim (Matlab ≥ 2023b, C++17, and CoppeliaSim ≥ v4.7.0-rev0)
 
 An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API. This API provides more functionalities when compared to the legacy remote API (the one used by the [DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep)). However, unlike DQ Robotics, dqrobotics-interface-coppeliasim is experimental and lacks official support. 
 
-|  ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.8.0--rev0-orange)  | SO | Status (C++20) | Status (Python) |  Status (Matlab ≥ R2023b) |
+|  ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.8.0--rev0-orange)  | SO | Status (C++17) | Status (Python) |  Status (Matlab ≥ R2023b) |
 | ------------- | ------------- |------------- |------------- |------------- |
 | ![Static Badge](https://img.shields.io/badge/Apple_silicon-magenta)| macOS ![Static Badge](https://img.shields.io/badge/Apple_silicon-magenta) | ![Static Badge](https://img.shields.io/badge/beta-yellow)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/pre--alpha-red)|
 | ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)   | Ubuntu 22.04 LTS ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)  |  ![Static Badge](https://img.shields.io/badge/beta-yellow)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/pre--alpha-red)|
@@ -20,7 +20,7 @@ An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on Zer
 ![Static Badge](https://img.shields.io/badge/warning-yellow)
 This project is under active development, incomplete, and experimental/unstable. Therefore, **I highly recommend** the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability and outstanding technical support. 
 
-| Feature  | Status (C++20) | Status (Python) |  Status (Matlab ≥ R2023b) |
+| Feature  | Status (C++17) | Status (Python) |  Status (Matlab ≥ R2023b) |
 | -------- | -------------- |---------------- |-------------------------- |
 |  Implementation | :construction: under construction :rocket:| -- | :construction: under construction :turtle: |
 | Documentation | :construction: under construction :rocket: | -- | :pushpin: planned |
