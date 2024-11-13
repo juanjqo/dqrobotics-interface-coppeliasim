@@ -83,7 +83,6 @@ endif()
 #FetchContent_MakeAvailable(Boost)
 #-----------------------------------------------
 
-#include(boost_dependencies.cmake)
 
 find_package(Boost)
 if(Boost_FOUND)
