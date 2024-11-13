@@ -30,30 +30,12 @@ This project is under active development, incomplete, and experimental/unstable.
 **The C++17 version is the baseline, and you could expect it to be the most stable, reliable, and better-supported version.**
 
 
-
-
-
 ## Basic requirements (for C++ users)
 
-- [DQ Robotics](https://github.com/dqrobotics/cpp) for C++
 - MacOS users require [Homebrew](https://brew.sh/)
 - Windows users require [vcpkg](https://vcpkg.io/en/index.html) (C:\vcpkg)
-- Download and install CoppeliaSim ≥ v4.7.0-rev0 (Use CoppeliaSim arm64 for Apple Silicon Macs)
 
-
-### MacOS (Apple Silicon)
-
-```shell
-brew install pkg-config cppzmq
-```
-### Ubuntu 
-```shell
-sudo apt install libzmq3-dev
-```
-
-### Windows 
-
-If you do not have vcpkg:
+  If you do not have vcpkg:
 
 ```shell
 cd C:/
@@ -61,6 +43,58 @@ git clone https://github.com/microsoft/vcpkg.git
 cd vcpkg; .\bootstrap-vcpkg.bat
 .\vcpkg.exe integrate install
 ```
+
+- Download and install CoppeliaSim ≥ v4.7.0-rev0 (Use CoppeliaSim arm64 for Apple Silicon Macs)
+
+### Install [DQ Robotics](https://github.com/dqrobotics/cpp) for C++ 
+
+Skip these steps if you already have DQ Robotics for C++ installed.
+
+#### MacOS (Apple Silicon)
+
+```shell
+brew install eigen
+git clone https://github.com/dqrobotics/cpp.git
+cd cpp
+mkdir build && cd build
+cmake ..
+make -j16
+sudo make install
+```
+
+#### Ubuntu 
+
+```shell
+sudo add-apt-repository ppa:dqrobotics-dev/development -y
+sudo apt-get update
+sudo apt-get install libdqrobotics
+```
+
+#### Windows 
+
+```shell
+Instructions missing here!
+```
+
+
+
+## Additional requirements:
+
+### MacOS (Apple Silicon)
+
+```shell
+brew install pkg-config cppzmq eigen
+```
+
+### Ubuntu 
+
+
+```shell
+sudo apt install libzmq3-dev
+```
+
+### Windows 
+
 Required vcpkg packages:
 
 ```shell
