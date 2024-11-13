@@ -128,7 +128,7 @@ public:
     DQ get_object_pose(const int& handle) const;
     DQ get_object_pose(const std::string& objectname);
 
-    void set_object_pose(const int& handle, const DQ& h);
+    void set_object_pose(const int& handle, const DQ& h) const;
     void set_object_pose(const std::string& objectname, const DQ& h);
 
     double   get_joint_position(const int& handle) const;
@@ -266,11 +266,11 @@ public:
     void set_object_as_static(const std::string& objectname,
                               const bool& static_object = true);
 
-    void add_primitive(const PRIMITIVE& primitive,
-                       const std::string& name,
-                       const std::vector<double>& sizes) const;
+    int add_primitive(const PRIMITIVE& primitive,
+                      const std::string& name,
+                      const std::vector<double>& sizes) const;
 
-    void set_object_parent(const int& handle, const int& parent_handle, const bool& move_child_to_parent_pose);
+    void set_object_parent(const int& handle, const int& parent_handle, const bool& move_child_to_parent_pose) const;
     void set_object_parent(const std::string& objectname, const std::string& parent_object_name,
                            const bool& move_child_to_parent_pose = true);
 
@@ -320,7 +320,7 @@ public:
                               const double& scale = 1,
                               const std::vector<double>& thickness_and_length = {0.005, 0.1});
 
-    void remove_plotted_object(const std::string& name);
+    //void remove_plotted_object(const std::string& name);
 
 
     void draw_permanent_trajectory(const DQ& point,
@@ -443,6 +443,9 @@ private:
     void _update_created_handles_map(const std::string& base_objectname,
                                      const std::vector<std::string>& children_objectnames,
                                      const UPDATE_MAP& mode = UPDATE_MAP::ADD);
+
+
+    void _removed_handles_from_handles_map();
     //------------------------------------------------------------------------
     std::string _remove_first_slash_from_string(const std::string& str) const;
     bool _start_with_slash(const std::string& str) const;
@@ -483,10 +486,11 @@ private:
     DQ _get_pose_from_direction(const DQ& direction, const DQ& point = DQ(1));
 
     [[nodiscard("The created primitives must be added to the created_handles_map")]]
-    std::vector<std::string> _create_static_axis_at_origin(const std::string& parent_name,
+    std::vector<std::string> _create_static_axis_at_origin(const int& parent_handle,
+                                                           const std::string& parent_name,
                                                            const std::vector<double>& sizes,
                                                            const AXIS& axis,
-                                                           const double& alpha_color = 1);
+                                                           const double& alpha_color = 1) const;
 
     void _set_static_object_properties(const std::string& name,
                                        const std::string& parent_name,
@@ -494,6 +498,34 @@ private:
                                        const std::vector<double>& rgba_color);
 
 
+    void _set_static_object_properties(const int& handle,
+                                       const int& parent_handle,
+                                       const DQ& pose,
+                                       const std::vector<double>& rgba_color) const;
+
+    void _create_reference_frame(const std::string& name,
+                                 const double& scale = 1,
+                                 const std::vector<double>& thickness_and_length = {0.005, 0.1}) const;
+
+    void _create_plane(const std::string& name,
+                       const std::vector<double>& sizes = {0.2,0.2},
+                       const std::vector<double>& rgba_color = {1,0,0,0.5},
+                       const bool& add_normal = true,
+                       const double& normal_scale = 1) const;
+
+    void _create_line(const std::string& name,
+                        const std::vector<double>& thickness_and_length = {0.01,1.5},
+                        const std::vector<double>& rgba_color = {1,0,0,0.5},
+                        const bool& add_arrow = true,
+                        const double& arrow_scale = 1) const;
+
+    void _create_cylinder(const std::string& name,
+                          const std::vector<double>& width_and_length = {0.2,1.0},
+                          const std::vector<double>& rgba_color = {1,0,0,0.5},
+                          const bool& add_line = true,
+                          const double& line_scale = 1) const;
+
+    void _merge_shapes(const int& parent_handle) const;
 
     std::tuple<DQ, MatrixXd> _get_center_of_mass_and_inertia_matrix(const int& handle) const;
 

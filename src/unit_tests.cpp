@@ -100,11 +100,56 @@ namespace My{
     };
 
     TEST_F(InterfaceUnitTests, get_object_pose) {
+        DQ p = -0.1*k_;
+        DQ x = 1 + 0.5*E_*p;
+        VectorXd vx = x.vec8();
+        VectorXd vxr = vi_->get_object_pose("/Floor").vec8();
+        for (auto i=0;i<vxr.size();i++)
+            EXPECT_NEAR(vx(i), vxr(i), 1e-6)<<"Error in get_object_pose()";
+    }
+
+    TEST_F(InterfaceUnitTests, plot_reference_frame) {
         DQ r = cos(M_PI/2) + k_*sin(M_PI/2);
         DQ p = 0.5*i_ + 0.4*j_ + 0.9*k_;
         DQ x = r + 0.5*E_*p*r;
         vi_->plot_reference_frame("/x", x);
-        EXPECT_EQ(vi_->get_object_pose("/x"), x)<<"Error in get_object_pose()";
+        EXPECT_EQ(vi_->get_object_pose("/x"), x)<<"Error in plot_reference_frame()";
+    }
+
+    TEST_F(InterfaceUnitTests, plot_plane) {
+        DQ p = 0.5*i_ + 0.4*j_ + 0.9*k_;
+        vi_->plot_plane("/plane", k_, p);
+        EXPECT_EQ(vi_->get_object_translation("/plane"), p)<<"Error in plot_plane()";
+    }
+
+    TEST_F(InterfaceUnitTests, plot_line) {
+        DQ p = 0.5*i_ + 0.4*j_ + 0.9*k_;
+        vi_->plot_line("/line", k_, p);
+        EXPECT_EQ(vi_->get_object_translation("/line"), p)<<"Error in plot_line()";
+    }
+
+    TEST_F(InterfaceUnitTests, plot_cylinder) {
+        DQ p = 0.5*i_ + 0.4*j_ + 0.9*k_;
+        vi_->plot_line("/cylinder", i_, p);
+        EXPECT_EQ(vi_->get_object_translation("/cylinder"), p)<<"Error in plot_cylinder()";
+    }
+
+
+    TEST_F(InterfaceUnitTests, plot_sphere) {
+        DQ p = 0.5*i_ + 0.4*j_ + 0.9*k_;
+        vi_->plot_sphere("/sphere", p);
+        EXPECT_EQ(vi_->get_object_translation("/sphere"), p)<<"Error in plot_sphere()";
+    }
+
+    TEST_F(InterfaceUnitTests, object_exist) {
+        vi_->plot_reference_frame("/x", DQ(1));
+        EXPECT_EQ(vi_->object_exist_on_scene("/x"), true)<<"Error in object_exist()";
+    }
+
+    TEST_F(InterfaceUnitTests, remove_object) {
+        vi_->plot_reference_frame("/x", DQ(1));
+        vi_->remove_object("/x");
+        EXPECT_EQ(vi_->object_exist_on_scene("/x"), false)<<"Error in remove_object()";
     }
 
     TEST_F(InterfaceUnitTests, joint_positions){
