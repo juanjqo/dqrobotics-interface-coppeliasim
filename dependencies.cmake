@@ -87,19 +87,17 @@ endif()
 
 find_package(Boost)
 if(Boost_FOUND)
-    if (Boost_VERSION_MAJOR LESS_EQUAL 1 AND Boost_VERSION_MINOR LESS_EQUAL 81)
+    #if (Boost_VERSION_MAJOR LESS_EQUAL 1 AND Boost_VERSION_MINOR LESS_EQUAL 81)
             include_directories(${Boost_INCLUDE_DIRS})
-            #add_executable(progname file1.cxx file2.cxx)
-            #target_link_libraries(progname ${Boost_LIBRARIES})
             message(AUTHOR_WARNING "Local Boost ${Boost_VERSION_MAJOR}.${Boost_VERSION_MINOR}.${Boost_VERSION_COUNT} found!")
             set(CUSTOM_BOOST_COMPONENTS
                 ${Boost_PROGRAM_FILESYTEM_LIBRARY}
                 ${Boost_PROGRAM_FORMAT_LIBRARY}
                 ${Boost_PROGRAM_OPTIONS_LIBRARY}
                 )
-    else()
-        message(AUTHOR_WARNING "Local Boost ${Boost_VERSION_MAJOR}.${Boost_VERSION_MINOR}.${Boost_VERSION_COUNT} is not compatible. I'm going to download a compatible one!")
-    endif()
+    #else()
+    #    message(AUTHOR_WARNING "Local Boost ${Boost_VERSION_MAJOR}.${Boost_VERSION_MINOR}.${Boost_VERSION_COUNT} is not compatible. I'm going to download a compatible one!")
+    #endif()
 else()
     message(AUTHOR_WARNING "Local Boost not found. I'm going to download it!")
     include(boost_dependencies.cmake)
