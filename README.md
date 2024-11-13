@@ -54,6 +54,9 @@ Skip these steps if you already have DQ Robotics for C++ installed.
 
 ```shell
 brew install eigen
+```
+
+```shell
 git clone https://github.com/dqrobotics/cpp.git
 cd cpp
 mkdir build && cd build
