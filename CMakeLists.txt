@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(dqrobotics-interface-coppeliasim LANGUAGES CXX)
+project(dqrobotics-interface-coppeliasim-zmq LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -12,6 +12,9 @@ set(SOURCE_DIR ${ZMQ_REMOTE_API_PATH}/clients/cpp)
 
 INCLUDE_DIRECTORIES(${PROJECT_NAME} include)
 INCLUDE_DIRECTORIES(${PROJECT_NAME} /coppeliarobotics/zmqRemoteApi/clients/cpp)
+
+#Temp library
+include_directories(/Users/user/git/dqrobotics/cpp-interface-coppeliasim/include/dqrobotics/interfaces/coppeliasim/)
 
 add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.cpp

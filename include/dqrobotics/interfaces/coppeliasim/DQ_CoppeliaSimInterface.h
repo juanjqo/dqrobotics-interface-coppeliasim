@@ -16,6 +16,8 @@ This file is based on DQ Robotics.
     You should have received a copy of the GNU Lesser General Public License
     along with DQ Robotics.  If not, see <http://www.gnu.org/licenses/>.
 
+DQ Robotics website: dqrobotics.github.io
+
 Contributors:
 - Juan Jose Quiroz Omana
        - Responsible for the original implementation.
@@ -26,10 +28,10 @@ Contributors:
 
 #pragma once
 #include <dqrobotics/DQ.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
 #include <unordered_map>
 #include <thread>
 #include <atomic>
-//#include <print> // For future use of C++23 features
 
 using namespace DQ_robotics;
 using namespace Eigen;
