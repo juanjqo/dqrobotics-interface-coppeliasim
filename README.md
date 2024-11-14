@@ -48,7 +48,7 @@ cd vcpkg; .\bootstrap-vcpkg.bat
 
 ### Install [DQ Robotics](https://github.com/dqrobotics/cpp) for C++ 
 
-Skip these steps if you already have DQ Robotics for C++ installed.
+Skip these steps if you already have DQ Robotics installed.
 
 #### MacOS (Apple Silicon)
 
