@@ -1,4 +1,4 @@
-#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimModels.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqModels.h>
 
 namespace DQ_robotics
 {
@@ -6,7 +6,7 @@ namespace DQ_robotics
  * @brief DQ_CoppeliaSimModels::_get_interface_sptr
  * @return
  */
-std::shared_ptr<DQ_CoppeliaSimZmqInterface> DQ_CoppeliaSimModels::_get_interface_sptr() const
+std::shared_ptr<DQ_CoppeliaSimZmqInterface> DQ_CoppeliaSimZmqModels::_get_interface_sptr() const
 {
     return coppeliasim_interface_sptr_;
 }
@@ -16,7 +16,7 @@ std::shared_ptr<DQ_CoppeliaSimZmqInterface> DQ_CoppeliaSimModels::_get_interface
  * @param model
  * @return
  */
-std::string DQ_CoppeliaSimModels::_get_string_from_others(const COMPONENTS &model)
+std::string DQ_CoppeliaSimZmqModels::_get_string_from_others(const COMPONENTS &model)
 {
     switch (model)
     {
@@ -47,7 +47,7 @@ std::string DQ_CoppeliaSimModels::_get_string_from_others(const COMPONENTS &mode
  * @brief DQ_CoppeliaSimModels::DQ_CoppeliaSimModels
  * @param coppeliasim_interface_sptr
  */
-DQ_CoppeliaSimModels::DQ_CoppeliaSimModels(const std::shared_ptr<DQ_CoppeliaSimZmqInterface> &coppeliasim_interface_sptr)
+DQ_CoppeliaSimZmqModels::DQ_CoppeliaSimZmqModels(const std::shared_ptr<DQ_CoppeliaSimZmqInterface> &coppeliasim_interface_sptr)
     :coppeliasim_interface_sptr_(coppeliasim_interface_sptr)
 {
 
@@ -60,7 +60,7 @@ DQ_CoppeliaSimModels::DQ_CoppeliaSimModels(const std::shared_ptr<DQ_CoppeliaSimZ
  * @param load_model_only_if_missing
  * @param remove_child_script
  */
-void DQ_CoppeliaSimModels::_load_model(const COMPONENTS &model,
+void DQ_CoppeliaSimZmqModels::_load_model(const COMPONENTS &model,
                                        const std::string &desired_model_name,
                                        const bool &load_model_only_if_missing,
                                        const bool &remove_child_script)
@@ -80,7 +80,7 @@ void DQ_CoppeliaSimModels::_load_model(const COMPONENTS &model,
  * @param load_model_only_if_missing
  * @param remove_child_script
  */
-void DQ_CoppeliaSimModels::load_model(const COMPONENTS &model,
+void DQ_CoppeliaSimZmqModels::load_model(const COMPONENTS &model,
                                       const std::string &desired_model_name,
                                       const DQ &pose,
                                       const bool &load_model_only_if_missing,
@@ -99,7 +99,7 @@ void DQ_CoppeliaSimModels::load_model(const COMPONENTS &model,
  * @param load_model_only_if_missing
  * @param remove_child_script
  */
-void DQ_CoppeliaSimModels::load_reference_frame(const std::string &desired_model_name,
+void DQ_CoppeliaSimZmqModels::load_reference_frame(const std::string &desired_model_name,
                                                 const DQ &pose,
                                                 const bool &load_model_only_if_missing,
                                                 const bool &remove_child_script)
@@ -114,7 +114,7 @@ void DQ_CoppeliaSimModels::load_reference_frame(const std::string &desired_model
  * @param desired_model_names
  * @param poses
  */
-void DQ_CoppeliaSimModels::load_reference_frames(const std::vector<std::string> &desired_model_names, const std::vector<DQ> &poses)
+void DQ_CoppeliaSimZmqModels::load_reference_frames(const std::vector<std::string> &desired_model_names, const std::vector<DQ> &poses)
 {
     size_t n = desired_model_names.size();
     for (size_t i=0;i<n;i++)
@@ -126,7 +126,7 @@ void DQ_CoppeliaSimModels::load_reference_frames(const std::vector<std::string> 
  * @brief DQ_CoppeliaSimModels::load_reference_frames
  * @param desired_model_names
  */
-void DQ_CoppeliaSimModels::load_reference_frames(const std::vector<std::string> &desired_model_names)
+void DQ_CoppeliaSimZmqModels::load_reference_frames(const std::vector<std::string> &desired_model_names)
 {
     for (auto& name : desired_model_names)
         load_reference_frame(name, DQ(1), true, true);
@@ -137,7 +137,7 @@ void DQ_CoppeliaSimModels::load_reference_frames(const std::vector<std::string> 
  * @param desired_model_name
  * @param pose
  */
-void DQ_CoppeliaSimModels::load_panda(const std::string &desired_model_name,
+void DQ_CoppeliaSimZmqModels::load_panda(const std::string &desired_model_name,
                                         const DQ &pose) {
     load_model(COMPONENTS::FRANKA_EMIKA_PANDA, desired_model_name, pose, true,
                true);
@@ -154,7 +154,7 @@ void DQ_CoppeliaSimModels::load_panda(const std::string &desired_model_name,
  * @param set_as_static
  * @param set_as_respondable
  */
-void DQ_CoppeliaSimModels::load_primitive(const DQ_CoppeliaSimZmqInterface::PRIMITIVE &primitive,
+void DQ_CoppeliaSimZmqModels::load_primitive(const DQ_CoppeliaSimZmqInterface::PRIMITIVE &primitive,
                                           const std::string &name,
                                           const DQ &pose,
                                           const std::vector<double> sizes,

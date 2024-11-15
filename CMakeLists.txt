@@ -18,9 +18,9 @@ include_directories(/Users/user/git/dqrobotics/cpp-interface-coppeliasim/include
 
 add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp  
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimModels.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqModels.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimRobot.cpp
     coppeliarobotics/zmqRemoteApi/clients/cpp/RemoteAPIClient.cpp
@@ -75,9 +75,9 @@ endif()
 
 # Other Headers
 INSTALL(FILES
-    include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.h
-    include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimModels.h
-    include/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.h
+    include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.h
+    include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqModels.h
+    include/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.h
     DESTINATION "include/dqrobotics/interfaces/coppeliasim")
 
 # Robots
@@ -93,9 +93,9 @@ INSTALL(FILES
 # base folder
 INSTALL(FILES
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimModels.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqModels.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/coppeliasim")
 
 # robots folder

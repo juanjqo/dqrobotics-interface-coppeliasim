@@ -65,25 +65,6 @@ if(WIN32)
 endif()
 
 
-#-----This works but is super slow--------------#
-#set(BOOST_INCLUDE_LIBRARIES thread format filesystem system program_options)
-#set(BOOST_ENABLE_CMAKE ON)
-# Download and extract the boost library from GitHub
-#message(STATUS "Downloading and extracting boost library sources. This will take some time...")
-#Set(FETCHCONTENT_QUIET FALSE)
-#include(FetchContent)
-#FetchContent_Declare(
-#  Boost
-#  GIT_REPOSITORY https://github.com/boostorg/boost.git
-#  GIT_TAG boost-1.84.0
-#  USES_TERMINAL_DOWNLOAD TRUE
-#  GIT_PROGRESS TRUE
-#  GIT_SHALLOW TRUE
-#)
-#FetchContent_MakeAvailable(Boost)
-#-----------------------------------------------
-
-
 find_package(Boost)
 if(Boost_FOUND)
     #if (Boost_VERSION_MAJOR LESS_EQUAL 1 AND Boost_VERSION_MINOR LESS_EQUAL 81)

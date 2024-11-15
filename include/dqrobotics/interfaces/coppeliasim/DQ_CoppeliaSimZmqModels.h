@@ -28,7 +28,7 @@ Contributors:
 
 namespace DQ_robotics
 {
-class DQ_CoppeliaSimModels
+class DQ_CoppeliaSimZmqModels
 {
 public:
     enum class COMPONENTS
@@ -57,8 +57,8 @@ protected:
                      const bool& load_model_only_if_missing = true,
                      const bool& remove_child_script = true);
 public:
-    DQ_CoppeliaSimModels()=delete;
-    DQ_CoppeliaSimModels(const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr);
+    DQ_CoppeliaSimZmqModels()=delete;
+    DQ_CoppeliaSimZmqModels(const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr);
 
     void load_model(const COMPONENTS& model,
                     const std::string& desired_model_name,

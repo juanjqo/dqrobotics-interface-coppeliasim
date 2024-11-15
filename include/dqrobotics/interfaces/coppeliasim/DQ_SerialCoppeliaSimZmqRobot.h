@@ -19,18 +19,18 @@ This file is based on DQ Robotics.
 Contributors:
 - Juan Jose Quiroz Omana
        - Responsible for the original implementation.
-         The DQ_SerialCoppeliaSimRobot class is partially based on the DQ_SerialVrepRobot class
+         The DQ_SerialCoppeliaSimZmqRobot class is partially based on the DQ_SerialVrepRobot class
          (https://github.com/dqrobotics/cpp-interface-vrep/blob/master/include/dqrobotics/interfaces/vrep/DQ_SerialVrepRobot.h)
 
 */
 
 #pragma once
 #include <vector>
-#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.h>
 
 namespace DQ_robotics
 {
-class DQ_SerialCoppeliaSimRobot: public DQ_CoppeliaSimRobot
+class DQ_SerialCoppeliaSimZmqRobot: public DQ_CoppeliaSimZmqRobot
 {
 protected:
     std::vector<std::string> jointnames_;
@@ -40,7 +40,7 @@ protected:
 
     void _initialize_jointnames_from_coppeliasim();
 
-    DQ_SerialCoppeliaSimRobot(const std::string& robot_name,
+    DQ_SerialCoppeliaSimZmqRobot(const std::string& robot_name,
                               const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr);
 public:
 

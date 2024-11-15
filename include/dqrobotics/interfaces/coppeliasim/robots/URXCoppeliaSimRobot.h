@@ -22,14 +22,14 @@ Contributors:
 */
 
 #pragma once
-#include <dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.h>
 #include <dqrobotics/robot_modeling/DQ_SerialManipulatorDH.h>
 
 namespace DQ_robotics
 {
 
 
-class URXCoppeliaSimRobot: public DQ_SerialCoppeliaSimRobot
+class URXCoppeliaSimRobot: public DQ_SerialCoppeliaSimZmqRobot
 {
 public:
     enum class MODEL{

@@ -19,37 +19,33 @@ This file is based on DQ Robotics.
 Contributors:
 - Juan Jose Quiroz Omana
        - Responsible for the original implementation.
-         The DQ_CoppeliaSimRobot class is partially based on the DQ_VrepRobot class
+         The DQ_CoppeliaSimZmqRobot class is partially based on the DQ_VrepRobot class
          (https://github.com/dqrobotics/cpp-interface-vrep/blob/master/include/dqrobotics/interfaces/vrep/DQ_VrepRobot.h)
 
 */
 
-#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.h>
+#pragma once
+#include<string>
+#include<memory>
+#include<dqrobotics/robot_modeling/DQ_Kinematics.h>
+#include<dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.h>
 
 namespace DQ_robotics
 {
-
-/**
- * @brief DQ_CoppeliaSimRobot::_get_interface_sptr
- * @return
- */
-std::shared_ptr<DQ_CoppeliaSimZmqInterface> DQ_CoppeliaSimRobot::_get_interface_sptr() const
+class DQ_CoppeliaSimZmqRobot
 {
-    return coppeliasim_interface_sptr_;
+protected:
+    std::string robot_name_;
+    std::shared_ptr<DQ_CoppeliaSimZmqInterface> coppeliasim_interface_sptr_;
+
+    std::shared_ptr<DQ_CoppeliaSimZmqInterface> _get_interface_sptr() const;
+
+    DQ_CoppeliaSimZmqRobot(const std::string& robot_name,
+                        const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr);
+
+public:
+    virtual ~DQ_CoppeliaSimZmqRobot() = default;
+};
 }
 
-/**
- * @brief DQ_CoppeliaSimRobot::DQ_CoppeliaSimRobot
- * @param robot_name
- * @param coppeliasim_interface_sptr
- */
-DQ_CoppeliaSimRobot::DQ_CoppeliaSimRobot(const std::string& robot_name,
-                                         const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr)
-{
-    robot_name_ = robot_name;
-    if(!coppeliasim_interface_sptr)
-        throw std::runtime_error("Null reference to coppeliasim_interface, initialize it first!");
-    coppeliasim_interface_sptr_ = coppeliasim_interface_sptr;
-}
 
-}

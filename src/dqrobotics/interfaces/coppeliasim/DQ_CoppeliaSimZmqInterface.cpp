@@ -98,8 +98,6 @@ DQ_CoppeliaSimZmqInterface::~DQ_CoppeliaSimZmqInterface()
 }
 
 
-
-
 /**
  * @brief DQ_CoppeliaSimZmqInterface::_join_if_joinable_chronometer_thread
  */
