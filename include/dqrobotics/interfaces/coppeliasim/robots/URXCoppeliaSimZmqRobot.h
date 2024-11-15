@@ -29,17 +29,17 @@ namespace DQ_robotics
 {
 
 
-class URXCoppeliaSimRobot: public DQ_SerialCoppeliaSimZmqRobot
+class URXCoppeliaSimZmqRobot: public DQ_SerialCoppeliaSimZmqRobot
 {
 public:
     enum class MODEL{
         UR5
     };
 protected:
-    URXCoppeliaSimRobot::MODEL model_;
+    URXCoppeliaSimZmqRobot::MODEL model_;
 
 public:
-    URXCoppeliaSimRobot(const std::string& robot_name,
+    URXCoppeliaSimZmqRobot(const std::string& robot_name,
                         const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr,
                         const MODEL& model = MODEL::UR5);
     DQ_SerialManipulatorDH kinematics();

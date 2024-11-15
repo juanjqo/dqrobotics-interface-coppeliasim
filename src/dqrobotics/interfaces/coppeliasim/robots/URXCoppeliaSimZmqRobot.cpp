@@ -21,13 +21,13 @@ Contributors:
        - Responsible for the original implementation.
 */
 
-#include <dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimRobot.h>
+#include <dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZmqRobot.h>
 
 
 namespace DQ_robotics
 {
 
-MatrixXd _get_dh_matrix(const URXCoppeliaSimRobot::MODEL& model);
+MatrixXd _get_dh_matrix(const URXCoppeliaSimZmqRobot::MODEL& model);
 
 
 
@@ -48,11 +48,11 @@ MatrixXd _get_dh_matrix(const URXCoppeliaSimRobot::MODEL& model);
  *
  * @return MatrixXd raw_dh_matrix a matrix related to the D-H parameters
  */
-MatrixXd _get_dh_matrix(const URXCoppeliaSimRobot::MODEL& model)
+MatrixXd _get_dh_matrix(const URXCoppeliaSimZmqRobot::MODEL& model)
 {
     const double pi = M_PI;
     switch (model){
-    case URXCoppeliaSimRobot::MODEL::UR5:
+    case URXCoppeliaSimZmqRobot::MODEL::UR5:
     {
         Matrix<double,5,6> raw_dh_matrix(5,6);
         raw_dh_matrix <<  -pi/2, -pi/2, 0, -pi/2, 0, 0,
@@ -69,7 +69,7 @@ MatrixXd _get_dh_matrix(const URXCoppeliaSimRobot::MODEL& model)
     }
 }
 
-URXCoppeliaSimRobot::URXCoppeliaSimRobot(const std::string &robot_name,
+URXCoppeliaSimZmqRobot::URXCoppeliaSimZmqRobot(const std::string &robot_name,
                                          const std::shared_ptr<DQ_CoppeliaSimZmqInterface> &coppeliasim_interface_sptr,
                                          const MODEL &model)
     :DQ_SerialCoppeliaSimZmqRobot(robot_name, coppeliasim_interface_sptr), model_(model)
@@ -78,7 +78,7 @@ URXCoppeliaSimRobot::URXCoppeliaSimRobot(const std::string &robot_name,
 }
 
 
-DQ_SerialManipulatorDH URXCoppeliaSimRobot::kinematics()
+DQ_SerialManipulatorDH URXCoppeliaSimZmqRobot::kinematics()
 {
     auto kin = DQ_SerialManipulatorDH(_get_dh_matrix(model_));
     kin.set_reference_frame(_get_interface_sptr()->get_object_pose(base_frame_name_));

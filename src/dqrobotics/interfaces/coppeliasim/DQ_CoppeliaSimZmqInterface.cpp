@@ -156,7 +156,7 @@ void DQ_CoppeliaSimZmqInterface::_check_connection()
 
 /**
  * @brief DQ_CoppeliaSimZmqInterface::connect establish a connection between the client (your code) and
- *                                         the host (the CoppeliaSim scene).
+ *                                         the host (the computer running the CoppeliaSim scene).
  * @param host    eg. 'localhost' if the host is running in the same
  *                machine in which is running the client.
  * @param rpcPort The port to establish a connection. (e.g. 23000, 23001, 23002, 23003...).
@@ -183,7 +183,7 @@ bool DQ_CoppeliaSimZmqInterface::connect(const std::string &host, const int &rpc
 
         _join_if_joinable_chronometer_thread();
         set_status_bar_message("       ");
-        _set_status_bar_message("DQ Robotics established a connection!",
+        _set_status_bar_message("DQ Robotics established a connection on port " + std::to_string(rpcPort),
                                 sim_->verbosity_warnings);
     }
     catch (const std::runtime_error& e)
@@ -366,30 +366,6 @@ std::vector<int> DQ_CoppeliaSimZmqInterface::get_object_handles(const std::vecto
     return handles;
 }
 
-std::unordered_map<std::string, int> DQ_CoppeliaSimZmqInterface::get_map()
-{
-    return handles_map_;
-}
-
-void DQ_CoppeliaSimZmqInterface::show_map()
-{
-    for (const auto& p : handles_map_)
-    {
-        std::cout << '[' << p.first << "] = " << p.second << '\n';
-    }
-}
-
-void DQ_CoppeliaSimZmqInterface::show_created_handle_map()
-{
-    std::cout<<"------------------"<<std::endl;
-    for (const auto& p : created_handles_map_)
-    {
-        std::cout<<"------------------"<<std::endl;
-        std::cout<<"[ "<<p.first<<" ]"<<std::endl;
-        for (const auto& n: p.second)
-            std::cout<<" --> "<<n<<std::endl;
-    }
-}
 
 /**
  * @brief DQ_CoppeliaSimZmqInterface::get_object_translation returns a pure quaternion that represents the position
@@ -2524,22 +2500,6 @@ int DQ_CoppeliaSimZmqInterface::_get_handle_from_map(const std::string &objectna
     }
 }
 
-void DQ_CoppeliaSimZmqInterface::_update_created_handles_map(const std::string &base_objectname,
-                                                          const std::vector<std::string> &children_objectnames,
-                                                          const UPDATE_MAP &mode)
-{
-    if (mode == DQ_CoppeliaSimZmqInterface::UPDATE_MAP::ADD)
-        created_handles_map_.try_emplace(base_objectname, children_objectnames);
-    else
-        created_handles_map_.erase(base_objectname);
-}
-
-void DQ_CoppeliaSimZmqInterface::_removed_handles_from_handles_map()
-{
-
-}
-
-
 
 //---------------Deprecated methods-----------------------------
 void DQ_CoppeliaSimZmqInterface::disconnect(){}
@@ -2550,7 +2510,11 @@ int DQ_CoppeliaSimZmqInterface::wait_for_simulation_step_to_end(){return 0;}
 
 //---------------Private methods-----------------------------
 /**
- * @brief DQ_CoppeliaSimZmqInterface::_remove_first_slash_from_string
+ * @brief DQ_CoppeliaSimZmqInterface::_remove_first_slash_from_string this method removes the slash at the beginning of a string.
+ *
+ *             Example: _remove_first_slash_from_string("/reference") returns "reference"
+ *                      _remove_first_slash_from_string("reference")  returns "reference"
+ *
  * @param str
  * @return
  */
@@ -2564,7 +2528,8 @@ std::string DQ_CoppeliaSimZmqInterface::_remove_first_slash_from_string(const st
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::_start_with_slash
+ * @brief DQ_CoppeliaSimZmqInterface::_start_with_slash returns true if the first character of a string is a slash.
+ *                  Otherwise returns false
  * @param str
  * @return
  */
@@ -2595,6 +2560,10 @@ std::string DQ_CoppeliaSimZmqInterface::_get_standard_name(const std::string &st
     return standard_str;
 }
 
+/**
+ * @brief DQ_CoppeliaSimZmqInterface::_get_engine returns the current engine in the simulation scene.
+ * @return
+ */
 DQ_CoppeliaSimZmqInterface::ENGINE DQ_CoppeliaSimZmqInterface::_get_engine()
 {
     _check_client();
@@ -2748,8 +2717,9 @@ std::vector<std::string> DQ_CoppeliaSimZmqInterface::_create_static_axis_at_orig
 }
 
 void DQ_CoppeliaSimZmqInterface::_set_static_object_properties(const std::string &name,
-                                                            const std::string &parent_name,
-                                                            const DQ &pose, const std::vector<double> &rgba_color)
+                                                               const std::string &parent_name,
+                                                               const DQ &pose,
+                                                               const std::vector<double> &rgba_color)
 {
     set_object_color(name, rgba_color);
     set_object_as_respondable(name, false);
@@ -2758,7 +2728,10 @@ void DQ_CoppeliaSimZmqInterface::_set_static_object_properties(const std::string
     set_object_parent(name, parent_name, false);
 }
 
-void DQ_CoppeliaSimZmqInterface::_set_static_object_properties(const int &handle, const int &parent_handle, const DQ &pose, const std::vector<double> &rgba_color) const
+void DQ_CoppeliaSimZmqInterface::_set_static_object_properties(const int &handle,
+                                                               const int &parent_handle,
+                                                               const DQ &pose,
+                                                               const std::vector<double> &rgba_color) const
 {
     set_object_color(handle, rgba_color);
     set_object_as_respondable(handle, false);
@@ -2791,6 +2764,9 @@ int DQ_CoppeliaSimZmqInterface::get_primitive_identifier(const PRIMITIVE &primit
     }
 }
 
+/**
+ * @brief DQ_CoppeliaSimZmqInterface::_check_client checks if the client is initialized.
+ */
 void DQ_CoppeliaSimZmqInterface::_check_client() const
 {
     if (!client_created_)

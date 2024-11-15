@@ -31,10 +31,10 @@ Contributors:
 
 namespace DQ_robotics
 {
-class FrankaEmikaPandaCoppeliaSimRobot: public DQ_SerialCoppeliaSimZmqRobot
+class FrankaEmikaPandaCoppeliaSimZmqRobot: public DQ_SerialCoppeliaSimZmqRobot
 {
 public:
-    FrankaEmikaPandaCoppeliaSimRobot(const std::string& robot_name,
+    FrankaEmikaPandaCoppeliaSimZmqRobot(const std::string& robot_name,
                                      const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr
                                      );
     DQ_SerialManipulatorMDH kinematics();

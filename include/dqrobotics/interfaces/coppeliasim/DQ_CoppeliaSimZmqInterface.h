@@ -385,9 +385,6 @@ public:
     //----------------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------------
 
-    std::unordered_map<std::string, int> get_map(); //For debug
-    void show_map();  // For debug
-    void show_created_handle_map();  // For debug
 
     //-----------Deprecated methods---------------------------//
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
@@ -431,13 +428,6 @@ private:
     void _update_map(const std::string& objectname, const int& handle, const UPDATE_MAP& mode = UPDATE_MAP::ADD);
     int _get_handle_from_map(const std::string& objectname);
 
-    std::unordered_map<std::string, std::vector<std::string>> created_handles_map_;
-    void _update_created_handles_map(const std::string& base_objectname,
-                                     const std::vector<std::string>& children_objectnames,
-                                     const UPDATE_MAP& mode = UPDATE_MAP::ADD);
-
-
-    void _removed_handles_from_handles_map();
     //------------------------------------------------------------------------
     std::string _remove_first_slash_from_string(const std::string& str) const;
     bool _start_with_slash(const std::string& str) const;
@@ -521,16 +511,6 @@ private:
 
     std::tuple<DQ, MatrixXd> _get_center_of_mass_and_inertia_matrix(const int& handle) const;
 
-
-    /* For C++20
-     * ---------------------------------------------------
-    void _check_sizes(const auto &v1,
-                      const auto &v2,
-                      const std::string& error_message) const
-    {
-        if (static_cast<std::size_t>(v1.size()) != static_cast<std::size_t>(v2.size()))
-            throw std::runtime_error(error_message);
-    }*/
 
     template <typename T, typename U>
     void _check_sizes(const T &v1,
