@@ -278,6 +278,7 @@ public:
                             const std::string& objectname2,
                             const double& threshold = 0);
 
+
     void plot_plane(const std::string& name,
                     const DQ& normal_to_the_plane,
                     const DQ& location,
@@ -285,6 +286,7 @@ public:
                     const std::vector<double>& rgba_color = {1,0,0,0.5},
                     const bool& add_normal = true,
                     const double& normal_scale = 1);
+
 
     void plot_line(const std::string& name,
                    const DQ& line_direction,
@@ -311,8 +313,6 @@ public:
                               const DQ& pose,
                               const double& scale = 1,
                               const std::vector<double>& thickness_and_length = {0.005, 0.1});
-
-    //void remove_plotted_object(const std::string& name);
 
 
     void draw_permanent_trajectory(const DQ& point,
