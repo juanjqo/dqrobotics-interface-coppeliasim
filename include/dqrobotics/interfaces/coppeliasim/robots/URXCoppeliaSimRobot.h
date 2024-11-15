@@ -40,7 +40,7 @@ protected:
 
 public:
     URXCoppeliaSimRobot(const std::string& robot_name,
-                        const std::shared_ptr<DQ_CoppeliaSimInterface>& coppeliasim_interface_sptr,
+                        const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr,
                         const MODEL& model = MODEL::UR5);
     DQ_SerialManipulatorDH kinematics();
 };

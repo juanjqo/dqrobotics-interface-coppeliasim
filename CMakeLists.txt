@@ -14,10 +14,10 @@ INCLUDE_DIRECTORIES(${PROJECT_NAME} include)
 INCLUDE_DIRECTORIES(${PROJECT_NAME} /coppeliarobotics/zmqRemoteApi/clients/cpp)
 
 #Temp library
-include_directories(/Users/user/git/dqrobotics/cpp-interface-coppeliasim/include/dqrobotics/interfaces/coppeliasim/)
+include_directories(/Users/user/git/dqrobotics/cpp-interface-coppeliasim/include/)
 
 add_library(${PROJECT_NAME} SHARED
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp  
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimModels.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
@@ -45,7 +45,7 @@ set_source_files_properties(RemoteAPIClient.cpp OBJECT_DEPENDS ${SOURCE_DIR}/Rem
 
 SET_TARGET_PROPERTIES(${PROJECT_NAME}
     PROPERTIES PUBLIC_HEADER
-    "include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h"
+    "include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.h"
     )
 
 INSTALL(TARGETS ${PROJECT_NAME}
@@ -92,7 +92,7 @@ INSTALL(FILES
 
 # base folder
 INSTALL(FILES
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimModels.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp

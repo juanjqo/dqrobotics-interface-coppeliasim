@@ -37,7 +37,7 @@ namespace DQ_robotics
  * @param robot_name
  * @param coppeliasim_interface_sptr
  */
-FrankaEmikaPandaCoppeliaSimRobot::FrankaEmikaPandaCoppeliaSimRobot(const std::string &robot_name, const std::shared_ptr<DQ_CoppeliaSimInterface> &coppeliasim_interface_sptr)
+FrankaEmikaPandaCoppeliaSimRobot::FrankaEmikaPandaCoppeliaSimRobot(const std::string &robot_name, const std::shared_ptr<DQ_CoppeliaSimZmqInterface> &coppeliasim_interface_sptr)
     :DQ_SerialCoppeliaSimRobot(robot_name, coppeliasim_interface_sptr)
 {
 

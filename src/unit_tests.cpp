@@ -1,4 +1,4 @@
-#include "dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h"
+#include "dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.h"
 #include <gtest/gtest.h>
 
 
@@ -10,10 +10,10 @@ namespace My{
 
     protected:
         enum class ROBOT_MODE{KINEMATIC, POSITION, VELOCITY, TORQUE};
-        std::unique_ptr<DQ_CoppeliaSimInterface> vi_;
+        std::unique_ptr<DQ_CoppeliaSimZmqInterface> vi_;
         VectorXd q_panda_home_ = (VectorXd(7)<<0, -M_PI_4, 0, -3 * M_PI_4, 0, M_PI_2, M_PI_4).finished();
     InterfaceUnitTests() {
-        vi_ = std::make_unique<DQ_CoppeliaSimInterface>();
+        vi_ = std::make_unique<DQ_CoppeliaSimZmqInterface>();
         vi_->connect("localhost", 23000, 1000);
     }
 
@@ -29,22 +29,22 @@ namespace My{
         switch (robot_mode){
 
         case ROBOT_MODE::KINEMATIC:
-            vi_->set_joint_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_MODE::KINEMATIC);
+            vi_->set_joint_modes(jointnames, DQ_CoppeliaSimZmqInterface::JOINT_MODE::KINEMATIC);
             vi_->enable_dynamics(false);
             break;
         case ROBOT_MODE::POSITION:
-            vi_->set_joint_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_MODE::DYNAMIC);
-            vi_->set_joint_control_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::POSITION);
+            vi_->set_joint_modes(jointnames, DQ_CoppeliaSimZmqInterface::JOINT_MODE::DYNAMIC);
+            vi_->set_joint_control_modes(jointnames, DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::POSITION);
             vi_->enable_dynamics(true);
             break;
         case ROBOT_MODE::VELOCITY:
-            vi_->set_joint_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_MODE::DYNAMIC);
-            vi_->set_joint_control_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::VELOCITY);
+            vi_->set_joint_modes(jointnames, DQ_CoppeliaSimZmqInterface::JOINT_MODE::DYNAMIC);
+            vi_->set_joint_control_modes(jointnames, DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::VELOCITY);
             vi_->enable_dynamics(true);
             break;
         case ROBOT_MODE::TORQUE:
-            vi_->set_joint_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_MODE::DYNAMIC);
-            vi_->set_joint_control_modes(jointnames, DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::TORQUE);
+            vi_->set_joint_modes(jointnames, DQ_CoppeliaSimZmqInterface::JOINT_MODE::DYNAMIC);
+            vi_->set_joint_control_modes(jointnames, DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::TORQUE);
             vi_->enable_dynamics(true);
             break;
         }

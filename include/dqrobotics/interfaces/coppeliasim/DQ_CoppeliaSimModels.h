@@ -24,7 +24,7 @@ Contributors:
 #pragma once
 #include <string>
 #include <memory>
-#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.h>
 
 namespace DQ_robotics
 {
@@ -48,8 +48,8 @@ public:
     };
 
 protected:
-    std::shared_ptr<DQ_CoppeliaSimInterface> coppeliasim_interface_sptr_;
-    std::shared_ptr<DQ_CoppeliaSimInterface> _get_interface_sptr() const;
+    std::shared_ptr<DQ_CoppeliaSimZmqInterface> coppeliasim_interface_sptr_;
+    std::shared_ptr<DQ_CoppeliaSimZmqInterface> _get_interface_sptr() const;
     std::string _get_string_from_others(const COMPONENTS& model);
 
     void _load_model(const COMPONENTS& model,
@@ -58,7 +58,7 @@ protected:
                      const bool& remove_child_script = true);
 public:
     DQ_CoppeliaSimModels()=delete;
-    DQ_CoppeliaSimModels(const std::shared_ptr<DQ_CoppeliaSimInterface>& coppeliasim_interface_sptr);
+    DQ_CoppeliaSimModels(const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr);
 
     void load_model(const COMPONENTS& model,
                     const std::string& desired_model_name,
@@ -79,7 +79,7 @@ public:
     void load_panda(const std::string& desired_model_name,
                     const DQ& pose = DQ(0));
 
-    void load_primitive(const DQ_CoppeliaSimInterface::PRIMITIVE& primitive,
+    void load_primitive(const DQ_CoppeliaSimZmqInterface::PRIMITIVE& primitive,
                         const std::string& name = "shape",
                         const DQ& pose = DQ(1),
                         const std::vector<double> sizes = {0.2,0.2,0.2},

@@ -6,7 +6,7 @@ namespace DQ_robotics
  * @brief DQ_CoppeliaSimModels::_get_interface_sptr
  * @return
  */
-std::shared_ptr<DQ_CoppeliaSimInterface> DQ_CoppeliaSimModels::_get_interface_sptr() const
+std::shared_ptr<DQ_CoppeliaSimZmqInterface> DQ_CoppeliaSimModels::_get_interface_sptr() const
 {
     return coppeliasim_interface_sptr_;
 }
@@ -47,7 +47,7 @@ std::string DQ_CoppeliaSimModels::_get_string_from_others(const COMPONENTS &mode
  * @brief DQ_CoppeliaSimModels::DQ_CoppeliaSimModels
  * @param coppeliasim_interface_sptr
  */
-DQ_CoppeliaSimModels::DQ_CoppeliaSimModels(const std::shared_ptr<DQ_CoppeliaSimInterface> &coppeliasim_interface_sptr)
+DQ_CoppeliaSimModels::DQ_CoppeliaSimModels(const std::shared_ptr<DQ_CoppeliaSimZmqInterface> &coppeliasim_interface_sptr)
     :coppeliasim_interface_sptr_(coppeliasim_interface_sptr)
 {
 
@@ -154,7 +154,7 @@ void DQ_CoppeliaSimModels::load_panda(const std::string &desired_model_name,
  * @param set_as_static
  * @param set_as_respondable
  */
-void DQ_CoppeliaSimModels::load_primitive(const DQ_CoppeliaSimInterface::PRIMITIVE &primitive,
+void DQ_CoppeliaSimModels::load_primitive(const DQ_CoppeliaSimZmqInterface::PRIMITIVE &primitive,
                                           const std::string &name,
                                           const DQ &pose,
                                           const std::vector<double> sizes,

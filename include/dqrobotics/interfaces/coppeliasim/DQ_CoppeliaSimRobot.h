@@ -28,7 +28,7 @@ Contributors:
 #include<string>
 #include<memory>
 #include<dqrobotics/robot_modeling/DQ_Kinematics.h>
-#include<dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
+#include<dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.h>
 
 namespace DQ_robotics
 {
@@ -36,12 +36,12 @@ class DQ_CoppeliaSimRobot
 {
 protected:
     std::string robot_name_;
-    std::shared_ptr<DQ_CoppeliaSimInterface> coppeliasim_interface_sptr_;
+    std::shared_ptr<DQ_CoppeliaSimZmqInterface> coppeliasim_interface_sptr_;
 
-    std::shared_ptr<DQ_CoppeliaSimInterface> _get_interface_sptr() const;
+    std::shared_ptr<DQ_CoppeliaSimZmqInterface> _get_interface_sptr() const;
 
     DQ_CoppeliaSimRobot(const std::string& robot_name,
-                        const std::shared_ptr<DQ_CoppeliaSimInterface>& coppeliasim_interface_sptr);
+                        const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr);
 
 public:
     virtual ~DQ_CoppeliaSimRobot() = default;

@@ -35,20 +35,20 @@ class DQ_SerialCoppeliaSimRobot: public DQ_CoppeliaSimRobot
 protected:
     std::vector<std::string> jointnames_;
     std::string base_frame_name_;
-    DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE joint_control_mode_;
+    DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE joint_control_mode_;
     bool robot_is_used_as_visualization_tool_;
 
     void _initialize_jointnames_from_coppeliasim();
 
     DQ_SerialCoppeliaSimRobot(const std::string& robot_name,
-                              const std::shared_ptr<DQ_CoppeliaSimInterface>& coppeliasim_interface_sptr);
+                              const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr);
 public:
 
-    virtual void set_operation_modes(const DQ_CoppeliaSimInterface::JOINT_MODE& joint_mode,
-                                     const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    virtual void set_operation_modes(const DQ_CoppeliaSimZmqInterface::JOINT_MODE& joint_mode,
+                                     const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
     virtual void set_robot_as_visualization_tool();
-    virtual void set_robot_as_dynamic_tool(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE& joint_control_mode);
-    virtual void set_joint_control_type(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    virtual void set_robot_as_dynamic_tool(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    virtual void set_joint_control_type(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
 
     virtual void set_control_inputs(const VectorXd& u);
 

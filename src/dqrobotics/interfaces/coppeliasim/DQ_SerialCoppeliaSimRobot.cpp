@@ -46,13 +46,13 @@ void DQ_SerialCoppeliaSimRobot::_initialize_jointnames_from_coppeliasim()
  * @param coppeliasim_interface_sptr
  */
 DQ_SerialCoppeliaSimRobot::DQ_SerialCoppeliaSimRobot(const std::string &robot_name,
-                                                     const std::shared_ptr<DQ_CoppeliaSimInterface> &coppeliasim_interface_sptr)
+                                                     const std::shared_ptr<DQ_CoppeliaSimZmqInterface> &coppeliasim_interface_sptr)
     :DQ_CoppeliaSimRobot(robot_name, coppeliasim_interface_sptr)
 {
     _initialize_jointnames_from_coppeliasim();
     // By Default, the robot is controlled by joint positions with both the dynamic engine
     // and the stepping mode enabled.
-    joint_control_mode_ = DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::POSITION;
+    joint_control_mode_ = DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::POSITION;
     robot_is_used_as_visualization_tool_ = false;
 }
 
@@ -61,7 +61,7 @@ DQ_SerialCoppeliaSimRobot::DQ_SerialCoppeliaSimRobot(const std::string &robot_na
  * @param joint_mode
  * @param joint_control_mode
  */
-void DQ_SerialCoppeliaSimRobot::set_operation_modes(const DQ_CoppeliaSimInterface::JOINT_MODE &joint_mode, const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE &joint_control_mode)
+void DQ_SerialCoppeliaSimRobot::set_operation_modes(const DQ_CoppeliaSimZmqInterface::JOINT_MODE &joint_mode, const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE &joint_control_mode)
 {
     joint_control_mode_ = joint_control_mode;
     _get_interface_sptr()->set_joint_modes(jointnames_, joint_mode);
@@ -80,7 +80,7 @@ void DQ_SerialCoppeliaSimRobot::set_robot_as_visualization_tool()
     _get_interface_sptr()->set_stepping_mode(false);
     _get_interface_sptr()->enable_dynamics(false);
     _get_interface_sptr()->set_joint_modes(jointnames_,
-                                           DQ_CoppeliaSimInterface::JOINT_MODE::KINEMATIC);
+                                           DQ_CoppeliaSimZmqInterface::JOINT_MODE::KINEMATIC);
     robot_is_used_as_visualization_tool_ = true;
 }
 
@@ -92,7 +92,7 @@ void DQ_SerialCoppeliaSimRobot::set_robot_as_visualization_tool()
  *
  * @param joint_control_mode Use POSITION, VELOCITY or TORQUE.
  */
-void DQ_SerialCoppeliaSimRobot::set_robot_as_dynamic_tool(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE &joint_control_mode)
+void DQ_SerialCoppeliaSimRobot::set_robot_as_dynamic_tool(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE &joint_control_mode)
 {
     _get_interface_sptr()->enable_dynamics(true);
     _get_interface_sptr()->set_stepping_mode(true);
@@ -104,9 +104,9 @@ void DQ_SerialCoppeliaSimRobot::set_robot_as_dynamic_tool(const DQ_CoppeliaSimIn
  *        of the robot.
  * @param joint_control_mode Use POSITION, VELOCITY or TORQUE.
  */
-void DQ_SerialCoppeliaSimRobot::set_joint_control_type(const DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE &joint_control_mode)
+void DQ_SerialCoppeliaSimRobot::set_joint_control_type(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE &joint_control_mode)
 {
-    set_operation_modes(DQ_CoppeliaSimInterface::JOINT_MODE::DYNAMIC, joint_control_mode);
+    set_operation_modes(DQ_CoppeliaSimZmqInterface::JOINT_MODE::DYNAMIC, joint_control_mode);
 }
 
 /**
@@ -122,21 +122,21 @@ void DQ_SerialCoppeliaSimRobot::set_control_inputs(const VectorXd &u)
     {
         switch (joint_control_mode_)
         {
-        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::FREE:
+        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::FREE:
             break;
-        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::FORCE:
+        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::FORCE:
             break;
-        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::VELOCITY:
+        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::VELOCITY:
             _get_interface_sptr()->set_joint_target_velocities(jointnames_, u);
             break;
-        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::POSITION:
+        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::POSITION:
             _get_interface_sptr()->set_joint_target_positions(jointnames_, u);
             break;
-        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::SPRING:
+        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::SPRING:
             break;
-        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::CUSTOM:
+        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::CUSTOM:
             break;
-        case DQ_CoppeliaSimInterface::JOINT_CONTROL_MODE::TORQUE:
+        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::TORQUE:
             _get_interface_sptr()->set_joint_torques(jointnames_, u);
             break;
         }
