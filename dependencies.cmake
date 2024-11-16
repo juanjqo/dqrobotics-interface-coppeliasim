@@ -22,6 +22,7 @@ if(UNIX AND NOT APPLE)
         ${Boost_PROGRAM_OPTIONS_LIBRARY}
     )
 
+    INCLUDE_DIRECTORIES(${PROJECT_NAME}/cppzmq)
     #include(FetchContent)
     #set(CPPZMQ_BUILD_TESTS OFF CACHE BOOL "" FORCE)
     #FetchContent_Declare(cppzmq

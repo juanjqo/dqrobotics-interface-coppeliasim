@@ -2,3 +2,6 @@
 	path = coppeliarobotics/zmqRemoteApi
 	url = https://github.com/CoppeliaRobotics/zmqRemoteApi.git
 
+[submodule "cppzmq"]
+	path = cppzmq
+	url = https://github.com/zeromq/cppzmq
