@@ -104,7 +104,7 @@ public:
     DQ   get_object_rotation(const std::string& objectname) override;
     void set_object_rotation(const std::string& objectname, const DQ& r) override;
     void set_object_pose(const std::string& objectname, const DQ& h) override;
-    DQ get_object_pose(const std::string& objectname) override;
+    DQ   get_object_pose(const std::string& objectname) override;
 
     VectorXd get_joint_positions(const std::vector<std::string>& jointnames) override;
     void     set_joint_positions(const std::vector<std::string>& jointnames,
@@ -118,13 +118,13 @@ public:
                                const VectorXd& torques) override;
     VectorXd get_joint_torques(const std::vector<std::string>& jointnames) override;
 
+    //----------------Exclusive methods from DQ_CoppeliaSimZmqInterface------//
+
     bool connect(const std::string& host,
                  const int& rpcPort,
                  const int& MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION,
                  const int& cntPort,
                  const int& verbose);
-
-
 
     void   pause_simulation() const;
 
@@ -136,36 +136,20 @@ public:
     void   set_status_bar_message(const std::string& message) const;
 
 
-
-
-
     DQ   get_object_translation(const int& handle) const;
-
-
     void set_object_translation(const int& handle, const DQ& t);
-
-
     DQ   get_object_rotation(const int& handle) const;
-
-
     void set_object_rotation(const int& handle, const DQ& r);
-
-
-    DQ get_object_pose(const int& handle) const;
-
-
+    DQ   get_object_pose(const int& handle) const;
     void set_object_pose(const int& handle, const DQ& h) const;
-
 
     double   get_joint_position(const int& handle) const;
     double   get_joint_position(const std::string& jointname);
     VectorXd get_joint_positions(const std::vector<int>& handles) const;
 
-
     void     set_joint_position(const int& handle, const double& angle_rad) const;
     void     set_joint_position(const std::string& jointname, const double& angle_rad);
     void     set_joint_positions(const std::vector<int>& handles, const VectorXd& angles_rad) const ;
-
 
     void     set_joint_target_position(const int& handle, const double& angle_rad) const;
     void     set_joint_target_position(const std::string& jointname, const double& angle_rad);
@@ -179,16 +163,13 @@ public:
     void     set_joint_target_velocity(const std::string& jointname, const double& angle_rad_dot);
     void     set_joint_target_velocities(const std::vector<int>& handles, const VectorXd& angles_rad_dot) const;
 
-
     void     set_joint_torque(const int& handle, const double& torque) const;
     void     set_joint_torque(const std::string& jointname, const double& torque);
     void     set_joint_torques(const std::vector<int>& handles, const VectorXd& torques) const;
 
-
     double   get_joint_torque(const int& handle) const;
     double   get_joint_torque(const std::string& jointname);
     VectorXd get_joint_torques(const std::vector<int>& handles) const;
-
 
     std::string get_object_name(const int& handle);
 
@@ -232,7 +213,9 @@ public:
     MatrixXd get_inertia_matrix(const int& handle, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
     MatrixXd get_inertia_matrix(const std::string& link_name, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
 
-    //------------------Exclusive methods---------------------------------------------------------------
+
+
+    //------------------Exclusive methods enabled by the ZMQ ZeroMQ remote API-----------------------------//
     void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
     void   set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
     void   set_joint_control_mode(const std::string& jointname, const JOINT_CONTROL_MODE& joint_control_mode);
@@ -270,8 +253,6 @@ public:
     void set_object_name(const std::string& current_object_name,
                          const std::string& new_object_name);
 
-    //-------- Methods to be implemented on Matlab---------------
-
     void set_object_color(const int& handle,
                           const std::vector<double>& rgba_color) const;
 
@@ -289,6 +270,8 @@ public:
 
     void set_object_as_static(const std::string& objectname,
                               const bool& static_object = true);
+
+    //---------------Experimental methods----------------------------------//
 
     int add_primitive(const PRIMITIVE& primitive,
                       const std::string& name,
@@ -310,7 +293,6 @@ public:
                             const std::string& objectname2,
                             const double& threshold = 0);
 
-
     void plot_plane(const std::string& name,
                     const DQ& normal_to_the_plane,
                     const DQ& location,
@@ -318,7 +300,6 @@ public:
                     const std::vector<double>& rgba_color = {1,0,0,0.5},
                     const bool& add_normal = true,
                     const double& normal_scale = 1);
-
 
     void plot_line(const std::string& name,
                    const DQ& line_direction,
@@ -347,8 +328,6 @@ public:
                               const double& scale = 1,
                               const std::vector<double>& thickness_and_length = {0.005, 0.1});
 
-
-
     void draw_permanent_trajectory(const DQ& point,
                          const double& size = 2,
                          const std::vector<double>& color = {1,0,0},
@@ -356,7 +335,6 @@ public:
 
     int add_simulation_lua_script(const std::string& script_name,
                                   const std::string& script_code);
-
 
     void draw_trajectory(const std::string& objectname,
                          const double& size = 2,
@@ -369,7 +347,7 @@ public:
     std::vector<double> get_bounding_box_size(const int& handle) const;
     std::vector<double> get_bounding_box_size(const std::string& objectname);
 
-
+    int get_primitive_identifier(const PRIMITIVE& primitive) const;
 
     //-----------------------------------------------------------------------
     // Mujoco settings
@@ -431,11 +409,9 @@ public:
     int wait_for_simulation_step_to_end();
     //---------------------------------------------------------//
 
-    int get_primitive_identifier(const PRIMITIVE& primitive) const;
+
 
 protected:
-    enum class AXIS{i,j,k};
-
 
     std::string host_{"localhost"};
     int rpcPort_{23000};
@@ -443,6 +419,7 @@ protected:
     int verbose_{-1};
 
 private:
+    enum class AXIS{i,j,k};
     enum class UPDATE_MAP{ADD, REMOVE};
 
     std::atomic<bool> client_created_{false};
