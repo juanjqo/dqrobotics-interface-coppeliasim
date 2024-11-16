@@ -31,11 +31,14 @@ Contributors:
 #include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h> //local temp file
 #include <thread>
 #include <atomic>
+#include <memory>
+
 
 using namespace DQ_robotics;
 using namespace Eigen;
 
-class DQ_CoppeliaSimZmqInterface
+
+class DQ_CoppeliaSimZmqInterface : public DQ_CoppeliaSimInterface
 {
 public:
     enum class JOINT_MODE
@@ -85,78 +88,107 @@ public:
     DQ_CoppeliaSimZmqInterface();
     ~DQ_CoppeliaSimZmqInterface();
 
+    //-----------Override from DQ_CoppeliaSimInterface ---------------------------------------
     bool connect(const std::string& host = "localhost",
-                 const int& rpcPort = 23000,
-                 const int& MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION = 300,
-                 const int& cntPort = -1,
-                 const int& verbose = -1);
+                 const int& port = 23000,
+                 const int&TIMEOUT_IN_MILISECONDS = 300) override;
 
-    void   start_simulation() const;
+    void   start_simulation() const override;
+    void   stop_simulation()  const override;
+    void   trigger_next_simulation_step() const override;
+    int get_object_handle(const std::string& objectname) override;
+
+    std::vector<int> get_object_handles(const std::vector<std::string>& objectnames) override;
+    DQ   get_object_translation(const std::string& objectname) override;
+    void set_object_translation(const std::string& objectname, const DQ& t) override;
+    DQ   get_object_rotation(const std::string& objectname) override;
+    void set_object_rotation(const std::string& objectname, const DQ& r) override;
+    void set_object_pose(const std::string& objectname, const DQ& h) override;
+    DQ get_object_pose(const std::string& objectname) override;
+
+    VectorXd get_joint_positions(const std::vector<std::string>& jointnames) override;
+    void     set_joint_positions(const std::vector<std::string>& jointnames,
+                                 const VectorXd& angles_rad) override;
+    void     set_joint_target_positions(const std::vector<std::string>& jointnames,
+                                        const VectorXd& angles_rad) override;
+    VectorXd get_joint_velocities(const std::vector<std::string>& jointnames) override;
+    void     set_joint_target_velocities(const std::vector<std::string>& jointnames,
+                                     const VectorXd& angles_rad_dot) override;
+    void     set_joint_torques(const std::vector<std::string>& jointnames,
+                               const VectorXd& torques) override;
+    VectorXd get_joint_torques(const std::vector<std::string>& jointnames) override;
+
+    bool connect(const std::string& host,
+                 const int& rpcPort,
+                 const int& MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION,
+                 const int& cntPort,
+                 const int& verbose);
+
+
+
     void   pause_simulation() const;
-    void   stop_simulation()  const;
+
     void   set_stepping_mode(const bool& flag);
     double get_simulation_time() const;
-    void   trigger_next_simulation_step() const;
+
     bool   is_simulation_running() const;
     int    get_simulation_state() const;
     void   set_status_bar_message(const std::string& message) const;
 
-    int get_object_handle(const std::string& objectname);
-    std::vector<int> get_object_handles(const std::vector<std::string>& objectnames);
+
+
 
 
     DQ   get_object_translation(const int& handle) const;
-    DQ   get_object_translation(const std::string& objectname);
+
 
     void set_object_translation(const int& handle, const DQ& t);
-    void set_object_translation(const std::string& objectname, const DQ& t);
+
 
     DQ   get_object_rotation(const int& handle) const;
-    DQ   get_object_rotation(const std::string& objectname);
+
 
     void set_object_rotation(const int& handle, const DQ& r);
-    void set_object_rotation(const std::string& objectname, const DQ& r);
+
 
     DQ get_object_pose(const int& handle) const;
-    DQ get_object_pose(const std::string& objectname);
+
 
     void set_object_pose(const int& handle, const DQ& h) const;
-    void set_object_pose(const std::string& objectname, const DQ& h);
+
 
     double   get_joint_position(const int& handle) const;
     double   get_joint_position(const std::string& jointname);
     VectorXd get_joint_positions(const std::vector<int>& handles) const;
-    VectorXd get_joint_positions(const std::vector<std::string>& jointnames);
+
 
     void     set_joint_position(const int& handle, const double& angle_rad) const;
     void     set_joint_position(const std::string& jointname, const double& angle_rad);
-    void     set_joint_positions(const std::vector<int>& handles, const VectorXd& angles_rad) const;
-    void     set_joint_positions(const std::vector<std::string>& jointnames, const VectorXd& angles_rad);
+    void     set_joint_positions(const std::vector<int>& handles, const VectorXd& angles_rad) const ;
+
 
     void     set_joint_target_position(const int& handle, const double& angle_rad) const;
     void     set_joint_target_position(const std::string& jointname, const double& angle_rad);
     void     set_joint_target_positions(const std::vector<int>& handles, const VectorXd& angles_rad) const;
-    void     set_joint_target_positions(const std::vector<std::string>& jointnames, const VectorXd& angles_rad);
 
     double   get_joint_velocity(const int& handle) const;
     double   get_joint_velocity(const std::string& jointname);
     VectorXd get_joint_velocities(const std::vector<int>& handles) const;
-    VectorXd get_joint_velocities(const std::vector<std::string>& jointnames);
 
     void     set_joint_target_velocity(const int& handle, const double& angle_rad_dot) const;
     void     set_joint_target_velocity(const std::string& jointname, const double& angle_rad_dot);
     void     set_joint_target_velocities(const std::vector<int>& handles, const VectorXd& angles_rad_dot) const;
-    void     set_joint_target_velocities(const std::vector<std::string>& jointnames, const VectorXd& angles_rad_dot);
+
 
     void     set_joint_torque(const int& handle, const double& torque) const;
     void     set_joint_torque(const std::string& jointname, const double& torque);
     void     set_joint_torques(const std::vector<int>& handles, const VectorXd& torques) const;
-    void     set_joint_torques(const std::vector<std::string>& jointnames, const VectorXd& torques);
+
 
     double   get_joint_torque(const int& handle) const;
     double   get_joint_torque(const std::string& jointname);
     VectorXd get_joint_torques(const std::vector<int>& handles) const;
-    VectorXd get_joint_torques(const std::vector<std::string>& jointnames);
+
 
     std::string get_object_name(const int& handle);
 
@@ -309,10 +341,12 @@ public:
                      const double& size = 0.2,
                      const std::vector<double> rgba_color = {1,0,0,0.5});
 
+
     void plot_reference_frame(const std::string& name,
                               const DQ& pose,
                               const double& scale = 1,
                               const std::vector<double>& thickness_and_length = {0.005, 0.1});
+
 
 
     void draw_permanent_trajectory(const DQ& point,
@@ -521,6 +555,10 @@ private:
             throw std::runtime_error(error_message);
     }
     //---------------------------------------------------
+
 };
+
+
+
 
 

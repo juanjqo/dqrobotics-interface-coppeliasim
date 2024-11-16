@@ -1,16 +1,16 @@
-#include "dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h"
+#include "dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.h"
 
 //#include <dqrobotics/solvers/DQ_PROXQPSolver.h>
 #include <dqrobotics/utils/DQ_LinearAlgebra.h>
 #include <dqrobotics/DQ.h>
-#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimModels.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqModels.h>
 
 using namespace DQ_robotics;
 using namespace Eigen;
 
 int main()
 {
-    auto vi = std::make_shared<DQ_CoppeliaSimInterface>();
+    auto vi = std::make_shared<DQ_CoppeliaSimZmqInterface>();
     vi->connect("localhost", 23000);
     vi->close_scene();
 
@@ -23,7 +23,6 @@ int main()
 
 
     vi->start_simulation();
-
 
 
 

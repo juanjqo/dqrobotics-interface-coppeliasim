@@ -81,7 +81,7 @@ bool _create_client(const std::string& host,
 /**
  * @brief DQ_CoppeliaSimZmqInterface::DQ_CoppeliaSimZmqInterface
  */
-DQ_CoppeliaSimZmqInterface::DQ_CoppeliaSimZmqInterface()
+DQ_CoppeliaSimZmqInterface::DQ_CoppeliaSimZmqInterface() //:exp_{std::shared_ptr<DQ_CoppeliaSimZmqInterface>(this)}
     :client_created_{false}
 {
 
@@ -192,6 +192,18 @@ bool DQ_CoppeliaSimZmqInterface::connect(const std::string &host, const int &rpc
                   << e.what() << std::endl;
     }
     return client_created_;
+}
+
+/**
+ * @brief DQ_CoppeliaSimZmqInterface::connect
+ * @param host
+ * @param port
+ * @param TIMEOUT_IN_MILISECONDS
+ * @return
+ */
+bool DQ_CoppeliaSimZmqInterface::connect(const std::string &host, const int &port, const int &TIMEOUT_IN_MILISECONDS)
+{
+    return connect(host, port, TIMEOUT_IN_MILISECONDS, -1, -1);
 }
 
 /**
@@ -2802,5 +2814,4 @@ std::tuple<DQ, MatrixXd> DQ_CoppeliaSimZmqInterface::_get_center_of_mass_and_ine
 }
 
 
-//--------------------------------------------------------------
 
