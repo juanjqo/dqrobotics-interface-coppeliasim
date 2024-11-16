@@ -14,7 +14,7 @@ INCLUDE_DIRECTORIES(${PROJECT_NAME} include)
 INCLUDE_DIRECTORIES(${PROJECT_NAME} /coppeliarobotics/zmqRemoteApi/clients/cpp)
 
 #Temp library
-include_directories(/Users/user/git/dqrobotics/cpp-interface-coppeliasim/include/)
+#include_directories(/Users/user/git/dqrobotics/cpp-interface-coppeliasim/include/)
 
 add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.cpp
@@ -113,10 +113,10 @@ INSTALL(FILES
 #target_link_libraries(example2 PRIVATE ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
 
-add_executable(example3 src/test_new_methods.cpp)
-target_link_libraries(example3 PRIVATE
-                      dqrobotics
-                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
+#add_executable(example3 src/test_new_methods.cpp)
+#target_link_libraries(example3 PRIVATE
+#                      dqrobotics
+#                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
 #add_executable(multiple_instances src/test_panda.cpp)
 #target_link_libraries(multiple_instances PRIVATE
@@ -125,6 +125,6 @@ target_link_libraries(example3 PRIVATE
 
 
 # Now simply link against gtest or gtest_main as needed. Eg
-add_executable(unit_tests src/unit_tests.cpp)
-target_link_libraries(unit_tests gtest_main ${PROJECT_NAME})
+#add_executable(unit_tests src/unit_tests.cpp)
+#target_link_libraries(unit_tests gtest_main ${PROJECT_NAME})
 #add_test(NAME example_test COMMAND example)
