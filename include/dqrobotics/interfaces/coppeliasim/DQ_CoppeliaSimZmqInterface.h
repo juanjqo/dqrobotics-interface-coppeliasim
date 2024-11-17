@@ -236,13 +236,6 @@ public:
     void save_scene(const std::string& path_to_filename) const;
     void close_scene() const;
 
-/*
-    bool load_from_model_browser(const std::string& path_to_filename,
-                                       const std::string& desired_model_name,
-                                       const bool& load_model_only_if_missing = true,
-                                       const bool& remove_child_script = true);
-*/
-
 
     void remove_child_script_from_object(const std::string& objectname, const std::string& script_name = "/Script");
 
@@ -273,9 +266,7 @@ public:
 
     //---------------Experimental methods----------------------------------//
 
-    int add_primitive(const PRIMITIVE& primitive,
-                      const std::string& name,
-                      const std::vector<double>& sizes) const;
+
 
     void set_object_parent(const int& handle, const int& parent_handle, const bool& move_child_to_parent_pose) const;
     void set_object_parent(const std::string& objectname, const std::string& parent_object_name,
@@ -425,6 +416,11 @@ public:
                                      const std::string& desired_model_name,
                                      const bool& load_model_only_if_missing = true,
                                      const bool& remove_child_script = true);
+
+        int add_primitive(const PRIMITIVE& primitive,
+                          const std::string& name,
+                          const std::vector<double>& sizes);
+
     };
 
     std::shared_ptr<DQ_CoppeliaSimZmqInterface::experimental> experimental_;
@@ -495,6 +491,10 @@ private:
     MatrixXd _get_rotation_matrix(const DQ& r) const;
 
     DQ _get_pose_from_direction(const DQ& direction, const DQ& point = DQ(1));
+
+    int _add_primitive(const PRIMITIVE& primitive,
+                      const std::string& name,
+                      const std::vector<double>& sizes) const;
 
     [[nodiscard("The created primitives must be added to the created_handles_map")]]
     std::vector<std::string> _create_static_axis_at_origin(const int& parent_handle,

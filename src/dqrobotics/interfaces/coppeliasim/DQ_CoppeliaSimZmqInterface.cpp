@@ -1365,20 +1365,6 @@ void DQ_CoppeliaSimZmqInterface::close_scene() const
     sim_->closeScene();
 }
 
-
-/*
-bool DQ_CoppeliaSimZmqInterface::load_from_model_browser(const std::string &path_to_filename,
-                                                            const std::string &desired_model_name,
-                                                            const bool &load_model_only_if_missing,
-                                                            const bool &remove_child_script)
-{
-    _check_client();
-    std::string resources_path = sim_->getStringParam(sim_->stringparam_resourcesdir);
-    return load_model(resources_path + std::string("/models") + path_to_filename,
-                      desired_model_name, load_model_only_if_missing, remove_child_script);
-}*/
-
-
 /**
  * @brief DQ_CoppeliaSimZmqInterface::remove_child_script_from_object
  *        The script must be located at objectname/script_name
@@ -1474,21 +1460,6 @@ void DQ_CoppeliaSimZmqInterface::set_object_as_static(const int &handle, const b
 void DQ_CoppeliaSimZmqInterface::set_object_as_static(const std::string &objectname, const bool &static_object)
 {
     set_object_as_static(_get_handle_from_map(objectname), static_object);
-}
-
-
-int DQ_CoppeliaSimZmqInterface::add_primitive(const PRIMITIVE &primitive, const std::string &name,
-                                            const std::vector<double> &sizes) const
-{
-    if (!object_exist_on_scene(name))
-    {
-        _check_client();
-        int shapeHandle = sim_->createPrimitiveShape(get_primitive_identifier(primitive), sizes, 0);
-        set_object_name(shapeHandle, _remove_first_slash_from_string(name));
-        return shapeHandle;
-    }else
-        return -1;
-
 }
 
 
@@ -1598,7 +1569,7 @@ double DQ_CoppeliaSimZmqInterface::compute_distance(const std::string &objectnam
 
 void DQ_CoppeliaSimZmqInterface::_create_plane(const std::string &name, const std::vector<double> &sizes, const std::vector<double> &rgba_color, const bool &add_normal, const double &normal_scale) const
 {
-    int primitive_handle = add_primitive(PRIMITIVE::PLANE, name,
+    int primitive_handle = _add_primitive(PRIMITIVE::PLANE, name,
                                          {sizes.at(0), sizes.at(1), sizes.at(1)});
     set_object_color(primitive_handle, rgba_color);
     set_object_as_respondable(primitive_handle, false);
@@ -1619,7 +1590,7 @@ void DQ_CoppeliaSimZmqInterface::_create_plane(const std::string &name, const st
 
 void DQ_CoppeliaSimZmqInterface::_create_line(const std::string &name, const std::vector<double> &thickness_and_length, const std::vector<double> &rgba_color, const bool &add_arrow, const double &arrow_scale) const
 {
-    int primitive_handle = add_primitive(PRIMITIVE::CYLINDER, name,
+    int primitive_handle = _add_primitive(PRIMITIVE::CYLINDER, name,
                           {thickness_and_length.at(0), thickness_and_length.at(0), thickness_and_length.at(1)});
     set_object_color(primitive_handle, rgba_color);
     set_object_as_respondable(primitive_handle, false);
@@ -1632,7 +1603,7 @@ void DQ_CoppeliaSimZmqInterface::_create_line(const std::string &name, const std
         double rfc = 2*arrow_scale;
         std::vector<double> arrow_size = {rfc*thickness_and_length.at(0),rfc*thickness_and_length.at(0), 0.02*arrow_scale*thickness_and_length.at(1)};
         std::string arrow_name = _get_standard_name(name)+std::string("_normal");
-        int arrow_handle = add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
+        int arrow_handle = _add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
         children_names.push_back(arrow_name);
         _set_static_object_properties(arrow_handle,
                                       primitive_handle ,
@@ -1648,7 +1619,7 @@ void DQ_CoppeliaSimZmqInterface::_create_line(const std::string &name, const std
 
 void DQ_CoppeliaSimZmqInterface::_create_cylinder(const std::string &name, const std::vector<double> &width_and_length, const std::vector<double> &rgba_color, const bool &add_line, const double &line_scale) const
 {
-    int primitive_handle = add_primitive(PRIMITIVE::CYLINDER, name,
+    int primitive_handle = _add_primitive(PRIMITIVE::CYLINDER, name,
                             {width_and_length.at(0), width_and_length.at(0), width_and_length.at(1)});
     set_object_color(primitive_handle, rgba_color);
     set_object_as_respondable(primitive_handle, false);
@@ -1659,7 +1630,7 @@ void DQ_CoppeliaSimZmqInterface::_create_cylinder(const std::string &name, const
     {
         double wscale = 0.05*line_scale;
         double lscale = 1.1*line_scale;
-        int line_handle = add_primitive(PRIMITIVE::CYLINDER, line_name,
+        int line_handle = _add_primitive(PRIMITIVE::CYLINDER, line_name,
                       {wscale*width_and_length.at(0), wscale*width_and_length.at(0), lscale*width_and_length.at(1)});
         children_names.push_back(line_name);
         _set_static_object_properties(line_handle,
@@ -1670,7 +1641,7 @@ void DQ_CoppeliaSimZmqInterface::_create_cylinder(const std::string &name, const
         double rfc = 2*wscale*line_scale;
         std::vector<double> arrow_size = {rfc*width_and_length.at(0),rfc*width_and_length.at(0), 0.02*line_scale*width_and_length.at(1)};
         std::string arrow_name = _get_standard_name(name)+std::string("_normal");
-        int arrow_handle = add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
+        int arrow_handle = _add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
         _set_static_object_properties(arrow_handle,
                                       primitive_handle,
                                       1+0.5*E_*0.5*lscale*width_and_length.at(1)*k_,
@@ -1699,7 +1670,7 @@ void DQ_CoppeliaSimZmqInterface::_merge_shapes(const int &parent_handle) const
 
 void DQ_CoppeliaSimZmqInterface::_create_reference_frame(const std::string &name, const double &scale, const std::vector<double> &thickness_and_length) const
 {
-    int primitive_handle = add_primitive(PRIMITIVE::SPHEROID, name,
+    int primitive_handle = _add_primitive(PRIMITIVE::SPHEROID, name,
                                          {1.5*scale*thickness_and_length.at(0), 1.5*scale*thickness_and_length.at(0), 1.5*scale*thickness_and_length.at(0)});
     set_object_color(primitive_handle, {1,1,1,0.5});
     set_object_as_respondable(primitive_handle, false);
@@ -2437,6 +2408,18 @@ DQ DQ_CoppeliaSimZmqInterface::_get_pose_from_direction(const DQ& direction, con
     return r + 0.5*E_*point*r;
 }
 
+int DQ_CoppeliaSimZmqInterface::_add_primitive(const PRIMITIVE &primitive, const std::string &name, const std::vector<double> &sizes) const
+{
+    if (!object_exist_on_scene(name))
+    {
+        _check_client();
+        int shapeHandle = sim_->createPrimitiveShape(get_primitive_identifier(primitive), sizes, 0);
+        set_object_name(shapeHandle, _remove_first_slash_from_string(name));
+        return shapeHandle;
+    }else
+        return -1;
+}
+
 std::vector<std::string> DQ_CoppeliaSimZmqInterface::_create_static_axis_at_origin(const int& parent_handle,
                                                            const std::string& parent_name,
                                                            const std::vector<double>& sizes,
@@ -2470,7 +2453,7 @@ std::vector<std::string> DQ_CoppeliaSimZmqInterface::_create_static_axis_at_orig
         rotation = DQ(1);
         break;
     }
-    int primitive_handle  = add_primitive(PRIMITIVE::CYLINDER,name,sizes);
+    int primitive_handle  = _add_primitive(PRIMITIVE::CYLINDER,name,sizes);
     created_primitives.push_back(name);
     _set_static_object_properties(primitive_handle,
                                   parent_handle,
@@ -2479,7 +2462,7 @@ std::vector<std::string> DQ_CoppeliaSimZmqInterface::_create_static_axis_at_orig
                                   );
     std::vector<double> arrow_size = {2*sizes.at(0), 2*sizes.at(1), 2*sizes.at(1)};
     std::string arrow_name = _get_standard_name(name)+std::string("_");
-    int primitive_arrow = add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
+    int primitive_arrow = _add_primitive(PRIMITIVE::CONE, arrow_name, arrow_size);
     created_primitives.push_back(arrow_name);
     _set_static_object_properties(primitive_arrow,
                                   parent_handle ,
@@ -2692,7 +2675,7 @@ void DQ_CoppeliaSimZmqInterface::experimental::plot_sphere(const std::string &na
 
     if (!smptr_->object_exist_on_scene(name))
     {
-        int primitive_handle = smptr_->add_primitive(PRIMITIVE::SPHEROID, name,{size, size, size});
+        int primitive_handle = smptr_->_add_primitive(PRIMITIVE::SPHEROID, name,{size, size, size});
         smptr_->set_object_color(primitive_handle, rgba_color);
         smptr_->set_object_as_respondable(primitive_handle, false);
         smptr_->set_object_as_static(primitive_handle, true);
@@ -2725,3 +2708,9 @@ bool DQ_CoppeliaSimZmqInterface::experimental::load_from_model_browser(const std
     return load_model(smptr_->_get_resources_path() + std::string("/models") + path_to_filename,
                       desired_model_name, load_model_only_if_missing, remove_child_script);
 }
+
+int DQ_CoppeliaSimZmqInterface::experimental::add_primitive(const PRIMITIVE &primitive, const std::string &name, const std::vector<double> &sizes)
+{
+    return smptr_->_add_primitive(primitive, name, sizes);
+}
+
