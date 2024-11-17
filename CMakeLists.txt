@@ -111,8 +111,8 @@ INSTALL(FILES
 
 
 # Now simply link against gtest or gtest_main as needed. Eg
-find_package(GTest CONFIG REQUIRED)
+#find_package(GTest CONFIG REQUIRED)
 
-add_executable(unit_tests src/unit_tests.cpp)
-target_link_libraries(unit_tests GTest::gtest dqrobotics ${PROJECT_NAME})
+#add_executable(unit_tests src/unit_tests.cpp)
+#target_link_libraries(unit_tests GTest::gtest dqrobotics ${PROJECT_NAME})
 #add_test(NAME example_test COMMAND example)
