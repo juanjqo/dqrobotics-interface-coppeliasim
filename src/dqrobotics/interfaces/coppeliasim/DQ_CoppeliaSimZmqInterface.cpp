@@ -148,8 +148,7 @@ void DQ_CoppeliaSimZmqInterface::_check_connection()
             if (rpcPort_ < 23000)
             {
                 if (rpcPort_ == 19997)
-                    std::cerr<<"The port "<<rpcPort_<<" is commonly used in the legacy API. However it is not compatible"
-                                                      "with the ZMQ Remote API"<<std::endl;
+                    std::cerr<<"The port "<<rpcPort_<<" is commonly used in the legacy API. However it is not compatible with the ZMQ Remote API."<<std::endl;
                 std::cerr<<"The ZMQ Remote API uses the port "<<23000<<" by default."<<std::endl;
             }
         }
