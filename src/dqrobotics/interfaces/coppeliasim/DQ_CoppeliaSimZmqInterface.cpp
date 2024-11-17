@@ -214,9 +214,18 @@ bool DQ_CoppeliaSimZmqInterface::connect(const std::string &host, const int &por
     return connect(host, port, TIMEOUT_IN_MILISECONDS, -1, -1);
 }
 
+
 bool DQ_CoppeliaSimZmqInterface::connect(const int &port, const int &TIMEOUT_IN_MILISECONDS, const int &MAX_TRY_COUNT)
 {
-    return connect("localhost", port, TIMEOUT_IN_MILISECONDS);
+    int auxport = port;
+    if (auxport == 19997)
+    {
+        auxport = 23000;
+        std::cerr<<"The port "<<port<<" is commonly used in the legacy API. However it is not compatible with the ZMQ Remote API."<<std::endl;
+        std::cerr<<"I changed the port to "<<23000<<std::endl;
+    }
+
+    return connect("localhost", auxport, TIMEOUT_IN_MILISECONDS);
 }
 
 /**
