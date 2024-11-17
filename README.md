@@ -139,8 +139,8 @@ cmake --install .
 
 ```cpp
 #include <dqrobotics/DQ.h>
-#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
-#include <dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimRobot.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.h>
+#include <dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZmqRobot.h>
 
 using namespace DQ_robotics;
 using namespace Eigen;
@@ -153,16 +153,19 @@ VectorXd compute_control_signal(const MatrixXd& J,
 
 int main()
 {
-    auto vi = std::make_shared<DQ_CoppeliaSimInterface>();
+    auto vi = std::make_shared<DQ_CoppeliaSimZmqInterface>();
     vi->connect();
 
+    //To enable experimental methods
+    auto vi_exp = std::make_shared<DQ_CoppeliaSimZmqInterface::experimental>(vi);
+
     // Load the models only if they are not already on the scene.
-    vi->load_from_model_browser("/robots/non-mobile/UR5.ttm", "/UR5");
-    vi->load_from_model_browser("/other/reference frame.ttm", "/Current_pose");
-    vi->load_from_model_browser("/other/reference frame.ttm", "/Desired_pose");
+    vi_exp->load_from_model_browser("/robots/non-mobile/UR5.ttm", "/UR5");
+    vi_exp->load_from_model_browser("/other/reference frame.ttm", "/Current_pose");
+    vi_exp->load_from_model_browser("/other/reference frame.ttm", "/Desired_pose");
     vi->start_simulation();
 
-    auto robot = URXCoppeliaSimRobot("/UR5", vi, URXCoppeliaSimRobot::MODEL::UR5);
+    auto robot = URXCoppeliaSimZmqRobot("/UR5", vi, URXCoppeliaSimZmqRobot::MODEL::UR5);
     auto robot_model = robot.kinematics();
     robot.set_robot_as_visualization_tool();
 
@@ -196,7 +199,7 @@ VectorXd compute_control_signal(const MatrixXd& J,
                                 const VectorXd& task_error)
 {
     VectorXd u = (J.transpose()*J + damping*damping*MatrixXd::Identity(q.size(), q.size())).inverse()*
-        J.transpose()*(-gain*task_error);
+                 J.transpose()*(-gain*task_error);
     return u;
 }
 ```
