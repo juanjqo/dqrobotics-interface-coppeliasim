@@ -1935,39 +1935,6 @@ void DQ_CoppeliaSimZmqInterface::_create_reference_frame(const std::string &name
     _merge_shapes(primitive_handle);
 }
 
-/*
- * @brief DQ_CoppeliaSimInterface::remove_plotted_object removes from the
- *          CoppeliaSim scene planes, lines , reference_frames or all objects
- *          added with plot-type methods. plot_plane, plot_line, and
- *          plot_reference_frame are examples of plot-type methods.
- * @param name The name of the primitive to be removed
-
-void DQ_CoppeliaSimInterface::remove_plotted_object(const std::string &name)
-{
-    _check_client();
-    auto standard_objectname = _get_standard_name(name);
-    //auto handle = _get_handle_from_map(standard_objectname);
-
-    auto search = created_handles_map_.find(name);
-    if (search != created_handles_map_.end())
-    { //found in map
-        auto children_names = search->second;
-        for (std::size_t i=0; i<children_names.size();i++)
-        {
-            _update_map(_get_standard_name(children_names.at(i)), 0, UPDATE_MAP::REMOVE);
-            _update_created_handles_map(standard_objectname, children_names, UPDATE_MAP::REMOVE);
-        }
-        remove_object(standard_objectname, true);
-        _update_map(standard_objectname, 0, UPDATE_MAP::REMOVE);
-    }else{
-        // For C++20
-        // std::string function_name = static_cast<std::string>(std::source_location::current().function_name());
-        std::string function_name = {"DQ_CoppeliaSimInterface::remove_plotted_object"};
-
-        _throw_runtime_error(function_name + ". The object "+name+" is not a plotted object or is not on the scene.");
-    }
-}
-*/
 
 /**
  * @brief DQ_CoppeliaSimZmqInterface::draw_trajectory
