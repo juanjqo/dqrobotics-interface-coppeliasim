@@ -93,8 +93,6 @@ DQ_CoppeliaSimZmqInterface::DQ_CoppeliaSimZmqInterface() //:exp_{std::shared_ptr
 DQ_CoppeliaSimZmqInterface::~DQ_CoppeliaSimZmqInterface()
 {
     _join_if_joinable_chronometer_thread();
-    //if (is_simulation_running())
-    //    stop_simulation();
 }
 
 
