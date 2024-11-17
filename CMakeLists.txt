@@ -27,7 +27,6 @@ add_library(${PROJECT_NAME} SHARED
     )
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC -DSIM_REMOTEAPICLIENT_OBJECTS)
-#target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/jsoncons/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/jsoncons/include)
 target_link_libraries(${PROJECT_NAME}
                         #Boost::filesystem
