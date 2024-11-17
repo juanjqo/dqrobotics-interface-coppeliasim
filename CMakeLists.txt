@@ -33,7 +33,8 @@ target_link_libraries(${PROJECT_NAME}
                         #Boost::format
                         #Boost::program_options
                         ${CUSTOM_BOOST_COMPONENTS}
-                        cppzmq
+                        #cppzmq
+                        zmq
                         dqrobotics
                         )
 
@@ -113,10 +114,10 @@ INSTALL(FILES
 #target_link_libraries(example2 PRIVATE ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
 
-#add_executable(example3 src/test_new_methods.cpp)
-#target_link_libraries(example3 PRIVATE
-#                      dqrobotics
-#                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
+add_executable(example3 src/test_new_methods.cpp)
+target_link_libraries(example3 PRIVATE
+                      dqrobotics
+                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
 #add_executable(multiple_instances src/test_panda.cpp)
 #target_link_libraries(multiple_instances PRIVATE

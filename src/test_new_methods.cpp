@@ -11,7 +11,7 @@ using namespace Eigen;
 int main()
 {
     auto vi = std::make_shared<DQ_CoppeliaSimZmqInterface>();
-    vi->connect("localhost", 23000);
+    vi->connect("192.168.50.16", 23000, 800);
     vi->close_scene();
 
 
