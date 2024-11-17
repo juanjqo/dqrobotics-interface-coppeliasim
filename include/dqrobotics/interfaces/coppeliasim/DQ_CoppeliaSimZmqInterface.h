@@ -32,6 +32,7 @@ Contributors:
 #include <thread>
 #include <atomic>
 #include <memory>
+#include <unordered_map>
 
 
 using namespace DQ_robotics;
