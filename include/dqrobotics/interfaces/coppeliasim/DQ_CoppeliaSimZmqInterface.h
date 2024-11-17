@@ -118,7 +118,7 @@ public:
                                const VectorXd& torques) override;
     VectorXd get_joint_torques(const std::vector<std::string>& jointnames) override;
 
-    //----------------Exclusive methods from DQ_CoppeliaSimZmqInterface------//
+    //------------------Exclusive methods enabled by the ZeroMQ remote API-----------------------------//
 
     bool connect(const std::string& host,
                  const int& rpcPort,
@@ -181,7 +181,7 @@ public:
                                                                const SHAPE_TYPE& shape_type = SHAPE_TYPE::ANY);
 
     VectorXd get_angular_and_linear_velocities(const int& handle,
-                                           const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
+                                               const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
 
     VectorXd get_angular_and_linear_velocities(std::string& objectname,
                                            const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
@@ -213,9 +213,6 @@ public:
     MatrixXd get_inertia_matrix(const int& handle, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
     MatrixXd get_inertia_matrix(const std::string& link_name, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
 
-
-
-    //------------------Exclusive methods enabled by the ZMQ ZeroMQ remote API-----------------------------//
     void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
     void   set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
     void   set_joint_control_mode(const std::string& jointname, const JOINT_CONTROL_MODE& joint_control_mode);
@@ -230,132 +227,13 @@ public:
     std::string get_engine();
     void   set_gravity(const DQ& gravity=-9.81*k_);
     DQ     get_gravity() const;
-    //-----------------------------------------------------------------------------------------------------//
 
     void load_scene(const std::string& path_to_filename) const;
     void save_scene(const std::string& path_to_filename) const;
     void close_scene() const;
 
-
-    void remove_child_script_from_object(const std::string& objectname, const std::string& script_name = "/Script");
-
-    bool object_exist_on_scene(const std::string& objectname) const;
-
-    void set_object_name(const int& handle,
-                         const std::string& new_object_name) const;
-    void set_object_name(const std::string& current_object_name,
-                         const std::string& new_object_name);
-
-    void set_object_color(const int& handle,
-                          const std::vector<double>& rgba_color) const;
-
-    void set_object_color(const std::string& objectname,
-                          const std::vector<double>& rgba_color);
-
-    void set_object_as_respondable(const int& handle,
-                                   const bool& respondable_object = true) const;
-
-    void set_object_as_respondable(const std::string& objectname,
-                                   const bool& respondable_object = true);
-
-    void set_object_as_static(const int& handle,
-                              const bool& static_object = true) const;
-
-    void set_object_as_static(const std::string& objectname,
-                              const bool& static_object = true);
-
-    //---------------Experimental methods----------------------------------//
-
-
-
-    void set_object_parent(const int& handle, const int& parent_handle, const bool& move_child_to_parent_pose) const;
-    void set_object_parent(const std::string& objectname, const std::string& parent_object_name,
-                           const bool& move_child_to_parent_pose = true);
-
-    bool check_collision(const int& handle1, const int& handle2) const;
-    bool check_collision(const std::string& objectname1, const std::string& objectname2);
-    std::tuple<double, DQ, DQ> check_distance(const int& handle1, const int& handle2, const double& threshold = 0) const;
-    std::tuple<double, DQ, DQ> check_distance(const std::string& objectname1, const std::string& objectname2, const double& threshold = 0);
-
-    double compute_distance(const int& handle1,
-                            const int& handle2,
-                            const double& threshold = 0) const;
-    double compute_distance(const std::string& objectname1,
-                            const std::string& objectname2,
-                            const double& threshold = 0);
-
-
-    void draw_permanent_trajectory(const DQ& point,
-                         const double& size = 2,
-                         const std::vector<double>& color = {1,0,0},
-                         const int& max_item_count = 1000);
-
-    int add_simulation_lua_script(const std::string& script_name,
-                                  const std::string& script_code);
-
-    void draw_trajectory(const std::string& objectname,
-                         const double& size = 2,
-                         const std::vector<double>& rgb_color = {1,0,1},
-                         const int& max_item_count = 1000);
-
-    void remove_object(const std::string& objectname,
-                       const bool& remove_children = false);
-
-    std::vector<double> get_bounding_box_size(const int& handle) const;
-    std::vector<double> get_bounding_box_size(const std::string& objectname);
-
-    int get_primitive_identifier(const PRIMITIVE& primitive) const;
-
-    //-----------------------------------------------------------------------
-    // Mujoco settings
-
-    bool mujoco_is_used();
-    void set_mujoco_global_impratio(const double& impratio);
-    void set_mujoco_global_wind(const std::vector<double>& wind);
-    void set_mujoco_global_density(const double& density);
-    void set_mujoco_global_viscosity(const double& viscosity);
-    void set_mujoco_global_boundmass(const double& boundmass);
-    void set_mujoco_global_boundinertia(const double& boundinertia);
-    void set_mujoco_global_overridemargin(const double& overridemargin);
-    void set_mujoco_global_overridesolref(const std::vector<double>& overridesolref);
-    void set_mujoco_global_overridesolimp(const std::vector<double>& overridesolimp);
-    void set_mujoco_global_iterations(const int& iterations);
-    void set_mujoco_global_integrator(const int& integrator);
-    void set_mujoco_global_solver(const int& solver);
-    void set_mujoco_global_njmax(const int& njmax);
-    void set_mujoco_global_nstack(const int& nstack);
-    void set_mujoco_global_nconmax(const int& nconmax);
-    void set_mujoco_global_cone(const int& cone);
-    void set_mujoco_global_overridekin(const int& overridekin);
-    //void set_mujoco_global_rebuildcondition(const int& rebuildcondition);
-    void set_mujoco_global_computeinertias(const bool& computeinertias);
-    void set_mujoco_global_multithreaded(const bool& multithreaded);
-    void set_mujoco_global_multiccd(const bool& multiccd);
-    void set_mujoco_global_balanceinertias(const bool& balanceinertias);
-    void set_mujoco_global_overridecontacts(const bool& overridecontacts);
-
-
-    void set_mujoco_joint_stiffness(const std::string& jointname, const double& stiffness);
-    void set_mujoco_joint_stiffnesses(const std::vector<std::string>& jointnames,
-                                      const double& stiffness);
-
-    void set_mujoco_joint_damping(const std::string& jointname, const double& damping);
-    void set_mujoco_joint_dampings(const std::vector<std::string>& jointnames,
-                                   const double& damping);
-
-    void set_mujoco_joint_armature(const std::string& jointname, const double& armature);
-    void set_mujoco_joint_armatures(const std::vector<std::string>& jointnames,
-                                    const double& armature);
-
-    void set_mujoco_body_friction(const std::string& bodyname, const std::vector<double>& friction);
-    void set_mujoco_body_frictions(const std::vector<std::string>& bodynames,
-                                   const std::vector<double>& friction);
-
-    //----------------------------------------------------------------------------------------
-    //----------------------------------------------------------------------------------------
-
-
-    //-----------Deprecated methods---------------------------//
+    //-----------------------------------------------------------------------------------------------------//
+    //-----------Deprecated methods------------------------------------------------------------------------//
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
     void disconnect();
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
@@ -364,11 +242,12 @@ public:
     void set_synchronous(const bool& flag);
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
     int wait_for_simulation_step_to_end();
-    //---------------------------------------------------------//
 
+    //-----------------------------------------------------------------------------------------------------//
+    //---------------Experimental methods------------------------------------------------------------------//
     class experimental
     {
-    protected:
+    private:
         std::shared_ptr<DQ_CoppeliaSimZmqInterface> smptr_;
     public:
         experimental(const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& smptr);
@@ -421,9 +300,29 @@ public:
                           const std::string& name,
                           const std::vector<double>& sizes);
 
+        bool object_exist_on_scene(const std::string& objectname) const;
+
+        void remove_object(const std::string& objectname,
+                            const bool& remove_children = false);
+
+        //-------Mujoco settings-------------------------------------------------------------
+        void set_mujoco_joint_stiffness(const std::string& jointname, const double& stiffness);
+        void set_mujoco_joint_stiffnesses(const std::vector<std::string>& jointnames,
+                                          const double& stiffness);
+
+        void set_mujoco_joint_damping(const std::string& jointname, const double& damping);
+        void set_mujoco_joint_dampings(const std::vector<std::string>& jointnames,
+                                       const double& damping);
+
+        void set_mujoco_joint_armature(const std::string& jointname, const double& armature);
+        void set_mujoco_joint_armatures(const std::vector<std::string>& jointnames,
+                                        const double& armature);
+
+        void set_mujoco_body_friction(const std::string& bodyname, const std::vector<double>& friction);
+        void set_mujoco_body_frictions(const std::vector<std::string>& bodynames,
+                                       const std::vector<double>& friction);
     };
 
-    std::shared_ptr<DQ_CoppeliaSimZmqInterface::experimental> experimental_;
 
 protected:
 
@@ -549,7 +448,118 @@ private:
         if (static_cast<std::size_t>(v1.size()) != static_cast<std::size_t>(v2.size()))
             throw std::runtime_error(error_message);
     }
-    //---------------------------------------------------
+    int _get_primitive_identifier(const PRIMITIVE& primitive) const;
+
+    void _set_object_parent(const int& handle, const int& parent_handle, const bool& move_child_to_parent_pose) const;
+    void _set_object_parent(const std::string& objectname, const std::string& parent_object_name,
+                           const bool& move_child_to_parent_pose = true);
+
+    void _remove_child_script_from_object(const std::string& objectname, const std::string& script_name = "/Script");
+
+    bool _object_exist_on_scene(const std::string& objectname) const;
+
+    void _set_object_name(const int& handle,
+                         const std::string& new_object_name) const;
+    void _set_object_name(const std::string& current_object_name,
+                         const std::string& new_object_name);
+
+    void _set_object_color(const int& handle,
+                          const std::vector<double>& rgba_color) const;
+
+    void _set_object_color(const std::string& objectname,
+                          const std::vector<double>& rgba_color);
+
+    void _set_object_as_respondable(const int& handle,
+                                   const bool& respondable_object = true) const;
+
+    void _set_object_as_respondable(const std::string& objectname,
+                                   const bool& respondable_object = true);
+
+    void _set_object_as_static(const int& handle,
+                              const bool& static_object = true) const;
+
+    void _set_object_as_static(const std::string& objectname,
+                              const bool& static_object = true);
+
+
+    bool _check_collision(const int& handle1, const int& handle2) const;
+    bool _check_collision(const std::string& objectname1, const std::string& objectname2);
+    std::tuple<double, DQ, DQ> _check_distance(const int& handle1, const int& handle2, const double& threshold = 0) const;
+    std::tuple<double, DQ, DQ> _check_distance(const std::string& objectname1, const std::string& objectname2, const double& threshold = 0);
+
+
+    double _compute_distance(const int& handle1,
+                            const int& handle2,
+                            const double& threshold = 0) const;
+    double _compute_distance(const std::string& objectname1,
+                            const std::string& objectname2,
+                            const double& threshold = 0);
+
+
+    void _draw_permanent_trajectory(const DQ& point,
+                                   const double& size = 2,
+                                   const std::vector<double>& color = {1,0,0},
+                                   const int& max_item_count = 1000);
+
+    int _add_simulation_lua_script(const std::string& script_name,
+                                  const std::string& script_code);
+
+    void _draw_trajectory(const std::string& objectname,
+                         const double& size = 2,
+                         const std::vector<double>& rgb_color = {1,0,1},
+                         const int& max_item_count = 1000);
+
+    void _remove_object(const std::string& objectname,
+                       const bool& remove_children = false);
+
+    std::vector<double> _get_bounding_box_size(const int& handle) const;
+    std::vector<double> _get_bounding_box_size(const std::string& objectname);
+
+
+    //-----------------------------------------------------------------------
+    // Mujoco settings
+
+    bool _mujoco_is_used();
+    void _set_mujoco_global_impratio(const double& impratio);
+    void _set_mujoco_global_wind(const std::vector<double>& wind);
+    void _set_mujoco_global_density(const double& density);
+    void _set_mujoco_global_viscosity(const double& viscosity);
+    void _set_mujoco_global_boundmass(const double& boundmass);
+    void _set_mujoco_global_boundinertia(const double& boundinertia);
+    void _set_mujoco_global_overridemargin(const double& overridemargin);
+    void _set_mujoco_global_overridesolref(const std::vector<double>& overridesolref);
+    void _set_mujoco_global_overridesolimp(const std::vector<double>& overridesolimp);
+    void _set_mujoco_global_iterations(const int& iterations);
+    void _set_mujoco_global_integrator(const int& integrator);
+    void _set_mujoco_global_solver(const int& solver);
+    void _set_mujoco_global_njmax(const int& njmax);
+    void _set_mujoco_global_nstack(const int& nstack);
+    void _set_mujoco_global_nconmax(const int& nconmax);
+    void _set_mujoco_global_cone(const int& cone);
+    void _set_mujoco_global_overridekin(const int& overridekin);
+    //void set_mujoco_global_rebuildcondition(const int& rebuildcondition);
+    void _set_mujoco_global_computeinertias(const bool& computeinertias);
+    void _set_mujoco_global_multithreaded(const bool& multithreaded);
+    void _set_mujoco_global_multiccd(const bool& multiccd);
+    void _set_mujoco_global_balanceinertias(const bool& balanceinertias);
+    void _set_mujoco_global_overridecontacts(const bool& overridecontacts);
+
+
+    void _set_mujoco_joint_stiffness(const std::string& jointname, const double& stiffness);
+    void _set_mujoco_joint_stiffnesses(const std::vector<std::string>& jointnames,
+                                      const double& stiffness);
+
+    void _set_mujoco_joint_damping(const std::string& jointname, const double& damping);
+    void _set_mujoco_joint_dampings(const std::vector<std::string>& jointnames,
+                                   const double& damping);
+
+    void _set_mujoco_joint_armature(const std::string& jointname, const double& armature);
+    void _set_mujoco_joint_armatures(const std::vector<std::string>& jointnames,
+                                    const double& armature);
+
+    void _set_mujoco_body_friction(const std::string& bodyname, const std::vector<double>& friction);
+    void _set_mujoco_body_frictions(const std::vector<std::string>& bodynames,
+                                   const std::vector<double>& friction);
 
 };
 

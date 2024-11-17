@@ -145,13 +145,13 @@ namespace My{
 
     TEST_F(InterfaceUnitTests, object_exist) {
         vi_exp_->plot_reference_frame("/x", DQ(1));
-        EXPECT_EQ(vi_->object_exist_on_scene("/x"), true)<<"Error in object_exist()";
+        EXPECT_EQ(vi_exp_->object_exist_on_scene("/x"), true)<<"Error in object_exist()";
     }
 
     TEST_F(InterfaceUnitTests, remove_object) {
         vi_exp_->plot_reference_frame("/x", DQ(1));
-        vi_->remove_object("/x");
-        EXPECT_EQ(vi_->object_exist_on_scene("/x"), false)<<"Error in remove_object()";
+        vi_exp_->remove_object("/x");
+        EXPECT_EQ(vi_exp_->object_exist_on_scene("/x"), false)<<"Error in remove_object()";
     }
 
     TEST_F(InterfaceUnitTests, joint_positions){
