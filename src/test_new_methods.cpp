@@ -25,7 +25,7 @@ int main()
     vi->start_simulation();
 
 
-
+    std::cout<<vi->get_object_pose("/x")<<std::endl;
 
     vi->stop_simulation();
 
