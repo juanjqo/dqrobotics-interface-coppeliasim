@@ -542,9 +542,9 @@ void DQ_CoppeliaSimZmqInterface::set_object_pose(const std::string &objectname, 
 
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::get_joint_position
- * @param handle
- * @return
+ * @brief DQ_CoppeliaSimZmqInterface::get_joint_position gets the joint position in the CoppeliaSim scene
+ * @param handle The joint handle
+ * @return The joint position
  */
 double DQ_CoppeliaSimZmqInterface::get_joint_position(const int &handle) const
 {
@@ -554,9 +554,9 @@ double DQ_CoppeliaSimZmqInterface::get_joint_position(const int &handle) const
 
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::get_joint_position
- * @param jointname
- * @return
+ * @brief DQ_CoppeliaSimZmqInterface::get_joint_position gets the joint position in the CoppeliaSim scene
+ * @param jointname the joint name
+ * @return The joint position
  */
 double DQ_CoppeliaSimZmqInterface::get_joint_position(const std::string &jointname)
 {
@@ -564,9 +564,9 @@ double DQ_CoppeliaSimZmqInterface::get_joint_position(const std::string &jointna
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::get_joint_positions
- * @param handles
- * @return
+ * @brief DQ_CoppeliaSimZmqInterface::get_joint_positions gets the joint positions in the CoppeliaSim scene
+ * @param handles A vector containing the handles of the joints.
+ * @return The joint positions
  */
 VectorXd DQ_CoppeliaSimZmqInterface::get_joint_positions(const std::vector<int> &handles) const
 {
@@ -580,7 +580,7 @@ VectorXd DQ_CoppeliaSimZmqInterface::get_joint_positions(const std::vector<int> 
 
 /**
  * @brief DQ_CoppeliaSimZmqInterface::get_joint_positions gets the joint positions in the CoppeliaSim scene.
- * @param jointnames A vector containing the name of the joint.
+ * @param jointnames A vector containing the names of the joints.
  * @return The joint positions
  */
 VectorXd DQ_CoppeliaSimZmqInterface::get_joint_positions(const std::vector<std::string> &jointnames)
@@ -626,9 +626,9 @@ void DQ_CoppeliaSimZmqInterface::set_joint_positions(const std::vector<int> &han
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::set_joint_positions
- * @param jointnames
- * @param angles_rad
+ * @brief DQ_CoppeliaSimZmqInterface::set_joint_positions sets the joint positions in the CoppeliaSim scene
+ * @param jointnames A vector containing the joint names.
+ * @param angles_rad The desired joint positions.
  */
 void DQ_CoppeliaSimZmqInterface::set_joint_positions(const std::vector<std::string> &jointnames, const VectorXd &angles_rad)
 {
@@ -639,7 +639,7 @@ void DQ_CoppeliaSimZmqInterface::set_joint_positions(const std::vector<std::stri
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::set_joint_target_position
+ * @brief DQ_CoppeliaSimZmqInterface::set_joint_target_position sets the joint target position
  * @param handle
  * @param angle_rad
  */
