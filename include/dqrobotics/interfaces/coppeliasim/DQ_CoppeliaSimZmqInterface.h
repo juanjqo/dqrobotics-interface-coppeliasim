@@ -66,11 +66,6 @@ public:
         CUSTOM,
         TORQUE
     };
-    enum class REFERENCE
-    {
-        BODY_FRAME,
-        ABSOLUTE_FRAME
-    };
     enum class PRIMITIVE {
         PLANE,
         DISC,
