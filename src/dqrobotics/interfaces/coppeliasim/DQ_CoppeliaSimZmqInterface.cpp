@@ -158,7 +158,7 @@ void DQ_CoppeliaSimZmqInterface::_check_connection()
  * @param host    eg. 'localhost' if the host is running in the same
  *                machine in which is running the client.
  * @param rpcPort The port to establish a connection. (e.g. 23000, 23001, 23002, 23003...).
- * @param MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION
+ * @param MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION The timeout to establish the connection.
  * @param cntPort
  * @param verbose
  * @return
@@ -192,12 +192,16 @@ bool DQ_CoppeliaSimZmqInterface::connect(const std::string &host, const int &rpc
     return client_created_;
 }
 
+
 /**
- * @brief DQ_CoppeliaSimZmqInterface::connect
- * @param host
- * @param port
- * @param TIMEOUT_IN_MILISECONDS
- * @return
+ * @brief DQ_CoppeliaSimZmqInterface::connect establish a connection between the client (your code) and
+ *             the host (the computer running the CoppeliaSim scene).
+ *             Calling this method is required before anything else can happen.
+ * @param host The IP address of the computer that hosts the CoppeliaSim simulation. If the client (your code)
+ *             and the simulation are running in the same computer, you can use "localhost".
+ * @param port The port to establish a connection. (e.g. 23000, 23001, 23002, 23003...).
+ * @param TIMEOUT_IN_MILISECONDS The timeout to establish the connection.
+ * @return true if the connection is established. False otherwise.
  */
 bool DQ_CoppeliaSimZmqInterface::connect(const std::string &host, const int &port, const int &TIMEOUT_IN_MILISECONDS)
 {
@@ -327,9 +331,8 @@ void DQ_CoppeliaSimZmqInterface::set_status_bar_message(const std::string &messa
 
 /**
  * @brief DQ_CoppeliaSimZmqInterface::get_object_handle gets the object handle from
- *        CoppeliaSim. If the handle is not included in the map, then the map is
- *        updated.
- * @param objectname
+ *        CoppeliaSim.
+ * @param objectname The name of the object in the CoppeliaSim scene.
  * @return the object handle.
  */
 int DQ_CoppeliaSimZmqInterface::get_object_handle(const std::string &objectname)
@@ -345,6 +348,7 @@ int DQ_CoppeliaSimZmqInterface::get_object_handle(const std::string &objectname)
         _check_client();
         auto standard_objectname = _get_standard_name(objectname);
         handle = sim_->getObject(standard_objectname);
+        //If the handle is not included in the map, then the map is updated.
         _update_map(standard_objectname, handle);
     }
     catch(const std::runtime_error& e)
@@ -362,9 +366,9 @@ int DQ_CoppeliaSimZmqInterface::get_object_handle(const std::string &objectname)
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::get_object_handles
- * @param objectnames
- * @return
+ * @brief DQ_CoppeliaSimZmqInterface::get_object_handles returns a vector containing the object handles.
+ * @param objectnames The vector that contains the object names in the CoppeliaSim scene.
+ * @return The desired vector of handles.
  */
 std::vector<int> DQ_CoppeliaSimZmqInterface::get_object_handles(const std::vector<std::string> &objectnames)
 {
@@ -575,9 +579,9 @@ VectorXd DQ_CoppeliaSimZmqInterface::get_joint_positions(const std::vector<int> 
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::get_joint_positions
- * @param jointnames
- * @return
+ * @brief DQ_CoppeliaSimZmqInterface::get_joint_positions gets the joint positions in the CoppeliaSim scene.
+ * @param jointnames A vector containing the name of the joint.
+ * @return The joint positions
  */
 VectorXd DQ_CoppeliaSimZmqInterface::get_joint_positions(const std::vector<std::string> &jointnames)
 {
@@ -590,9 +594,9 @@ VectorXd DQ_CoppeliaSimZmqInterface::get_joint_positions(const std::vector<std::
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::set_joint_position
- * @param handle
- * @param angle_rad
+ * @brief DQ_CoppeliaSimZmqInterface::set_joint_position sets the joint position in the CoppeliaSim scene
+ * @param handle The joint handle
+ * @param angle_rad The desired joint position
  */
 void DQ_CoppeliaSimZmqInterface::set_joint_position(const int &handle, const double &angle_rad) const
 {
@@ -601,9 +605,9 @@ void DQ_CoppeliaSimZmqInterface::set_joint_position(const int &handle, const dou
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::set_joint_position
- * @param jointname
- * @param angle_rad
+ * @brief DQ_CoppeliaSimZmqInterface::set_joint_position sets the joint position in the CoppeliaSim scene
+ * @param jointname The joint name
+ * @param angle_rad The desired joint position
  */
 void DQ_CoppeliaSimZmqInterface::set_joint_position(const std::string &jointname, const double &angle_rad)
 {
@@ -611,9 +615,9 @@ void DQ_CoppeliaSimZmqInterface::set_joint_position(const std::string &jointname
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::set_joint_positions
- * @param handles
- * @param angles_rad
+ * @brief DQ_CoppeliaSimZmqInterface::set_joint_positions sets the joint positions in the CoppeliaSim scene
+ * @param handles A vector containing the joint handles
+ * @param angles_rad The desired joint positions
  */
 void DQ_CoppeliaSimZmqInterface::set_joint_positions(const std::vector<int> &handles, const VectorXd &angles_rad) const
 {
