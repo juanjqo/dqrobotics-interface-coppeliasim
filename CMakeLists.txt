@@ -22,71 +22,7 @@ add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZmqRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZmqRobot.cpp
     submodules/zmqRemoteApi/clients/cpp/RemoteAPIClient.cpp
-
-    submodules/jsoncons/include/jsoncons/allocator_holder.hpp
-    submodules/jsoncons/include/jsoncons/allocator_set.hpp
-    submodules/jsoncons/include/jsoncons/basic_json.hpp
-    submodules/jsoncons/include/jsoncons/bigint.hpp
-    submodules/jsoncons/include/jsoncons/byte_string.hpp
-    submodules/jsoncons/include/jsoncons/chunk_reader.hpp
-    submodules/jsoncons/include/jsoncons/conv_error.hpp
-    submodules/jsoncons/include/jsoncons/decode_json.hpp
-    submodules/jsoncons/include/jsoncons/decode_traits.hpp
-    submodules/jsoncons/include/jsoncons/encode_json.hpp
-    submodules/jsoncons/include/jsoncons/encode_traits.hpp
-    submodules/jsoncons/include/jsoncons/extension_traits.hpp
-    submodules/jsoncons/include/jsoncons/item_event_visitor.hpp
-    submodules/jsoncons/include/jsoncons/json_array.hpp
-    submodules/jsoncons/include/jsoncons/json_cursor.hpp
-    submodules/jsoncons/include/jsoncons/json_decoder.hpp
-    submodules/jsoncons/include/jsoncons/json_encoder.hpp
-    submodules/jsoncons/include/jsoncons/json_error.hpp
-    submodules/jsoncons/include/jsoncons/json_exception.hpp
-    submodules/jsoncons/include/jsoncons/json_filter.hpp
-    submodules/jsoncons/include/jsoncons/json_fwd.hpp
-    submodules/jsoncons/include/jsoncons/json_object.hpp
-    submodules/jsoncons/include/jsoncons/json_options.hpp
-    submodules/jsoncons/include/jsoncons/json_parser.hpp
-    submodules/jsoncons/include/jsoncons/json_reader.hpp
-    submodules/jsoncons/include/jsoncons/json_traits_macros.hpp
-    submodules/jsoncons/include/jsoncons/json_type_traits.hpp
-    submodules/jsoncons/include/jsoncons/json_type.hpp
-    submodules/jsoncons/include/jsoncons/json_visitor.hpp
-    submodules/jsoncons/include/jsoncons/json.hpp
-    submodules/jsoncons/include/jsoncons/pretty_print.hpp
-    submodules/jsoncons/include/jsoncons/ser_context.hpp
-    submodules/jsoncons/include/jsoncons/sink.hpp
-    submodules/jsoncons/include/jsoncons/source_adaptor.hpp
-    submodules/jsoncons/include/jsoncons/source.hpp
-    submodules/jsoncons/include/jsoncons/staj_cursor.hpp
-    submodules/jsoncons/include/jsoncons/staj_event_reader.hpp
-    submodules/jsoncons/include/jsoncons/staj_event.hpp
-    submodules/jsoncons/include/jsoncons/staj_iterator.hpp
-    submodules/jsoncons/include/jsoncons/tag_type.hpp
-    submodules/jsoncons/include/jsoncons/text_source_adaptor.hpp
-    submodules/jsoncons/include/jsoncons/typed_array_view.hpp
-    submodules/jsoncons/include/jsoncons/unicode_traits.hpp
-    submodules/jsoncons/include/jsoncons/uri.hpp
-    submodules/jsoncons/include/jsoncons/value_converter.hpp
-    submodules/jsoncons/include/jsoncons/config/binary_config.hpp
-    submodules/jsoncons/include/jsoncons/config/compiler_support.hpp
-    submodules/jsoncons/include/jsoncons/config/jsoncons_config.hpp
-    submodules/jsoncons/include/jsoncons/config/version.hpp
-    submodules/jsoncons/include/jsoncons/detail/endian.hpp
-    submodules/jsoncons/include/jsoncons/detail/grisu3.hpp
-    submodules/jsoncons/include/jsoncons/detail/optional.hpp
-    submodules/jsoncons/include/jsoncons/detail/parse_number.hpp
-    submodules/jsoncons/include/jsoncons/detail/span.hpp
-    submodules/jsoncons/include/jsoncons/detail/string_view.hpp
-    submodules/jsoncons/include/jsoncons/detail/write_number.hpp
-    submodules/jsoncons/include/jsoncons/utility/binary.hpp
-    submodules/jsoncons/include/jsoncons/utility/heap_string.hpp
-
-
-
-    submodules/cppzmq/zmq.hpp
-    submodules/cppzmq/zmq_addon.hpp
-    )
+  )
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC -DSIM_REMOTEAPICLIENT_OBJECTS)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/jsoncons/include)
