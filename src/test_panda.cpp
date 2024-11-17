@@ -1,54 +1,64 @@
-#include "dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h"
-
-#include <dqrobotics/solvers/DQ_PROXQPSolver.h>
-#include <dqrobotics/utils/DQ_LinearAlgebra.h>
 #include <dqrobotics/DQ.h>
-#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimModels.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.h>
+#include <dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZmqRobot.h>
 
 using namespace DQ_robotics;
 using namespace Eigen;
 
+VectorXd compute_control_signal(const MatrixXd& J,
+                                const VectorXd& q,
+                                const double& damping,
+                                const double& gain,
+                                const VectorXd& task_error);
+
 int main()
 {
+    auto vi = std::make_shared<DQ_CoppeliaSimZmqInterface>();
+    vi->connect();
 
-    auto vi1 = std::make_shared<DQ_CoppeliaSimInterface>();
+    //To enable experimental methods
+    auto vi_exp = std::make_shared<DQ_CoppeliaSimZmqInterface::experimental>(vi);
 
-    try {
-        vi1->connect("localhost", 23000, 200);//
-        vi1->close_scene();
-        vi1->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm","/Franka", true, false);
-        //vi1->remove_child_script_from_object("/Franka");
-        vi1->draw_trajectory("/Franka/connection", 4, {1,0,0}, 100);
-        vi1->plot_reference_frame("/x", DQ(1));
+    // Load the models only if they are not already on the scene.
+    vi_exp->load_from_model_browser("/robots/non-mobile/UR5.ttm", "/UR5");
+    vi_exp->load_from_model_browser("/other/reference frame.ttm", "/Current_pose");
+    vi_exp->load_from_model_browser("/other/reference frame.ttm", "/Desired_pose");
+    vi->start_simulation();
 
-        vi1->plot_plane("/plane", k_, k_,{0.2,0.2}, {1,0,0,0.5}, true);
-        vi1->plot_line("/line", k_, k_);
-        vi1->plot_sphere("/mysphere", 1*k_);
-        vi1->plot_cylinder("/cylinder", k_,0.8*k_, {0.5,1.5}, {1,0,0,0.5}, true, 1);
+    auto robot = URXCoppeliaSimZmqRobot("/UR5", vi, URXCoppeliaSimZmqRobot::MODEL::UR5);
+    auto robot_model = robot.kinematics();
+    robot.set_robot_as_visualization_tool();
 
-        //vi1->remove_object("/Sphere", true);
-        vi1->remove_plotted_object("/x");
-        vi1->remove_plotted_object("/plane");
-        vi1->remove_plotted_object("/line");
-        vi1->remove_plotted_object("/mysphere");
-        vi1->remove_plotted_object("/cylinder");
-        //auto size_ = vi1->get_bounding_box_size("/line");
-        //std::cout<<std::format("x: {}, y: {}, z: {}", size_.at(0),size_.at(1),size_.at(2))<<std::endl;
-        vi1->show_map();
-        vi1->show_created_handle_map();
+    auto q = robot.get_configuration_space_positions();
+    double gain = 10;
+    double T = 0.001;
+    double damping = 0.01;
 
-        vi1->start_simulation();
+    auto xd = robot_model.fkm(((VectorXd(6) <<  0.5, 0, 1.5, 0, 0, 0).finished()));
+    vi->set_object_pose("/Desired_pose", xd);
 
-
-
-
-
-        vi1->stop_simulation();
-    } catch (const std::runtime_error& e)
+    for (int i=0; i<300; i++)
     {
-        std::cerr<<e.what()<<std::endl;
-
+        auto x = robot_model.fkm(q);
+        vi->set_object_pose("/Current_pose", x);
+        auto J =  robot_model.pose_jacobian(q);
+        auto Jt = robot_model.translation_jacobian(J, x);
+        auto task_error = (x.translation()-xd.translation()).vec4();
+        auto u = compute_control_signal(Jt, q, damping, gain, task_error);
+        q = q + T*u;
+        robot.set_control_inputs(q);
+        std::cout<<"error: "<<task_error.norm()<<std::endl;
     }
+    vi->stop_simulation();
+}
 
-
+VectorXd compute_control_signal(const MatrixXd& J,
+                                const VectorXd& q,
+                                const double& damping,
+                                const double& gain,
+                                const VectorXd& task_error)
+{
+    VectorXd u = (J.transpose()*J + damping*damping*MatrixXd::Identity(q.size(), q.size())).inverse()*
+                 J.transpose()*(-gain*task_error);
+    return u;
 }

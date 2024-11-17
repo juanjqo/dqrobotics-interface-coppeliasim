@@ -274,7 +274,7 @@ void DQ_CoppeliaSimZmqInterface::stop_simulation() const
  * @param flag. Eg: set_stepping_mode(true)  // enables the stepping mode
  *                  set_stepping_mode(false)  // disables the stepping mode
  */
-void DQ_CoppeliaSimZmqInterface::set_stepping_mode(const bool &flag)
+void DQ_CoppeliaSimZmqInterface::set_stepping_mode(const bool &flag) const
 {
     _check_client();
     sim_->setStepping(flag);

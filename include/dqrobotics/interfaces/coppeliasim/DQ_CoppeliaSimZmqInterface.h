@@ -28,7 +28,7 @@ Contributors:
 
 #pragma once
 #include <dqrobotics/DQ.h>
-#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h> //local temp file
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
 #include <thread>
 #include <atomic>
 #include <memory>
@@ -96,9 +96,10 @@ public:
 
     void   start_simulation() const override;
     void   stop_simulation()  const override;
+    void   set_stepping_mode(const bool& flag) const override;
     void   trigger_next_simulation_step() const override;
-    int get_object_handle(const std::string& objectname) override;
 
+    int    get_object_handle(const std::string& objectname) override;
     std::vector<int> get_object_handles(const std::vector<std::string>& objectnames) override;
     DQ   get_object_translation(const std::string& objectname) override;
     void set_object_translation(const std::string& objectname, const DQ& t) override;
@@ -128,8 +129,6 @@ public:
                  const int& verbose);
 
     void   pause_simulation() const;
-
-    void   set_stepping_mode(const bool& flag);
     double get_simulation_time() const;
 
     bool   is_simulation_running() const;
