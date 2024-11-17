@@ -22,8 +22,8 @@ if(UNIX AND NOT APPLE)
         ${Boost_PROGRAM_OPTIONS_LIBRARY}
     )
 
-    INCLUDE_DIRECTORIES(${PROJECT_NAME}/cppzmq)
-    INCLUDE_DIRECTORIES(${PROJECT_NAME}/jsoncons/include)
+    INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/submodules/cppzmq)
+    INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/submodules/jsoncons/include)
     #include(FetchContent)
     #set(CPPZMQ_BUILD_TESTS OFF CACHE BOOL "" FORCE)
     #FetchContent_Declare(cppzmq

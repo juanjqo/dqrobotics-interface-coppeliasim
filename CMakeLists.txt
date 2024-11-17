@@ -7,11 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(${CMAKE_CURRENT_SOURCE_DIR}/dependencies.cmake)
 
 set(SUBMODULES ${CMAKE_CURRENT_SOURCE_DIR}/submodules)
-set(ZMQ_REMOTE_API_PATH ${CMAKE_CURRENT_SOURCE_DIR}/coppeliarobotics/zmqRemoteApi/)
+set(ZMQ_REMOTE_API_PATH ${SUBMODULES}/zmqRemoteApi/)
 set(SOURCE_DIR ${ZMQ_REMOTE_API_PATH}/clients/cpp)
 
 INCLUDE_DIRECTORIES(${PROJECT_NAME} include)
-INCLUDE_DIRECTORIES(${PROJECT_NAME} /coppeliarobotics/zmqRemoteApi/clients/cpp)
+INCLUDE_DIRECTORIES(${PROJECT_NAME} ${SUBMODULES}/zmqRemoteApi/clients/cpp)
 
 #Temp library
 #include_directories(/Users/user/git/dqrobotics/cpp-interface-coppeliasim/include/)
@@ -23,7 +23,7 @@ add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZmqRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZmqRobot.cpp
-    coppeliarobotics/zmqRemoteApi/clients/cpp/RemoteAPIClient.cpp
+    submodules/zmqRemoteApi/clients/cpp/RemoteAPIClient.cpp
     )
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC -DSIM_REMOTEAPICLIENT_OBJECTS)
