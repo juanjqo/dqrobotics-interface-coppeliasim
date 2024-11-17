@@ -13,9 +13,6 @@ set(SOURCE_DIR ${ZMQ_REMOTE_API_PATH}/clients/cpp)
 INCLUDE_DIRECTORIES(${PROJECT_NAME} include)
 INCLUDE_DIRECTORIES(${PROJECT_NAME} ${SUBMODULES}/zmqRemoteApi/clients/cpp)
 
-#Temp library
-#include_directories(/Users/user/git/dqrobotics/cpp-interface-coppeliasim/include/)
-
 add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.cpp
@@ -29,11 +26,7 @@ add_library(${PROJECT_NAME} SHARED
 target_compile_definitions(${PROJECT_NAME} PUBLIC -DSIM_REMOTEAPICLIENT_OBJECTS)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/jsoncons/include)
 target_link_libraries(${PROJECT_NAME}
-                        #Boost::filesystem
-                        #Boost::format
-                        #Boost::program_options
                         ${CUSTOM_BOOST_COMPONENTS}
-                        #cppzmq
                         zmq
                         dqrobotics
                         )
@@ -53,11 +46,6 @@ INSTALL(TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION "lib"
     PUBLIC_HEADER DESTINATION "include/dqrobotics/interfaces/coppeliasim"
     PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
-
-#if(APPLE)
-#    TARGET_LINK_LIBRARIES(${PROJECT_NAME}
-#        -ldqrobotics)
-#endif()
 
 if(WIN32)
 INSTALL(TARGETS ${PROJECT_NAME}
