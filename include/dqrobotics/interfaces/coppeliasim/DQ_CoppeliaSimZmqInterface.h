@@ -243,6 +243,13 @@ public:
     void set_synchronous(const bool& flag);
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
     int wait_for_simulation_step_to_end();
+    [[deprecated("This signature with MAX_TRY_COUNT is not required with ZeroMQ remote API.")]]
+    bool connect(const std::string& ip, const int& port, const int& TIMEOUT_IN_MILISECONDS, const int& MAX_TRY_COUNT);
+
+    // For backward compatibility
+    [[deprecated("This signature with MAX_TRY_COUNT is not required with ZeroMQ remote API.")]]
+    bool connect(const int &port, const int& TIMEOUT_IN_MILISECONDS, const int& MAX_TRY_COUNT);
+
 
     //-----------------------------------------------------------------------------------------------------//
     //---------------Experimental methods------------------------------------------------------------------//

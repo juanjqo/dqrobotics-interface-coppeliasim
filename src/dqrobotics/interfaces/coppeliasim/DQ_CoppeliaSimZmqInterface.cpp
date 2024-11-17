@@ -208,6 +208,11 @@ bool DQ_CoppeliaSimZmqInterface::connect(const std::string &host, const int &por
     return connect(host, port, TIMEOUT_IN_MILISECONDS, -1, -1);
 }
 
+bool DQ_CoppeliaSimZmqInterface::connect(const int &port, const int &TIMEOUT_IN_MILISECONDS, const int &MAX_TRY_COUNT)
+{
+    return connect("localhost", port, TIMEOUT_IN_MILISECONDS);
+}
+
 /**
  * @brief DQ_CoppeliaSimZmqInterface::_map_simulation_state
  * @param state
@@ -2248,6 +2253,12 @@ void DQ_CoppeliaSimZmqInterface::disconnect(){}
 void DQ_CoppeliaSimZmqInterface::disconnect_all(){}
 void DQ_CoppeliaSimZmqInterface::set_synchronous(const bool &flag){set_stepping_mode(flag);}
 int DQ_CoppeliaSimZmqInterface::wait_for_simulation_step_to_end(){return 0;}
+
+bool DQ_CoppeliaSimZmqInterface::connect(const std::string &ip, const int &port, const int &TIMEOUT_IN_MILISECONDS,
+                                         const int &MAX_TRY_COUNT)
+{
+    return connect(ip, port, TIMEOUT_IN_MILISECONDS);
+}
 
 
 //---------------Private methods-----------------------------
