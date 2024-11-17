@@ -10,10 +10,12 @@ namespace My{
 
     protected:
         enum class ROBOT_MODE{KINEMATIC, POSITION, VELOCITY, TORQUE};
-        std::unique_ptr<DQ_CoppeliaSimZmqInterface> vi_;
+        std::shared_ptr<DQ_CoppeliaSimZmqInterface> vi_;
+        std::shared_ptr<DQ_CoppeliaSimZmqInterface::experimental> vi_exp_;
         VectorXd q_panda_home_ = (VectorXd(7)<<0, -M_PI_4, 0, -3 * M_PI_4, 0, M_PI_2, M_PI_4).finished();
     InterfaceUnitTests() {
-        vi_ = std::make_unique<DQ_CoppeliaSimZmqInterface>();
+        vi_     = std::make_shared<DQ_CoppeliaSimZmqInterface>();
+        vi_exp_ = std::make_shared<DQ_CoppeliaSimZmqInterface::experimental>(vi_);
         vi_->connect("localhost", 23000, 1000);
     }
 
@@ -24,7 +26,7 @@ namespace My{
     }
 
     std::vector<std::string> load_panda(const ROBOT_MODE& robot_mode){
-        vi_->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm","/Franka", true, true);
+        vi_exp_->load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm","/Franka", true, true);
         auto jointnames = vi_->get_jointnames_from_parent_object("/Franka");
         switch (robot_mode){
 
@@ -112,42 +114,42 @@ namespace My{
         DQ r = cos(M_PI/2) + k_*sin(M_PI/2);
         DQ p = 0.5*i_ + 0.4*j_ + 0.9*k_;
         DQ x = r + 0.5*E_*p*r;
-        vi_->plot_reference_frame("/x", x);
+        vi_exp_->plot_reference_frame("/x", x);
         EXPECT_EQ(vi_->get_object_pose("/x"), x)<<"Error in plot_reference_frame()";
     }
 
     TEST_F(InterfaceUnitTests, plot_plane) {
         DQ p = 0.5*i_ + 0.4*j_ + 0.9*k_;
-        vi_->plot_plane("/plane", k_, p);
+        vi_exp_->plot_plane("/plane", k_, p);
         EXPECT_EQ(vi_->get_object_translation("/plane"), p)<<"Error in plot_plane()";
     }
 
     TEST_F(InterfaceUnitTests, plot_line) {
         DQ p = 0.5*i_ + 0.4*j_ + 0.9*k_;
-        vi_->plot_line("/line", k_, p);
+        vi_exp_->plot_line("/line", k_, p);
         EXPECT_EQ(vi_->get_object_translation("/line"), p)<<"Error in plot_line()";
     }
 
     TEST_F(InterfaceUnitTests, plot_cylinder) {
         DQ p = 0.5*i_ + 0.4*j_ + 0.9*k_;
-        vi_->plot_line("/cylinder", i_, p);
+        vi_exp_->plot_line("/cylinder", i_, p);
         EXPECT_EQ(vi_->get_object_translation("/cylinder"), p)<<"Error in plot_cylinder()";
     }
 
 
     TEST_F(InterfaceUnitTests, plot_sphere) {
         DQ p = 0.5*i_ + 0.4*j_ + 0.9*k_;
-        vi_->plot_sphere("/sphere", p);
+        vi_exp_->plot_sphere("/sphere", p);
         EXPECT_EQ(vi_->get_object_translation("/sphere"), p)<<"Error in plot_sphere()";
     }
 
     TEST_F(InterfaceUnitTests, object_exist) {
-        vi_->plot_reference_frame("/x", DQ(1));
+        vi_exp_->plot_reference_frame("/x", DQ(1));
         EXPECT_EQ(vi_->object_exist_on_scene("/x"), true)<<"Error in object_exist()";
     }
 
     TEST_F(InterfaceUnitTests, remove_object) {
-        vi_->plot_reference_frame("/x", DQ(1));
+        vi_exp_->plot_reference_frame("/x", DQ(1));
         vi_->remove_object("/x");
         EXPECT_EQ(vi_->object_exist_on_scene("/x"), false)<<"Error in remove_object()";
     }

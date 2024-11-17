@@ -230,19 +230,19 @@ public:
     std::string get_engine();
     void   set_gravity(const DQ& gravity=-9.81*k_);
     DQ     get_gravity() const;
+    //-----------------------------------------------------------------------------------------------------//
 
     void load_scene(const std::string& path_to_filename) const;
     void save_scene(const std::string& path_to_filename) const;
     void close_scene() const;
 
-    bool load_model(const std::string& path_to_filename,
-                    const std::string& desired_model_name,
-                    const bool& load_model_only_if_missing = true,
-                    const bool& remove_child_script = true);
+/*
     bool load_from_model_browser(const std::string& path_to_filename,
                                        const std::string& desired_model_name,
                                        const bool& load_model_only_if_missing = true,
                                        const bool& remove_child_script = true);
+*/
+
 
     void remove_child_script_from_object(const std::string& objectname, const std::string& script_name = "/Script");
 
@@ -293,40 +293,6 @@ public:
                             const std::string& objectname2,
                             const double& threshold = 0);
 
-    void plot_plane(const std::string& name,
-                    const DQ& normal_to_the_plane,
-                    const DQ& location,
-                    const std::vector<double>& sizes = {0.2,0.2},
-                    const std::vector<double>& rgba_color = {1,0,0,0.5},
-                    const bool& add_normal = true,
-                    const double& normal_scale = 1);
-
-    void plot_line(const std::string& name,
-                   const DQ& line_direction,
-                   const DQ& location,
-                   const std::vector<double>& thickness_and_length = {0.01,1.5},
-                   const std::vector<double>& rgba_color = {1,0,0,0.5},
-                   const bool& add_arrow = true,
-                   const double& arrow_scale = 1);
-
-    void plot_cylinder(const std::string& name,
-                       const DQ& direction,
-                       const DQ& location,
-                       const std::vector<double>& width_and_length = {0.2,1.0},
-                       const std::vector<double>& rgba_color = {1,0,0,0.5},
-                       const bool& add_line = true,
-                       const double& line_scale = 1);
-
-    void plot_sphere(const std::string& name,
-                     const DQ& location,
-                     const double& size = 0.2,
-                     const std::vector<double> rgba_color = {1,0,0,0.5});
-
-
-    void plot_reference_frame(const std::string& name,
-                              const DQ& pose,
-                              const double& scale = 1,
-                              const std::vector<double>& thickness_and_length = {0.005, 0.1});
 
     void draw_permanent_trajectory(const DQ& point,
                          const double& size = 2,
@@ -409,7 +375,59 @@ public:
     int wait_for_simulation_step_to_end();
     //---------------------------------------------------------//
 
+    class experimental
+    {
+    protected:
+        std::shared_ptr<DQ_CoppeliaSimZmqInterface> smptr_;
+    public:
+        experimental(const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& smptr);
 
+        void plot_reference_frame(const std::string& name,
+                                  const DQ& pose,
+                                  const double& scale = 1,
+                                  const std::vector<double>& thickness_and_length = {0.005, 0.1});
+
+        void plot_plane(const std::string& name,
+                        const DQ& normal_to_the_plane,
+                        const DQ& location,
+                        const std::vector<double>& sizes = {0.2,0.2},
+                        const std::vector<double>& rgba_color = {1,0,0,0.5},
+                        const bool& add_normal = true,
+                        const double& normal_scale = 1);
+
+        void plot_line(const std::string& name,
+                       const DQ& line_direction,
+                       const DQ& location,
+                       const std::vector<double>& thickness_and_length = {0.01,1.5},
+                       const std::vector<double>& rgba_color = {1,0,0,0.5},
+                       const bool& add_arrow = true,
+                       const double& arrow_scale = 1);
+
+        void plot_cylinder(const std::string& name,
+                           const DQ& direction,
+                           const DQ& location,
+                           const std::vector<double>& width_and_length = {0.2,1.0},
+                           const std::vector<double>& rgba_color = {1,0,0,0.5},
+                           const bool& add_line = true,
+                           const double& line_scale = 1);
+
+        void plot_sphere(const std::string& name,
+                         const DQ& location,
+                         const double& size = 0.2,
+                         const std::vector<double> rgba_color = {1,0,0,0.5});
+
+        bool load_model(const std::string& path_to_filename,
+                        const std::string& desired_model_name,
+                        const bool& load_model_only_if_missing = true,
+                        const bool& remove_child_script = true);
+
+        bool load_from_model_browser(const std::string& path_to_filename,
+                                     const std::string& desired_model_name,
+                                     const bool& load_model_only_if_missing = true,
+                                     const bool& remove_child_script = true);
+    };
+
+    std::shared_ptr<DQ_CoppeliaSimZmqInterface::experimental> experimental_;
 
 protected:
 
@@ -468,7 +486,7 @@ private:
 
     std::vector<int> _get_velocity_const_params() const;
 
-
+    std::string _get_resources_path() const;
     bool _load_model(const std::string& path_to_filename,
                      const std::string& desired_model_name,
                      const bool& remove_child_script);

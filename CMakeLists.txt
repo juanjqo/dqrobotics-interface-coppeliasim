@@ -16,7 +16,6 @@ INCLUDE_DIRECTORIES(${PROJECT_NAME} ${SUBMODULES}/zmqRemoteApi/clients/cpp)
 add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqModels.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZmqRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZmqRobot.cpp
@@ -65,7 +64,6 @@ endif()
 # Other Headers
 INSTALL(FILES
     include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.h
-    include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqModels.h
     include/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.h
     DESTINATION "include/dqrobotics/interfaces/coppeliasim")
 
@@ -82,7 +80,6 @@ INSTALL(FILES
 # base folder
 INSTALL(FILES
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqModels.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/coppeliasim")
@@ -102,10 +99,10 @@ INSTALL(FILES
 #target_link_libraries(example2 PRIVATE ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
 
-add_executable(example3 src/test_new_methods.cpp)
-target_link_libraries(example3 PRIVATE
-                      dqrobotics
-                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
+#add_executable(example3 src/test_new_methods.cpp)
+#target_link_libraries(example3 PRIVATE
+#                      dqrobotics
+#                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
 #add_executable(multiple_instances src/test_panda.cpp)
 #target_link_libraries(multiple_instances PRIVATE
@@ -114,6 +111,8 @@ target_link_libraries(example3 PRIVATE
 
 
 # Now simply link against gtest or gtest_main as needed. Eg
-#add_executable(unit_tests src/unit_tests.cpp)
-#target_link_libraries(unit_tests gtest_main ${PROJECT_NAME})
+find_package(GTest CONFIG REQUIRED)
+
+add_executable(unit_tests src/unit_tests.cpp)
+target_link_libraries(unit_tests GTest::gtest dqrobotics ${PROJECT_NAME})
 #add_test(NAME example_test COMMAND example)

@@ -1365,52 +1365,8 @@ void DQ_CoppeliaSimZmqInterface::close_scene() const
     sim_->closeScene();
 }
 
-/**
- * @brief DQ_CoppeliaSimZmqInterface::load_model loads a model to
- *        the scene.
- *
- * @param path_to_filename The path to the model.
- * @param desired_model_name The name you want for the loaded model.
- * @param load_model_only_if_missing If the model exists (with the same alias)
- *                                   the model is not loaded. (Default)
- * @param remove_child_script Remove the associated child script of the model
- *                            (Default)
- * @return A boolean flag. True if the model was loaded. False otherwise.
- */
-bool DQ_CoppeliaSimZmqInterface::load_model(const std::string &path_to_filename,
-                                         const std::string &desired_model_name,
-                                         const bool &load_model_only_if_missing,
-                                         const bool &remove_child_script)
-{
-    if (load_model_only_if_missing == true)
-    {
-        if (!object_exist_on_scene(std::string("/") +
-            _remove_first_slash_from_string(desired_model_name)))
-        {
-            return _load_model(path_to_filename, desired_model_name, remove_child_script);
-        }else
-            return true;
-    }else
-    {// Load the model even if the model is already on the scene
-        return _load_model(path_to_filename, desired_model_name, remove_child_script);
-    }
 
-}
-
-/**
- * @brief DQ_CoppeliaSimZmqInterface::load_from_model_browser loads a model from
- *        the CoppeliaSim model browser.
- *
- *      Ex: load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm",
-                                    "/Franka");
- * @param path_to_filename The path to the model relative to the model browser.
- * @param desired_model_name The name you want for the loaded model.
- * @param load_model_only_if_missing If the model exists (with the same alias)
- *                                   the model is not loaded. (Default)
- * @param remove_child_script Remove the associated child script of the model
- *                            (Default)
- * @return A boolean flag. True if the model was loaded. False otherwise.
- */
+/*
 bool DQ_CoppeliaSimZmqInterface::load_from_model_browser(const std::string &path_to_filename,
                                                             const std::string &desired_model_name,
                                                             const bool &load_model_only_if_missing,
@@ -1420,7 +1376,8 @@ bool DQ_CoppeliaSimZmqInterface::load_from_model_browser(const std::string &path
     std::string resources_path = sim_->getStringParam(sim_->stringparam_resourcesdir);
     return load_model(resources_path + std::string("/models") + path_to_filename,
                       desired_model_name, load_model_only_if_missing, remove_child_script);
-}
+}*/
+
 
 /**
  * @brief DQ_CoppeliaSimZmqInterface::remove_child_script_from_object
@@ -1637,45 +1594,6 @@ double DQ_CoppeliaSimZmqInterface::compute_distance(const std::string &objectnam
 }
 
 
-/**
- * @brief DQ_CoppeliaSimZmqInterface::plot_plane
- * @param name
- * @param normal_to_the_plane
- * @param location
- * @param sizes
- * @param rgba_color
- * @param add_normal
- * @param normal_scale
- */
-void DQ_CoppeliaSimZmqInterface::plot_plane(const std::string &name,
-                                         const DQ &normal_to_the_plane,
-                                         const DQ &location,
-                                         const std::vector<double> &sizes,
-                                         const std::vector<double> &rgba_color,
-                                         const bool &add_normal,
-                                         const double &normal_scale)
-{
-    // For C++20
-    // std::string function_name = static_cast<std::string>(std::source_location::current().function_name());
-    std::string function_name = {"DQ_CoppeliaSimInterface::plot_plane"};
-
-    if (!is_unit(normal_to_the_plane) or !is_quaternion(normal_to_the_plane))
-        _throw_runtime_error(function_name + ". The normal to the plane must be a unit quaternion!");
-    if (!is_pure(location) or !is_quaternion(location))
-        _throw_runtime_error(function_name + ". The location must be a pure quaternion!");
-
-    if (sizes.size() != 2)
-        _throw_runtime_error(function_name + ". The sizes must be vector of size 2.");
-
-    if (rgba_color.size() != 4)
-        _throw_runtime_error(function_name + ". The rgba_color must be vector of size 4.");
-
-    if (!object_exist_on_scene(name))
-        {
-        _create_plane(name, sizes, rgba_color, add_normal, normal_scale);
-        }
-    set_object_pose(name, _get_pose_from_direction(normal_to_the_plane, location));
-}
 
 
 void DQ_CoppeliaSimZmqInterface::_create_plane(const std::string &name, const std::vector<double> &sizes, const std::vector<double> &rgba_color, const bool &add_normal, const double &normal_scale) const
@@ -1698,43 +1616,6 @@ void DQ_CoppeliaSimZmqInterface::_create_plane(const std::string &name, const st
 }
 
 
-
-
-/**
- * @brief DQ_CoppeliaSimZmqInterface::plot_line
- * @param name
- * @param line_direction
- * @param location
- * @param thickness_and_length
- * @param rgba_color
- * @param add_arrow
- * @param arrow_scale
- */
-void DQ_CoppeliaSimZmqInterface::plot_line(const std::string &name, const DQ &line_direction, const DQ &location, const std::vector<double> &thickness_and_length, const std::vector<double> &rgba_color, const bool &add_arrow, const double &arrow_scale)
-{
-    // For C++20
-    // std::string function_name = static_cast<std::string>(std::source_location::current().function_name());
-    std::string function_name = {"DQ_CoppeliaSimInterface::plot_line"};
-
-    if (!is_unit(line_direction) or !is_quaternion(line_direction))
-        _throw_runtime_error(function_name + ". The line direction must be a unit quaternion!");
-
-    if (!is_pure(location) or !is_quaternion(location))
-        _throw_runtime_error(function_name + ". The location must be a pure quaternion!");
-
-    if (thickness_and_length.size() != 2)
-        _throw_runtime_error(function_name + ". The thickness_and_length must be vector of size 2.");
-
-    if (rgba_color.size() != 4)
-        _throw_runtime_error(function_name + ". The rgba_color must be vector of size 4.");
-
-    if (!object_exist_on_scene(name))
-    {
-        _create_line(name, thickness_and_length, rgba_color, add_arrow, arrow_scale);
-    }
-    set_object_pose(name, _get_pose_from_direction(line_direction, location));
-
-}
 
 void DQ_CoppeliaSimZmqInterface::_create_line(const std::string &name, const std::vector<double> &thickness_and_length, const std::vector<double> &rgba_color, const bool &add_arrow, const double &arrow_scale) const
 {
@@ -1762,42 +1643,6 @@ void DQ_CoppeliaSimZmqInterface::_create_line(const std::string &name, const std
     //_update_created_handles_map(name, children_names);
 }
 
-
-
-
-/**
- * @brief DQ_CoppeliaSimZmqInterface::plot_cylinder
- * @param name
- * @param direction
- * @param location
- * @param width_and_length
- * @param rgba_color
- * @param add_line
- * @param line_scale
- */
-void DQ_CoppeliaSimZmqInterface::plot_cylinder(const std::string &name, const DQ &direction, const DQ &location, const std::vector<double> &width_and_length, const std::vector<double> &rgba_color, const bool &add_line, const double &line_scale)
-{
-    // For C++20
-    // std::string function_name = static_cast<std::string>(std::source_location::current().function_name());
-    std::string function_name = {"DQ_CoppeliaSimInterface::plot_cylinder"};
-    if (!is_unit(direction) or !is_quaternion(direction))
-        _throw_runtime_error(function_name + ". The line direction must be a unit quaternion!");
-
-    if (!is_pure(location) or !is_quaternion(location))
-        _throw_runtime_error(function_name + ". The location must be a pure quaternion!");
-
-    if (width_and_length.size() != 2)
-        _throw_runtime_error(function_name + ". The thickness_and_length must be vector of size 2.");
-
-    if (rgba_color.size() != 4)
-        _throw_runtime_error(function_name + ". The rgba_color must be vector of size 4.");
-
-    if (!object_exist_on_scene(name))
-    {
-        _create_cylinder(name, width_and_length, rgba_color, add_line, line_scale);
-    }
-    set_object_pose(name, _get_pose_from_direction(direction, location));
-}
 
 
 
@@ -1850,61 +1695,6 @@ void DQ_CoppeliaSimZmqInterface::_merge_shapes(const int &parent_handle) const
     sim_->groupShapes(shapehandles, false);
 }
 
-void DQ_CoppeliaSimZmqInterface::plot_sphere(const std::string &name, const DQ &location, const double &size, const std::vector<double> rgba_color)
-{
-
-    // For C++20
-    // std::string function_name = static_cast<std::string>(std::source_location::current().function_name());
-    std::string function_name = {"DQ_CoppeliaSimInterface::plot_sphere"};
-
-    if (!is_pure(location) or !is_quaternion(location))
-        _throw_runtime_error(function_name + ". The location must be a pure quaternion!");
-    if (rgba_color.size() != 4)
-        _throw_runtime_error(function_name + ". The rgba_color must be vector of size 4.");
-
-    if (!object_exist_on_scene(name))
-    {
-        int primitive_handle = add_primitive(PRIMITIVE::SPHEROID, name,{size, size, size});
-        set_object_color(primitive_handle, rgba_color);
-        set_object_as_respondable(primitive_handle, false);
-        set_object_as_static(primitive_handle, true);
-        //std::vector<std::string> children_names;
-        //_update_created_handles_map(name, children_names);
-    }
-    set_object_pose(name, 1+0.5*E_*location);
-}
-
-
-/**
- * @brief DQ_CoppeliaSimZmqInterface::plot_reference_frame
- * @param name
- * @param pose
- * @param scale
- * @param thickness_and_length
- */
-void DQ_CoppeliaSimZmqInterface::plot_reference_frame(const std::string &name,
-                                                   const DQ &pose,
-                                                   const double &scale,
-                                                   const std::vector<double>& thickness_and_length)
-{
-    _check_client();
-
-    // For C++20
-    // std::string function_name = static_cast<std::string>(std::source_location::current().function_name());
-    std::string function_name = {"DQ_CoppeliaSimInterface::plot_reference_frame"};
-
-    if (!is_unit(pose))
-        _throw_runtime_error(function_name  + ". The pose must be a unit dual quaternion!");
-
-    if (thickness_and_length.size() != 2)
-        _throw_runtime_error(function_name  + ". The thickness_and_length must be vector of size 2.");
-
-    if (!object_exist_on_scene(name))
-    {
-        _create_reference_frame(name, scale, thickness_and_length);
-    }
-    set_object_pose(name, pose);
-}
 
 
 void DQ_CoppeliaSimZmqInterface::_create_reference_frame(const std::string &name, const double &scale, const std::vector<double> &thickness_and_length) const
@@ -2565,6 +2355,11 @@ std::vector<int> DQ_CoppeliaSimZmqInterface::_get_velocity_const_params() const
     return params;
 }
 
+std::string DQ_CoppeliaSimZmqInterface::_get_resources_path() const
+{
+    return sim_->getStringParam(sim_->stringparam_resourcesdir);
+}
+
 /**
  * @brief DQ_CoppeliaSimZmqInterface::_load_model
  * @param path_to_filename
@@ -2779,4 +2574,154 @@ std::tuple<DQ, MatrixXd> DQ_CoppeliaSimZmqInterface::_get_center_of_mass_and_ine
 }
 
 
+DQ_CoppeliaSimZmqInterface::experimental::experimental(const std::shared_ptr<DQ_CoppeliaSimZmqInterface> &smptr)
+    :smptr_{smptr}
+{
 
+}
+
+void DQ_CoppeliaSimZmqInterface::experimental::plot_reference_frame(const std::string &name,
+                                                                    const DQ &pose,
+                                                                    const double &scale,
+                                                                    const std::vector<double> &thickness_and_length)
+{
+    smptr_->_check_client();
+
+    // For C++20
+    // std::string function_name = static_cast<std::string>(std::source_location::current().function_name());
+    std::string function_name = {"DQ_CoppeliaSimInterface::plot_reference_frame"};
+
+    if (!is_unit(pose))
+        smptr_->_throw_runtime_error(function_name  + ". The pose must be a unit dual quaternion!");
+
+    if (thickness_and_length.size() != 2)
+        smptr_->_throw_runtime_error(function_name  + ". The thickness_and_length must be vector of size 2.");
+
+    if (!smptr_->object_exist_on_scene(name))
+    {
+        smptr_->_create_reference_frame(name, scale, thickness_and_length);
+    }
+    smptr_->set_object_pose(name, pose);
+}
+
+void DQ_CoppeliaSimZmqInterface::experimental::plot_plane(const std::string &name, const DQ &normal_to_the_plane, const DQ &location, const std::vector<double> &sizes, const std::vector<double> &rgba_color, const bool &add_normal, const double &normal_scale)
+{
+    // For C++20
+    // std::string function_name = static_cast<std::string>(std::source_location::current().function_name());
+    std::string function_name = {"DQ_CoppeliaSimInterface::plot_plane"};
+
+    if (!is_unit(normal_to_the_plane) or !is_quaternion(normal_to_the_plane))
+        smptr_->_throw_runtime_error(function_name + ". The normal to the plane must be a unit quaternion!");
+    if (!is_pure(location) or !is_quaternion(location))
+        smptr_->_throw_runtime_error(function_name + ". The location must be a pure quaternion!");
+
+    if (sizes.size() != 2)
+        smptr_->_throw_runtime_error(function_name + ". The sizes must be vector of size 2.");
+
+    if (rgba_color.size() != 4)
+        smptr_->_throw_runtime_error(function_name + ". The rgba_color must be vector of size 4.");
+
+    if (!smptr_->object_exist_on_scene(name))
+    {
+        smptr_->_create_plane(name, sizes, rgba_color, add_normal, normal_scale);
+    }
+    smptr_->set_object_pose(name, smptr_->_get_pose_from_direction(normal_to_the_plane, location));
+}
+
+
+void DQ_CoppeliaSimZmqInterface::experimental::plot_line(const std::string &name, const DQ &line_direction, const DQ &location, const std::vector<double> &thickness_and_length, const std::vector<double> &rgba_color, const bool &add_arrow, const double &arrow_scale)
+{
+    // For C++20
+    // std::string function_name = static_cast<std::string>(std::source_location::current().function_name());
+    std::string function_name = {"DQ_CoppeliaSimInterface::plot_line"};
+
+    if (!is_unit(line_direction) or !is_quaternion(line_direction))
+        smptr_->_throw_runtime_error(function_name + ". The line direction must be a unit quaternion!");
+
+    if (!is_pure(location) or !is_quaternion(location))
+        smptr_->_throw_runtime_error(function_name + ". The location must be a pure quaternion!");
+
+    if (thickness_and_length.size() != 2)
+        smptr_->_throw_runtime_error(function_name + ". The thickness_and_length must be vector of size 2.");
+
+    if (rgba_color.size() != 4)
+        smptr_->_throw_runtime_error(function_name + ". The rgba_color must be vector of size 4.");
+
+    if (!smptr_->object_exist_on_scene(name))
+    {
+        smptr_->_create_line(name, thickness_and_length, rgba_color, add_arrow, arrow_scale);
+    }
+    smptr_->set_object_pose(name, smptr_->_get_pose_from_direction(line_direction, location));
+}
+
+
+void DQ_CoppeliaSimZmqInterface::experimental::plot_cylinder(const std::string &name, const DQ &direction, const DQ &location, const std::vector<double> &width_and_length, const std::vector<double> &rgba_color, const bool &add_line, const double &line_scale)
+{
+    // For C++20
+    // std::string function_name = static_cast<std::string>(std::source_location::current().function_name());
+    std::string function_name = {"DQ_CoppeliaSimInterface::plot_cylinder"};
+    if (!is_unit(direction) or !is_quaternion(direction))
+        smptr_->_throw_runtime_error(function_name + ". The line direction must be a unit quaternion!");
+
+    if (!is_pure(location) or !is_quaternion(location))
+        smptr_->_throw_runtime_error(function_name + ". The location must be a pure quaternion!");
+
+    if (width_and_length.size() != 2)
+        smptr_->_throw_runtime_error(function_name + ". The thickness_and_length must be vector of size 2.");
+
+    if (rgba_color.size() != 4)
+        smptr_->_throw_runtime_error(function_name + ". The rgba_color must be vector of size 4.");
+
+    if (!smptr_->object_exist_on_scene(name))
+    {
+        smptr_->_create_cylinder(name, width_and_length, rgba_color, add_line, line_scale);
+    }
+    smptr_->set_object_pose(name, smptr_->_get_pose_from_direction(direction, location));
+}
+
+void DQ_CoppeliaSimZmqInterface::experimental::plot_sphere(const std::string &name, const DQ &location, const double &size, const std::vector<double> rgba_color)
+{
+    // For C++20
+    // std::string function_name = static_cast<std::string>(std::source_location::current().function_name());
+    std::string function_name = {"DQ_CoppeliaSimInterface::plot_sphere"};
+
+    if (!is_pure(location) or !is_quaternion(location))
+        smptr_->_throw_runtime_error(function_name + ". The location must be a pure quaternion!");
+    if (rgba_color.size() != 4)
+        smptr_->_throw_runtime_error(function_name + ". The rgba_color must be vector of size 4.");
+
+    if (!smptr_->object_exist_on_scene(name))
+    {
+        int primitive_handle = smptr_->add_primitive(PRIMITIVE::SPHEROID, name,{size, size, size});
+        smptr_->set_object_color(primitive_handle, rgba_color);
+        smptr_->set_object_as_respondable(primitive_handle, false);
+        smptr_->set_object_as_static(primitive_handle, true);
+        //std::vector<std::string> children_names;
+        //_update_created_handles_map(name, children_names);
+    }
+    smptr_->set_object_pose(name, 1+0.5*E_*location);
+}
+
+
+bool DQ_CoppeliaSimZmqInterface::experimental::load_model(const std::string &path_to_filename, const std::string &desired_model_name, const bool &load_model_only_if_missing, const bool &remove_child_script)
+{
+    if (load_model_only_if_missing == true)
+    {
+        if (!smptr_->object_exist_on_scene(std::string("/") +
+                                   smptr_->_remove_first_slash_from_string(desired_model_name)))
+        {
+            return smptr_->_load_model(path_to_filename, desired_model_name, remove_child_script);
+        }else
+            return true;
+    }else
+    {// Load the model even if the model is already on the scene
+        return smptr_->_load_model(path_to_filename, desired_model_name, remove_child_script);
+    }
+}
+
+bool DQ_CoppeliaSimZmqInterface::experimental::load_from_model_browser(const std::string &path_to_filename, const std::string &desired_model_name, const bool &load_model_only_if_missing, const bool &remove_child_script)
+{
+    smptr_->_check_client();
+    return load_model(smptr_->_get_resources_path() + std::string("/models") + path_to_filename,
+                      desired_model_name, load_model_only_if_missing, remove_child_script);
+}
