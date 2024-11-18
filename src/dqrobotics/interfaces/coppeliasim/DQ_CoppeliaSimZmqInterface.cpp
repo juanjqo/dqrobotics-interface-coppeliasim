@@ -169,7 +169,7 @@ void DQ_CoppeliaSimZmqInterface::_check_connection()
  * @param verbose
  * @return
  */
-bool DQ_CoppeliaSimZmqInterface::connect(const std::string &host, const int &rpcPort, const int &MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION, const int &cntPort, const int &verbose)
+bool DQ_CoppeliaSimZmqInterface::_connect(const std::string &host, const int &rpcPort, const int &MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION, const int &cntPort, const int &verbose)
 {
     try
     {
@@ -211,7 +211,7 @@ bool DQ_CoppeliaSimZmqInterface::connect(const std::string &host, const int &rpc
  */
 bool DQ_CoppeliaSimZmqInterface::connect(const std::string &host, const int &port, const int &TIMEOUT_IN_MILISECONDS)
 {
-    return connect(host, port, TIMEOUT_IN_MILISECONDS, -1, -1);
+    return _connect(host, port, TIMEOUT_IN_MILISECONDS, -1, -1);
 }
 
 int DQ_CoppeliaSimZmqInterface::_get_port_from_deprecated_default_port(const int &port)
@@ -405,7 +405,7 @@ std::vector<int> DQ_CoppeliaSimZmqInterface::get_object_handles(const std::vecto
  * @param handle The handle of the object.
  * @return The position of the handle.
  */
-DQ DQ_CoppeliaSimZmqInterface::get_object_translation(const int &handle) const
+DQ DQ_CoppeliaSimZmqInterface::_get_object_translation(const int &handle) const
 {
     _check_client();
     auto position = sim_->getObjectPosition(handle, sim_->handle_world);
@@ -422,7 +422,7 @@ DQ DQ_CoppeliaSimZmqInterface::get_object_translation(const int &handle) const
  */
 DQ DQ_CoppeliaSimZmqInterface::get_object_translation(const std::string &objectname)
 {
-    return get_object_translation(_get_handle_from_map(objectname));
+    return _get_object_translation(_get_handle_from_map(objectname));
 }
 
 
@@ -432,7 +432,7 @@ DQ DQ_CoppeliaSimZmqInterface::get_object_translation(const std::string &objectn
  * @param handle the object handle
  * @param t The pure quaternion that represents the desired position with respect to the absolute frame..
  */
-void DQ_CoppeliaSimZmqInterface::set_object_translation(const int &handle, const DQ &t)
+void DQ_CoppeliaSimZmqInterface::_set_object_translation(const int &handle, const DQ &t)
 {
     VectorXd vec_t = t.vec3();
     std::vector<double> position = {vec_t[0], vec_t[1],vec_t[2]};
@@ -448,7 +448,7 @@ void DQ_CoppeliaSimZmqInterface::set_object_translation(const int &handle, const
  */
 void DQ_CoppeliaSimZmqInterface::set_object_translation(const std::string &objectname, const DQ &t)
 {
-    set_object_translation(_get_handle_from_map(objectname), t);
+    _set_object_translation(_get_handle_from_map(objectname), t);
 }
 
 /**
@@ -457,7 +457,7 @@ void DQ_CoppeliaSimZmqInterface::set_object_translation(const std::string &objec
  * @param handle the object handle
  * @return The object rotation.
  */
-DQ DQ_CoppeliaSimZmqInterface::get_object_rotation(const int &handle) const
+DQ DQ_CoppeliaSimZmqInterface::_get_object_rotation(const int &handle) const
 {
     _check_client();
     auto rotation = sim_->getObjectQuaternion(handle +
@@ -475,7 +475,7 @@ DQ DQ_CoppeliaSimZmqInterface::get_object_rotation(const int &handle) const
  */
 DQ DQ_CoppeliaSimZmqInterface::get_object_rotation(const std::string &objectname)
 {
-    return get_object_rotation(_get_handle_from_map(objectname));
+    return _get_object_rotation(_get_handle_from_map(objectname));
 }
 
 /**
@@ -483,7 +483,7 @@ DQ DQ_CoppeliaSimZmqInterface::get_object_rotation(const std::string &objectname
  * @param handle the object handle
  * @param r A unit quaternion that represents the desired rotation with respect to the absolute frame..
  */
-void DQ_CoppeliaSimZmqInterface::set_object_rotation(const int &handle, const DQ &r)
+void DQ_CoppeliaSimZmqInterface::_set_object_rotation(const int &handle, const DQ &r)
 {
 
     VectorXd vec_r = r.vec4();
@@ -499,7 +499,7 @@ void DQ_CoppeliaSimZmqInterface::set_object_rotation(const int &handle, const DQ
  */
 void DQ_CoppeliaSimZmqInterface::set_object_rotation(const std::string &objectname, const DQ &r)
 {
-    set_object_rotation(_get_handle_from_map(objectname), r);
+    _set_object_rotation(_get_handle_from_map(objectname), r);
 }
 
 /**
@@ -508,10 +508,10 @@ void DQ_CoppeliaSimZmqInterface::set_object_rotation(const std::string &objectna
  * @param handle The object handle
  * @return The desired object pose.
  */
-DQ DQ_CoppeliaSimZmqInterface::get_object_pose(const int &handle) const
+DQ DQ_CoppeliaSimZmqInterface::_get_object_pose(const int &handle) const
 {
-    DQ t = get_object_translation(handle);
-    DQ r = get_object_rotation(handle);
+    DQ t = _get_object_translation(handle);
+    DQ r = _get_object_rotation(handle);
     return r + 0.5*E_*t*r;
 }
 
@@ -523,7 +523,7 @@ DQ DQ_CoppeliaSimZmqInterface::get_object_pose(const int &handle) const
  */
 DQ DQ_CoppeliaSimZmqInterface::get_object_pose(const std::string &objectname)
 {
-    return get_object_pose(_get_handle_from_map(objectname));
+    return _get_object_pose(_get_handle_from_map(objectname));
 }
 
 
@@ -532,7 +532,7 @@ DQ DQ_CoppeliaSimZmqInterface::get_object_pose(const std::string &objectname)
  * @param handle the object handle
  * @param h A unit dual qualternion that represents the desired object pose with respect to the absolute frame.
  */
-void DQ_CoppeliaSimZmqInterface::set_object_pose(const int &handle, const DQ &h) const
+void DQ_CoppeliaSimZmqInterface::_set_object_pose(const int &handle, const DQ &h) const
 {
 
     VectorXd vec_r = h.P().vec4();
@@ -555,7 +555,7 @@ void DQ_CoppeliaSimZmqInterface::set_object_pose(const std::string &objectname, 
     if (!is_unit(h))
         _throw_runtime_error(function_name + ". The pose must be a unit dual quaternion!");
     int handle = _get_handle_from_map(objectname);
-    set_object_pose(handle, h);
+    _set_object_pose(handle, h);
 }
 
 
@@ -564,7 +564,7 @@ void DQ_CoppeliaSimZmqInterface::set_object_pose(const std::string &objectname, 
  * @param handle The joint handle
  * @return The joint position
  */
-double DQ_CoppeliaSimZmqInterface::get_joint_position(const int &handle) const
+double DQ_CoppeliaSimZmqInterface::_get_joint_position(const int &handle) const
 {
     _check_client();
     return double(sim_->getJointPosition(handle));
@@ -576,9 +576,9 @@ double DQ_CoppeliaSimZmqInterface::get_joint_position(const int &handle) const
  * @param jointname the joint name
  * @return The joint position
  */
-double DQ_CoppeliaSimZmqInterface::get_joint_position(const std::string &jointname)
+double DQ_CoppeliaSimZmqInterface::_get_joint_position(const std::string &jointname)
 {
-    return get_joint_position(_get_handle_from_map(jointname));
+    return _get_joint_position(_get_handle_from_map(jointname));
 }
 
 /**
@@ -586,12 +586,12 @@ double DQ_CoppeliaSimZmqInterface::get_joint_position(const std::string &jointna
  * @param handles A vector containing the handles of the joints.
  * @return The joint positions
  */
-VectorXd DQ_CoppeliaSimZmqInterface::get_joint_positions(const std::vector<int> &handles) const
+VectorXd DQ_CoppeliaSimZmqInterface::_get_joint_positions(const std::vector<int> &handles) const
 {
     int n = handles.size();
     VectorXd joint_positions(n);
     for(auto i=0;i<n;i++)
-        joint_positions(i)=get_joint_position(handles.at(i));
+        joint_positions(i)=_get_joint_position(handles.at(i));
 
     return joint_positions;
 }
@@ -606,7 +606,7 @@ VectorXd DQ_CoppeliaSimZmqInterface::get_joint_positions(const std::vector<std::
     int n = jointnames.size();
     VectorXd joint_positions(n);
     for(auto i=0;i<n;i++)
-        joint_positions(i)=get_joint_position(jointnames[i]);
+        joint_positions(i)=_get_joint_position(jointnames[i]);
 
     return joint_positions;
 }
@@ -616,7 +616,7 @@ VectorXd DQ_CoppeliaSimZmqInterface::get_joint_positions(const std::vector<std::
  * @param handle The joint handle
  * @param angle_rad The desired joint position
  */
-void DQ_CoppeliaSimZmqInterface::set_joint_position(const int &handle, const double &angle_rad) const
+void DQ_CoppeliaSimZmqInterface::_set_joint_position(const int &handle, const double &angle_rad) const
 {
     _check_client();
     sim_->setJointPosition(handle, angle_rad);
@@ -627,9 +627,9 @@ void DQ_CoppeliaSimZmqInterface::set_joint_position(const int &handle, const dou
  * @param jointname The joint name
  * @param angle_rad The desired joint position
  */
-void DQ_CoppeliaSimZmqInterface::set_joint_position(const std::string &jointname, const double &angle_rad)
+void DQ_CoppeliaSimZmqInterface::_set_joint_position(const std::string &jointname, const double &angle_rad)
 {
-    set_joint_position(_get_handle_from_map(jointname), angle_rad);
+    _set_joint_position(_get_handle_from_map(jointname), angle_rad);
 }
 
 /**
@@ -637,10 +637,10 @@ void DQ_CoppeliaSimZmqInterface::set_joint_position(const std::string &jointname
  * @param handles A vector containing the joint handles
  * @param angles_rad The desired joint positions
  */
-void DQ_CoppeliaSimZmqInterface::set_joint_positions(const std::vector<int> &handles, const VectorXd &angles_rad) const
+void DQ_CoppeliaSimZmqInterface::_set_joint_positions(const std::vector<int> &handles, const VectorXd &angles_rad) const
 {
     for(std::size_t i=0;i<handles.size();i++)
-        set_joint_position(handles.at(i), angles_rad(i));
+        _set_joint_position(handles.at(i), angles_rad(i));
 }
 
 /**
@@ -653,7 +653,7 @@ void DQ_CoppeliaSimZmqInterface::set_joint_positions(const std::vector<std::stri
      _check_sizes(jointnames, angles_rad, "Error in DQ_CoppeliaSimInterface::set_joint_positions: "
                                           "jointnames and angles_rad have incompatible sizes");
     for(std::size_t i=0;i<jointnames.size();i++)
-         set_joint_position(jointnames.at(i), angles_rad(i));
+         _set_joint_position(jointnames.at(i), angles_rad(i));
 }
 
 /**
@@ -661,7 +661,7 @@ void DQ_CoppeliaSimZmqInterface::set_joint_positions(const std::vector<std::stri
  * @param handle
  * @param angle_rad
  */
-void DQ_CoppeliaSimZmqInterface::set_joint_target_position(const int &handle, const double &angle_rad) const
+void DQ_CoppeliaSimZmqInterface::_set_joint_target_position(const int &handle, const double &angle_rad) const
 {
     _check_client();
     sim_->setJointTargetPosition(handle, angle_rad);
@@ -672,9 +672,9 @@ void DQ_CoppeliaSimZmqInterface::set_joint_target_position(const int &handle, co
  * @param jointname
  * @param angle_rad
  */
-void DQ_CoppeliaSimZmqInterface::set_joint_target_position(const std::string &jointname, const double &angle_rad)
+void DQ_CoppeliaSimZmqInterface::_set_joint_target_position(const std::string &jointname, const double &angle_rad)
 {
-    set_joint_target_position(_get_handle_from_map(jointname), angle_rad);
+    _set_joint_target_position(_get_handle_from_map(jointname), angle_rad);
 }
 
 /**
@@ -682,10 +682,10 @@ void DQ_CoppeliaSimZmqInterface::set_joint_target_position(const std::string &jo
  * @param handles
  * @param angles_rad
  */
-void DQ_CoppeliaSimZmqInterface::set_joint_target_positions(const std::vector<int> &handles, const VectorXd &angles_rad) const
+void DQ_CoppeliaSimZmqInterface::_set_joint_target_positions(const std::vector<int> &handles, const VectorXd &angles_rad) const
 {
     for(std::size_t i=0;i<handles.size();i++)
-        set_joint_target_position(handles.at(i), angles_rad(i));
+        _set_joint_target_position(handles.at(i), angles_rad(i));
 }
 
 /**
@@ -702,7 +702,7 @@ void DQ_CoppeliaSimZmqInterface::set_joint_target_positions(const std::vector<st
     _check_sizes(jointnames, angles_rad, "Error in DQ_CoppeliaSimInterface::set_joint_target_positions: "
                                          "jointnames and angles_rad have incompatible sizes");
     for(std::size_t i=0;i<jointnames.size();i++)
-        set_joint_target_position(jointnames.at(i), angles_rad(i));
+        _set_joint_target_position(jointnames.at(i), angles_rad(i));
 }
 
 /**
@@ -710,7 +710,7 @@ void DQ_CoppeliaSimZmqInterface::set_joint_target_positions(const std::vector<st
  * @param handle
  * @return
  */
-double DQ_CoppeliaSimZmqInterface::get_joint_velocity(const int &handle) const
+double DQ_CoppeliaSimZmqInterface::_get_joint_velocity(const int &handle) const
 {
     _check_client();
     return sim_->getObjectFloatParam(handle, sim_->jointfloatparam_velocity);
@@ -721,9 +721,9 @@ double DQ_CoppeliaSimZmqInterface::get_joint_velocity(const int &handle) const
  * @param jointname
  * @return
  */
-double DQ_CoppeliaSimZmqInterface::get_joint_velocity(const std::string &jointname)
+double DQ_CoppeliaSimZmqInterface::_get_joint_velocity(const std::string &jointname)
 {
-    return get_joint_velocity(_get_handle_from_map(jointname));
+    return _get_joint_velocity(_get_handle_from_map(jointname));
 }
 
 /**
@@ -731,12 +731,12 @@ double DQ_CoppeliaSimZmqInterface::get_joint_velocity(const std::string &jointna
  * @param handles
  * @return
  */
-VectorXd DQ_CoppeliaSimZmqInterface::get_joint_velocities(const std::vector<int> &handles) const
+VectorXd DQ_CoppeliaSimZmqInterface::_get_joint_velocities(const std::vector<int> &handles) const
 {
     int n = handles.size();
     VectorXd joint_velocities(n);
     for(auto i=0;i<n;i++)
-        joint_velocities(i)=get_joint_velocity(handles.at(i));
+        joint_velocities(i)=_get_joint_velocity(handles.at(i));
 
     return joint_velocities;
 }
@@ -751,7 +751,7 @@ VectorXd DQ_CoppeliaSimZmqInterface::get_joint_velocities(const std::vector<std:
     int n = jointnames.size();
     VectorXd joint_velocities(n);
     for(auto i=0;i<n;i++)
-        joint_velocities(i)=get_joint_velocity(jointnames[i]);
+        joint_velocities(i)=_get_joint_velocity(jointnames[i]);
 
     return joint_velocities;
 }
@@ -761,7 +761,7 @@ VectorXd DQ_CoppeliaSimZmqInterface::get_joint_velocities(const std::vector<std:
  * @param handle
  * @param angle_rad_dot
  */
-void DQ_CoppeliaSimZmqInterface::set_joint_target_velocity(const int &handle, const double &angle_rad_dot) const
+void DQ_CoppeliaSimZmqInterface::_set_joint_target_velocity(const int &handle, const double &angle_rad_dot) const
 {
     _check_client();
     sim_->setJointTargetVelocity(handle, angle_rad_dot);
@@ -772,9 +772,9 @@ void DQ_CoppeliaSimZmqInterface::set_joint_target_velocity(const int &handle, co
  * @param jointname
  * @param angle_rad_dot
  */
-void DQ_CoppeliaSimZmqInterface::set_joint_target_velocity(const std::string &jointname, const double &angle_rad_dot)
+void DQ_CoppeliaSimZmqInterface::_set_joint_target_velocity(const std::string &jointname, const double &angle_rad_dot)
 {
-    set_joint_target_velocity(_get_handle_from_map(jointname), angle_rad_dot);
+    _set_joint_target_velocity(_get_handle_from_map(jointname), angle_rad_dot);
 }
 
 /**
@@ -782,10 +782,10 @@ void DQ_CoppeliaSimZmqInterface::set_joint_target_velocity(const std::string &jo
  * @param handles
  * @param angles_rad_dot
  */
-void DQ_CoppeliaSimZmqInterface::set_joint_target_velocities(const std::vector<int> &handles, const VectorXd &angles_rad_dot) const
+void DQ_CoppeliaSimZmqInterface::_set_joint_target_velocities(const std::vector<int> &handles, const VectorXd &angles_rad_dot) const
 {
     for(std::size_t i=0;i<handles.size();i++)
-        set_joint_target_velocity(handles.at(i), angles_rad_dot(i));
+        _set_joint_target_velocity(handles.at(i), angles_rad_dot(i));
 }
 
 
@@ -802,7 +802,7 @@ void DQ_CoppeliaSimZmqInterface::set_joint_target_velocities(const std::vector<s
     _check_sizes(jointnames, angles_rad_dot, "Error in DQ_CoppeliaSimInterface::set_joint_target_velocities: "
                                              "jointnames and angles_rad_Dot have incompatible sizes");
     for(std::size_t i=0;i<jointnames.size();i++)
-        set_joint_target_velocity(jointnames.at(i), angles_rad_dot(i));
+        _set_joint_target_velocity(jointnames.at(i), angles_rad_dot(i));
 }
 
 /**
@@ -810,7 +810,7 @@ void DQ_CoppeliaSimZmqInterface::set_joint_target_velocities(const std::vector<s
  * @param handle
  * @param torque
  */
-void DQ_CoppeliaSimZmqInterface::set_joint_torque(const int &handle, const double &torque) const
+void DQ_CoppeliaSimZmqInterface::_set_joint_torque(const int &handle, const double &torque) const
 {
     _check_client();
     double angle_dot_rad_max = 10000.0;
@@ -830,9 +830,9 @@ void DQ_CoppeliaSimZmqInterface::set_joint_torque(const int &handle, const doubl
  * @param jointname
  * @param torque
  */
-void DQ_CoppeliaSimZmqInterface::set_joint_torque(const std::string &jointname, const double &torque)
+void DQ_CoppeliaSimZmqInterface::_set_joint_torque(const std::string &jointname, const double &torque)
 {
-    set_joint_torque(_get_handle_from_map(jointname), torque);
+    _set_joint_torque(_get_handle_from_map(jointname), torque);
 }
 
 /**
@@ -840,10 +840,10 @@ void DQ_CoppeliaSimZmqInterface::set_joint_torque(const std::string &jointname, 
  * @param handles
  * @param torques
  */
-void DQ_CoppeliaSimZmqInterface::set_joint_torques(const std::vector<int> &handles, const VectorXd &torques) const
+void DQ_CoppeliaSimZmqInterface::_set_joint_torques(const std::vector<int> &handles, const VectorXd &torques) const
 {
     for(std::size_t i=0;i<handles.size();i++)
-        set_joint_torque(handles.at(i), torques(i));
+        _set_joint_torque(handles.at(i), torques(i));
 }
 
 
@@ -860,7 +860,7 @@ void DQ_CoppeliaSimZmqInterface::set_joint_torques(const std::vector<std::string
     _check_sizes(jointnames, torques, "Error in DQ_CoppeliaSimInterface::set_joint_torques: "
                                              "jointnames and torques have incompatible sizes");
     for(std::size_t i=0;i<jointnames.size();i++)
-        set_joint_torque(jointnames.at(i), torques(i));
+        _set_joint_torque(jointnames.at(i), torques(i));
 }
 
 /**
@@ -868,7 +868,7 @@ void DQ_CoppeliaSimZmqInterface::set_joint_torques(const std::vector<std::string
  * @param handle
  * @return
  */
-double DQ_CoppeliaSimZmqInterface::get_joint_torque(const int &handle) const
+double DQ_CoppeliaSimZmqInterface::_get_joint_torque(const int &handle) const
 {
     _check_client();
     return sim_->getJointForce(handle);
@@ -879,9 +879,9 @@ double DQ_CoppeliaSimZmqInterface::get_joint_torque(const int &handle) const
  * @param jointname
  * @return
  */
-double DQ_CoppeliaSimZmqInterface::get_joint_torque(const std::string &jointname)
+double DQ_CoppeliaSimZmqInterface::_get_joint_torque(const std::string &jointname)
 {
-    return get_joint_torque(_get_handle_from_map(jointname));
+    return _get_joint_torque(_get_handle_from_map(jointname));
 }
 
 /**
@@ -889,12 +889,12 @@ double DQ_CoppeliaSimZmqInterface::get_joint_torque(const std::string &jointname
  * @param handles
  * @return
  */
-VectorXd DQ_CoppeliaSimZmqInterface::get_joint_torques(const std::vector<int> &handles) const
+VectorXd DQ_CoppeliaSimZmqInterface::_get_joint_torques(const std::vector<int> &handles) const
 {
     int n = handles.size();
     VectorXd joint_torques(n);
     for(auto i=0;i<n;i++)
-        joint_torques(i)=get_joint_torque(handles.at(i));
+        joint_torques(i)=_get_joint_torque(handles.at(i));
 
     return joint_torques;
 }
@@ -909,7 +909,7 @@ VectorXd DQ_CoppeliaSimZmqInterface::get_joint_torques(const std::vector<std::st
     int n = jointnames.size();
     VectorXd joint_torques(n);
     for(auto i=0;i<n;i++)
-        joint_torques(i)=get_joint_torque(jointnames[i]);
+        joint_torques(i)=_get_joint_torque(jointnames[i]);
 
     return joint_torques;
 }
@@ -1037,7 +1037,7 @@ VectorXd DQ_CoppeliaSimZmqInterface::_get_angular_and_linear_velocities(const in
     }
     if (reference == REFERENCE::BODY_FRAME)
     {
-        DQ x = get_object_pose(handle);
+        DQ x = _get_object_pose(handle);
         DQ r = x.P();
         DQ w_b = r.conj()*DQ(v.head(3))*r;
         DQ p_dot_b = r.conj()*DQ(v.tail(3))*r;
@@ -1079,7 +1079,7 @@ void DQ_CoppeliaSimZmqInterface::_set_angular_and_linear_velocities(const int &h
         v.tail(3) = p_dot_a.vec3();
     }else
     {
-        DQ x = get_object_pose(handle);
+        DQ x = _get_object_pose(handle);
         DQ r = x.P();
         DQ w_a = r*w*r.conj();
         DQ p_dot_a = r*p_dot*r.conj();
@@ -1117,7 +1117,7 @@ DQ DQ_CoppeliaSimZmqInterface::_get_twist(const int &handle, const REFERENCE &re
     VectorXd v = _get_angular_and_linear_velocities(handle);
     DQ w = DQ(v.head(3));
     DQ p_dot = DQ(v.tail(3));
-    DQ x = get_object_pose(handle);
+    DQ x = _get_object_pose(handle);
     DQ twist =  w + E_*(p_dot + cross(x.translation(), w));;
     if (reference == REFERENCE::BODY_FRAME)
     {
@@ -1155,7 +1155,7 @@ void DQ_CoppeliaSimZmqInterface::_set_twist(const int &handle, const DQ& twist, 
                                           REFERENCE::BODY_FRAME);
     }
     else{
-        DQ x = get_object_pose(handle);
+        DQ x = _get_object_pose(handle);
         _set_angular_and_linear_velocities(handle, twist.P(), twist.D()-cross(x.translation(), twist.P()),
                                           REFERENCE::ABSOLUTE_FRAME);
     }
@@ -2174,7 +2174,7 @@ DQ DQ_CoppeliaSimZmqInterface::_get_center_of_mass(const int &handle, const REFE
         return COM_body_frame;
     else
     {
-        DQ x_0_bodyFrame = get_object_pose(handle);
+        DQ x_0_bodyFrame = _get_object_pose(handle);
         DQ x_bodyFrame_com = 1 + 0.5*E_*COM_body_frame;
         return (x_0_bodyFrame*x_bodyFrame_com).translation();
     }
@@ -2206,7 +2206,7 @@ MatrixXd DQ_CoppeliaSimZmqInterface::_get_inertia_matrix(const int &handle, cons
         return Inertia_maxtrix_body_frame;
     else
     {
-        DQ x_0_bodyFrame = get_object_pose(handle);
+        DQ x_0_bodyFrame = _get_object_pose(handle);
         DQ x_bodyFrame_com = 1 + 0.5*E_*COM_body_frame;
         DQ x_0_com = x_0_bodyFrame*x_bodyFrame_com;
         MatrixXd R_0_COM = _get_rotation_matrix(x_0_com.P());
@@ -2541,7 +2541,7 @@ void DQ_CoppeliaSimZmqInterface::_set_static_object_properties(const int &handle
     _set_object_color(handle, rgba_color);
     _set_object_as_respondable(handle, false);
     _set_object_as_static(handle, true);
-    set_object_pose(handle, pose);
+    _set_object_pose(handle, pose);
     _set_object_parent(handle, parent_handle, false);
 }
 

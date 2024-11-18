@@ -120,52 +120,6 @@ public:
                                const VectorXd& torques) override;
     VectorXd get_joint_torques(const std::vector<std::string>& jointnames) override;
 
-    //------------------Additional methods-------------------------------------------------------------//
-    DQ   get_object_translation(const int& handle) const;
-    void set_object_translation(const int& handle, const DQ& t);
-    DQ   get_object_rotation(const int& handle) const;
-    void set_object_rotation(const int& handle, const DQ& r);
-    DQ   get_object_pose(const int& handle) const;
-    void set_object_pose(const int& handle, const DQ& h) const;
-
-    double   get_joint_position(const int& handle) const;
-    double   get_joint_position(const std::string& jointname);
-    VectorXd get_joint_positions(const std::vector<int>& handles) const;
-
-    void     set_joint_position(const int& handle, const double& angle_rad) const;
-    void     set_joint_position(const std::string& jointname, const double& angle_rad);
-    void     set_joint_positions(const std::vector<int>& handles, const VectorXd& angles_rad) const ;
-
-    void     set_joint_target_position(const int& handle, const double& angle_rad) const;
-    void     set_joint_target_position(const std::string& jointname, const double& angle_rad);
-    void     set_joint_target_positions(const std::vector<int>& handles, const VectorXd& angles_rad) const;
-
-    double   get_joint_velocity(const int& handle) const;
-    double   get_joint_velocity(const std::string& jointname);
-    VectorXd get_joint_velocities(const std::vector<int>& handles) const;
-
-    void     set_joint_target_velocity(const int& handle, const double& angle_rad_dot) const;
-    void     set_joint_target_velocity(const std::string& jointname, const double& angle_rad_dot);
-    void     set_joint_target_velocities(const std::vector<int>& handles, const VectorXd& angles_rad_dot) const;
-
-    void     set_joint_torque(const int& handle, const double& torque) const;
-    void     set_joint_torque(const std::string& jointname, const double& torque);
-    void     set_joint_torques(const std::vector<int>& handles, const VectorXd& torques) const;
-
-    double   get_joint_torque(const int& handle) const;
-    double   get_joint_torque(const std::string& jointname);
-    VectorXd get_joint_torques(const std::vector<int>& handles) const;
-
-    //------------------Exclusive methods enabled by the ZeroMQ remote API-----------------------------//
-
-    bool connect(const std::string& host,
-                 const int& rpcPort,
-                 const int& MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION,
-                 const int& cntPort,
-                 const int& verbose);
-
-
-
     //-----------------------------------------------------------------------------------------------------//
     //-----------Deprecated methods------------------------------------------------------------------------//
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
@@ -301,12 +255,20 @@ protected:
 
     std::string host_{"localhost"};
     int rpcPort_{23000};
+
+
+private:
     int cntPort_{-1};
     int verbose_{-1};
 
-private:
     enum class AXIS{i,j,k};
     enum class UPDATE_MAP{ADD, REMOVE};
+
+    bool _connect(const std::string& host,
+                 const int& rpcPort,
+                 const int& MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION,
+                 const int& cntPort,
+                 const int& verbose);
 
     int _get_port_from_deprecated_default_port(const int& port);
 
@@ -610,6 +572,43 @@ private:
     void _load_scene(const std::string& path_to_filename) const;
     void _save_scene(const std::string& path_to_filename) const;
     void _close_scene() const;
+
+
+    //------------------Additional methods-------------------------------------------------------------//
+    DQ   _get_object_translation(const int& handle) const;
+    void _set_object_translation(const int& handle, const DQ& t);
+    DQ   _get_object_rotation(const int& handle) const;
+    void _set_object_rotation(const int& handle, const DQ& r);
+    DQ   _get_object_pose(const int& handle) const;
+    void _set_object_pose(const int& handle, const DQ& h) const;
+
+    double   _get_joint_position(const int& handle) const;
+    double   _get_joint_position(const std::string& jointname);
+    VectorXd _get_joint_positions(const std::vector<int>& handles) const;
+
+    void     _set_joint_position(const int& handle, const double& angle_rad) const;
+    void     _set_joint_position(const std::string& jointname, const double& angle_rad);
+    void     _set_joint_positions(const std::vector<int>& handles, const VectorXd& angles_rad) const ;
+
+    void     _set_joint_target_position(const int& handle, const double& angle_rad) const;
+    void     _set_joint_target_position(const std::string& jointname, const double& angle_rad);
+    void     _set_joint_target_positions(const std::vector<int>& handles, const VectorXd& angles_rad) const;
+
+    double   _get_joint_velocity(const int& handle) const;
+    double   _get_joint_velocity(const std::string& jointname);
+    VectorXd _get_joint_velocities(const std::vector<int>& handles) const;
+
+    void     _set_joint_target_velocity(const int& handle, const double& angle_rad_dot) const;
+    void     _set_joint_target_velocity(const std::string& jointname, const double& angle_rad_dot);
+    void     _set_joint_target_velocities(const std::vector<int>& handles, const VectorXd& angles_rad_dot) const;
+
+    void     _set_joint_torque(const int& handle, const double& torque) const;
+    void     _set_joint_torque(const std::string& jointname, const double& torque);
+    void     _set_joint_torques(const std::vector<int>& handles, const VectorXd& torques) const;
+
+    double   _get_joint_torque(const int& handle) const;
+    double   _get_joint_torque(const std::string& jointname);
+    VectorXd _get_joint_torques(const std::vector<int>& handles) const;
 
 };
 
