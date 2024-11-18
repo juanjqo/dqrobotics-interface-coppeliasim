@@ -2857,9 +2857,40 @@ void DQ_CoppeliaSimZmqInterface::experimental::enable_dynamics(const bool &flag)
     smptr_->_enable_dynamics(flag);
 }
 
+double DQ_CoppeliaSimZmqInterface::experimental::get_simulation_time_step() const
+{
+    return smptr_->_get_simulation_time_step();
+}
+
+void DQ_CoppeliaSimZmqInterface::experimental::set_simulation_time_step(const double &time_step)
+{
+    smptr_->_set_simulation_time_step(time_step);
+}
+
+double DQ_CoppeliaSimZmqInterface::experimental::get_physics_time_step() const
+{
+    return smptr_->_get_physics_time_step();
+}
+
+void DQ_CoppeliaSimZmqInterface::experimental::set_physics_time_step(const double &time_step) const
+{
+    smptr_->_set_physics_time_step(time_step);
+}
+
+void DQ_CoppeliaSimZmqInterface::experimental::set_engine(const ENGINE &engine)
+{
+    smptr_->_set_engine(engine);
+}
+
 std::vector<std::string> DQ_CoppeliaSimZmqInterface::experimental::get_jointnames_from_parent_object(const std::string &parent_objectname)
 {
     return smptr_->_get_jointnames_from_parent_object(parent_objectname);
+}
+
+std::vector<std::string> DQ_CoppeliaSimZmqInterface::experimental::get_shapenames_from_parent_object(const std::string &parent_objectname,
+                                                                                                     const SHAPE_TYPE &shape_type)
+{
+    return smptr_->_get_shapenames_from_parent_object(parent_objectname, shape_type);
 }
 
 void DQ_CoppeliaSimZmqInterface::experimental::load_scene(const std::string &path_to_filename) const

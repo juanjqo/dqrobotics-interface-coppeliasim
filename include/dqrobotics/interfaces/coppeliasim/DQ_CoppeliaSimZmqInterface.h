@@ -281,7 +281,15 @@ public:
         void   set_joint_control_mode(const std::string& jointname, const JOINT_CONTROL_MODE& joint_control_mode);
         void   set_joint_control_modes(const std::vector<std::string>& jointnames, const JOINT_CONTROL_MODE& joint_control_mode);
         void   enable_dynamics(const bool& flag);
+        double get_simulation_time_step() const;
+        void   set_simulation_time_step(const double& time_step);
+        double get_physics_time_step() const;
+        void   set_physics_time_step(const double& time_step) const;
+        void   set_engine(const ENGINE& engine);
+
         std::vector<std::string> get_jointnames_from_parent_object(const std::string& parent_objectname);
+        std::vector<std::string> get_shapenames_from_parent_object(const std::string& parent_objectname,
+                                                                    const SHAPE_TYPE& shape_type = SHAPE_TYPE::ANY);
 
         void load_scene(const std::string& path_to_filename) const;
         void save_scene(const std::string& path_to_filename) const;
