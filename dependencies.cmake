@@ -10,13 +10,13 @@ if(UNIX AND NOT APPLE)
     INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
     ADD_COMPILE_OPTIONS(-Werror=return-type -Wall -Wextra -Wmissing-declarations -Wredundant-decls -Woverloaded-virtual)
     
-    find_package(Boost 1.71.0 COMPONENTS filesystem format options)
+    find_package(Boost 1.71.0 COMPONENTS filesystem system)
     include_directories(${Boost_INCLUDE_DIRS})
-    set(CUSTOM_BOOST_COMPONENTS
-        ${Boost_PROGRAM_FILESYTEM_LIBRARY}
-        ${Boost_PROGRAM_FORMAT_LIBRARY}
-        ${Boost_PROGRAM_OPTIONS_LIBRARY}
-    )
+   # set(CUSTOM_BOOST_COMPONENTS
+   #     ${Boost_PROGRAM_FILESYTEM_LIBRARY}
+   #     ${Boost_PROGRAM_FORMAT_LIBRARY}
+   #     ${Boost_PROGRAM_OPTIONS_LIBRARY}
+   # )
 endif()
 
 if(APPLE)
