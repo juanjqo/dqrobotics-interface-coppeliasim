@@ -159,7 +159,7 @@ void DQ_CoppeliaSimZmqInterface::_check_connection()
 
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::connect establish a connection between the client (your code) and
+ * @brief DQ_CoppeliaSimZmqInterface::connect establishes a connection between the client (your code) and
  *                                         the host (the computer running the CoppeliaSim scene).
  * @param host    eg. 'localhost' if the host is running in the same
  *                machine in which is running the client.
@@ -213,13 +213,6 @@ bool DQ_CoppeliaSimZmqInterface::connect(const std::string &host, const int &por
 {
     return connect(host, port, TIMEOUT_IN_MILISECONDS, -1, -1);
 }
-
-
-bool DQ_CoppeliaSimZmqInterface::connect(const int &port, const int &TIMEOUT_IN_MILISECONDS, const int &MAX_TRY_COUNT)
-{
-    return connect("localhost", _get_port_from_deprecated_default_port(port), TIMEOUT_IN_MILISECONDS);
-}
-
 
 int DQ_CoppeliaSimZmqInterface::_get_port_from_deprecated_default_port(const int &port)
 {
@@ -320,7 +313,7 @@ bool DQ_CoppeliaSimZmqInterface::is_simulation_running() const
 
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::get_simulation_state
+ * @brief DQ_CoppeliaSimZmqInterface::get_simulation_state returns the simulation state
  *        See more in https://manual.coppeliarobotics.com/en/simulation.htm
  *
  * @return The simulation state.
@@ -696,9 +689,13 @@ void DQ_CoppeliaSimZmqInterface::set_joint_target_positions(const std::vector<in
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::set_joint_target_positions
- * @param jointnames
- * @param angles_rad
+ * @brief DQ_CoppeliaSimZmqInterface::set_joint_target_positions sets the joint target positions in the CoppeliaSim scene.
+ *                      This method requires a dynamics enabled scene, and joints in dynamic mode with position control mode.
+ *                      Check this link for more information about joint modes:
+ *                      https://www.coppeliarobotics.com/helpFiles/en/jointModes.htm
+ *
+ * @param jointnames A vector containing the names of the joints.
+ * @param angles_rad The desired joint positions.
  */
 void DQ_CoppeliaSimZmqInterface::set_joint_target_positions(const std::vector<std::string> &jointnames, const VectorXd &angles_rad)
 {
@@ -745,9 +742,9 @@ VectorXd DQ_CoppeliaSimZmqInterface::get_joint_velocities(const std::vector<int>
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::get_joint_velocities
- * @param jointnames
- * @return
+ * @brief DQ_CoppeliaSimZmqInterface::get_joint_velocities gets the joint velocities in the CoppeliaSim scene.
+ * @param jointnames A vector containing the names of the joints.
+ * @return The joint velocities
  */
 VectorXd DQ_CoppeliaSimZmqInterface::get_joint_velocities(const std::vector<std::string> &jointnames)
 {
@@ -791,10 +788,14 @@ void DQ_CoppeliaSimZmqInterface::set_joint_target_velocities(const std::vector<i
         set_joint_target_velocity(handles.at(i), angles_rad_dot(i));
 }
 
+
 /**
- * @brief DQ_CoppeliaSimZmqInterface::set_joint_target_velocities
- * @param jointnames
- * @param angles_rad_dot
+ * @brief DQ_CoppeliaSimZmqInterface::set_joint_target_velocities sets the joint target velocities in the CoppeliaSim scene.
+ *                      This method requires a dynamics enabled scene, and joints in dynamic mode with velocity control mode.
+ *                      Check this link for more information about joint modes:
+ *                      https://www.coppeliarobotics.com/helpFiles/en/jointModes.htm
+ * @param jointnames    A vector containing the names of the joints.
+ * @param angles_rad_dot  The desired joint velocities.
  */
 void DQ_CoppeliaSimZmqInterface::set_joint_target_velocities(const std::vector<std::string> &jointnames, const VectorXd &angles_rad_dot)
 {
@@ -845,10 +846,14 @@ void DQ_CoppeliaSimZmqInterface::set_joint_torques(const std::vector<int> &handl
         set_joint_torque(handles.at(i), torques(i));
 }
 
+
 /**
- * @brief DQ_CoppeliaSimZmqInterface::set_joint_torques
- * @param jointnames
- * @param torques
+ * @brief DQ_CoppeliaSimZmqInterface::set_joint_torques sets the joint torques in the CoppeliaSim scene.
+ *                      This method requires a dynamics enabled scene, and joints in dynamic mode with force control mode.
+ *                      Check this link for more information about joint modes:
+ *                      https://www.coppeliarobotics.com/helpFiles/en/jointModes.htm
+ * @param jointnames A vector containing the names of the joints.
+ * @param torques The desired joint torques.
  */
 void DQ_CoppeliaSimZmqInterface::set_joint_torques(const std::vector<std::string> &jointnames, const VectorXd &torques)
 {
@@ -895,9 +900,9 @@ VectorXd DQ_CoppeliaSimZmqInterface::get_joint_torques(const std::vector<int> &h
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::get_joint_torques
- * @param jointnames
- * @return
+ * @brief DQ_CoppeliaSimZmqInterface::get_joint_torques gets the joint torques in the CoppeliaSim scene.
+ * @param jointnames A vector containing the names of the joints.
+ * @return the joint torques.
  */
 VectorXd DQ_CoppeliaSimZmqInterface::get_joint_torques(const std::vector<std::string> &jointnames)
 {
@@ -910,9 +915,9 @@ VectorXd DQ_CoppeliaSimZmqInterface::get_joint_torques(const std::vector<std::st
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::get_object_name
- * @param handle
- * @return
+ * @brief DQ_CoppeliaSimZmqInterface::get_object_name gets the name of an object in the CoppeliaSim scene
+ * @param handle the object handle.
+ * @return The object name
  */
 std::string DQ_CoppeliaSimZmqInterface::get_object_name(const int &handle)
 {
@@ -1015,10 +1020,11 @@ std::vector<std::string> DQ_CoppeliaSimZmqInterface::get_shapenames_from_parent_
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::get_angular_and_linear_velocities
- * @param handle
- * @param reference
- * @return
+ * @brief DQ_CoppeliaSimZmqInterface::get_angular_and_linear_velocities returns the angular a linear velocities of an
+ *                  object in the CoppeliaSim scene
+ * @param handle The object handle.
+ * @param reference The reference frame
+ * @return A vector containg the angular and linear velocities. [wx wy wz x_dot y_dot z_dot]
  */
 VectorXd DQ_CoppeliaSimZmqInterface::get_angular_and_linear_velocities(const int &handle, const REFERENCE &reference) const
 {
@@ -1042,10 +1048,11 @@ VectorXd DQ_CoppeliaSimZmqInterface::get_angular_and_linear_velocities(const int
 }
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::get_angular_and_linear_velocities
- * @param objectname
- * @param reference
- * @return
+ * @brief DQ_CoppeliaSimZmqInterface::get_angular_and_linear_velocities returns the angular a linear velocities of an
+ *                  object in the CoppeliaSim scene.
+ * @param objectname The object name
+ * @param reference The reference frame.
+ * @return A vector containg the angular and linear velocities. [wx wy wz x_dot y_dot z_dot]
  */
 VectorXd DQ_CoppeliaSimZmqInterface::get_angular_and_linear_velocities(std::string &objectname, const REFERENCE &reference)
 {
@@ -2270,7 +2277,17 @@ void DQ_CoppeliaSimZmqInterface::disconnect_all(){}
 void DQ_CoppeliaSimZmqInterface::set_synchronous(const bool &flag){set_stepping_mode(flag);}
 int DQ_CoppeliaSimZmqInterface::wait_for_simulation_step_to_end(){return 0;}
 
-bool DQ_CoppeliaSimZmqInterface::connect(const std::string &ip, const int &port, const int &TIMEOUT_IN_MILISECONDS,
+bool DQ_CoppeliaSimZmqInterface::connect(const int &port,
+                                         const int &TIMEOUT_IN_MILISECONDS,
+                                         const int &MAX_TRY_COUNT)
+{
+    return connect("localhost", _get_port_from_deprecated_default_port(port), TIMEOUT_IN_MILISECONDS);
+}
+
+
+bool DQ_CoppeliaSimZmqInterface::connect(const std::string &ip,
+                                         const int &port,
+                                         const int &TIMEOUT_IN_MILISECONDS,
                                          const int &MAX_TRY_COUNT)
 {
     return connect(ip, _get_port_from_deprecated_default_port(port), TIMEOUT_IN_MILISECONDS);
