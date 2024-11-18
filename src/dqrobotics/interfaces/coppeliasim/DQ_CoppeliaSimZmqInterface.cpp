@@ -2225,10 +2225,13 @@ MatrixXd DQ_CoppeliaSimZmqInterface::get_inertia_matrix(const std::string &link_
 
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::_update_map updates the map if and only if
- *        the objectname is not in the map.
- * @param objectname
- * @param handle
+ * @brief DQ_CoppeliaSimZmqInterface::_update_map update the map. It the objectname is already in the map, and
+ *                      If you use the mode UPDATE_MAP::ADD, the map is updated only if the objectname is not in the map.
+ *                      In other words, it is not allowed to have a abjectname twice in the map.
+ *
+ * @param objectname The objectname you want to add or remove from the map.
+ * @param handle     The objectname handle.
+ * @param mode       The operation mode. Use UPDATE_MAP::ADD or UPDATE_MAP::REMOVE accordingly.
  */
 void DQ_CoppeliaSimZmqInterface::_update_map(const std::string &objectname,
                                           const int &handle, const UPDATE_MAP &mode)
@@ -2242,21 +2245,26 @@ void DQ_CoppeliaSimZmqInterface::_update_map(const std::string &objectname,
 
 
 /**
- * @brief DQ_CoppeliaSimZmqInterface::_get_handle_from_map searchs a handle in the map.
+ * @brief DQ_CoppeliaSimZmqInterface::_get_handle_from_map searchs a handle in the map. If
+ *                              the handle is not found, it is taken from CoppeliaSim and the map is updated
+ *                              by using the get_object_handle() method.
  *
  * @param objectname
- * @return a tuple <bool, int>. If the handle is found in the map, returns <true, handle>.
- *                              Otherwise, returns <false, 0>
+ * @return The objectname handle.
  */
 int DQ_CoppeliaSimZmqInterface::_get_handle_from_map(const std::string &objectname)
 {
     auto search = handles_map_.find(objectname);
+    // returns a tuple <bool, int>
+    //If the handle is found in the map, returns <true, handle>.
+
+
     if (search != handles_map_.end())
     { // handle found in map
         return search->second;
     }
     else
-    {   // handle not found in map. Therefore is taken from CoppeliaSim and the map
+    {   // handle not found in map. Therefore, it is taken from CoppeliaSim and the map
         // is updated;
         return get_object_handle(objectname);
     }
@@ -2298,8 +2306,8 @@ std::string DQ_CoppeliaSimZmqInterface::_remove_first_slash_from_string(const st
 /**
  * @brief DQ_CoppeliaSimZmqInterface::_start_with_slash returns true if the first character of a string is a slash.
  *                  Otherwise returns false
- * @param str
- * @return
+ * @param str The string
+ * @return A boolean. True if the first character of a string is a slash. False otherwise
  */
 bool DQ_CoppeliaSimZmqInterface::_start_with_slash(const std::string &str) const
 {
@@ -2310,7 +2318,7 @@ bool DQ_CoppeliaSimZmqInterface::_start_with_slash(const std::string &str) const
     else
         return false;
 
-    //return str.starts_with("/");
+    //return str.starts_with("/"); // For C++20
 
 }
 

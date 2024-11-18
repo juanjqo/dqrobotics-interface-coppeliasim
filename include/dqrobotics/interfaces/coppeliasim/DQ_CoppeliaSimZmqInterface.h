@@ -115,22 +115,7 @@ public:
                                const VectorXd& torques) override;
     VectorXd get_joint_torques(const std::vector<std::string>& jointnames) override;
 
-    //------------------Exclusive methods enabled by the ZeroMQ remote API-----------------------------//
-
-    bool connect(const std::string& host,
-                 const int& rpcPort,
-                 const int& MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION,
-                 const int& cntPort,
-                 const int& verbose);
-
-    void   pause_simulation() const;
-    double get_simulation_time() const;
-
-    bool   is_simulation_running() const;
-    int    get_simulation_state() const;
-    void   set_status_bar_message(const std::string& message) const;
-
-
+    //------------------Additional methods-------------------------------------------------------------//
     DQ   get_object_translation(const int& handle) const;
     void set_object_translation(const int& handle, const DQ& t);
     DQ   get_object_rotation(const int& handle) const;
@@ -165,6 +150,22 @@ public:
     double   get_joint_torque(const int& handle) const;
     double   get_joint_torque(const std::string& jointname);
     VectorXd get_joint_torques(const std::vector<int>& handles) const;
+
+    //------------------Exclusive methods enabled by the ZeroMQ remote API-----------------------------//
+
+    bool connect(const std::string& host,
+                 const int& rpcPort,
+                 const int& MAX_TIME_IN_MILLISECONDS_TO_TRY_CONNECTION,
+                 const int& cntPort,
+                 const int& verbose);
+
+    void   pause_simulation() const;
+    double get_simulation_time() const;
+
+    bool   is_simulation_running() const;
+    int    get_simulation_state() const;
+    void   set_status_bar_message(const std::string& message) const;
+
 
     std::string get_object_name(const int& handle);
 
@@ -338,7 +339,10 @@ private:
     enum class UPDATE_MAP{ADD, REMOVE};
 
     std::atomic<bool> client_created_{false};
+
+    // If true, the class will accept names without a slash in the first character.
     bool enable_deprecated_name_compatibility_{true};
+
     void _check_client() const;
     [[noreturn]] void _throw_runtime_error(const std::string& msg) const;
 
