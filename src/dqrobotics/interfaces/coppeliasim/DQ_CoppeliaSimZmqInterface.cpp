@@ -2612,6 +2612,15 @@ DQ_CoppeliaSimZmqInterface::experimental::experimental(const std::shared_ptr<DQ_
 {
 }
 
+
+/**
+ * @brief DQ_CoppeliaSimZmqInterface::experimental::plot_reference_frame adds a reference frame object
+ *                  in the CoppeliaSim scene.
+ * @param name The name of the reference frame
+ * @param pose The position and orientation of the reference frame
+ * @param scale The scale of the reference frame.
+ * @param thickness_and_length The thicknessand and length.
+ */
 void DQ_CoppeliaSimZmqInterface::experimental::plot_reference_frame(const std::string &name,
                                                                     const DQ &pose,
                                                                     const double &scale,
@@ -2636,6 +2645,17 @@ void DQ_CoppeliaSimZmqInterface::experimental::plot_reference_frame(const std::s
     smptr_->set_object_pose(name, pose);
 }
 
+
+/**
+ * @brief DQ_CoppeliaSimZmqInterface::experimental::plot_plane adds a plane object in the CoppeliaSim scene
+ * @param name
+ * @param normal_to_the_plane
+ * @param location
+ * @param sizes
+ * @param rgba_color
+ * @param add_normal
+ * @param normal_scale
+ */
 void DQ_CoppeliaSimZmqInterface::experimental::plot_plane(const std::string &name, const DQ &normal_to_the_plane, const DQ &location, const std::vector<double> &sizes, const std::vector<double> &rgba_color, const bool &add_normal, const double &normal_scale)
 {
     // For C++20
@@ -2660,7 +2680,16 @@ void DQ_CoppeliaSimZmqInterface::experimental::plot_plane(const std::string &nam
     smptr_->set_object_pose(name, smptr_->_get_pose_from_direction(normal_to_the_plane, location));
 }
 
-
+/**
+ * @brief DQ_CoppeliaSimZmqInterface::experimental::plot_line add a segment line in the CoppeliaSim scene
+ * @param name
+ * @param line_direction
+ * @param location
+ * @param thickness_and_length
+ * @param rgba_color
+ * @param add_arrow
+ * @param arrow_scale
+ */
 void DQ_CoppeliaSimZmqInterface::experimental::plot_line(const std::string &name, const DQ &line_direction, const DQ &location, const std::vector<double> &thickness_and_length, const std::vector<double> &rgba_color, const bool &add_arrow, const double &arrow_scale)
 {
     // For C++20
@@ -2686,7 +2715,16 @@ void DQ_CoppeliaSimZmqInterface::experimental::plot_line(const std::string &name
     smptr_->set_object_pose(name, smptr_->_get_pose_from_direction(line_direction, location));
 }
 
-
+/**
+ * @brief DQ_CoppeliaSimZmqInterface::experimental::plot_cylinder adds a cylinder in the CoppeliaSim scene
+ * @param name
+ * @param direction
+ * @param location
+ * @param width_and_length
+ * @param rgba_color
+ * @param add_line
+ * @param line_scale
+ */
 void DQ_CoppeliaSimZmqInterface::experimental::plot_cylinder(const std::string &name, const DQ &direction, const DQ &location, const std::vector<double> &width_and_length, const std::vector<double> &rgba_color, const bool &add_line, const double &line_scale)
 {
     // For C++20
@@ -2711,6 +2749,13 @@ void DQ_CoppeliaSimZmqInterface::experimental::plot_cylinder(const std::string &
     smptr_->set_object_pose(name, smptr_->_get_pose_from_direction(direction, location));
 }
 
+/**
+ * @brief DQ_CoppeliaSimZmqInterface::experimental::plot_sphere adds an sphere object in the CoppeliaSim scene
+ * @param name
+ * @param location
+ * @param size
+ * @param rgba_color
+ */
 void DQ_CoppeliaSimZmqInterface::experimental::plot_sphere(const std::string &name, const DQ &location, const double &size, const std::vector<double> rgba_color)
 {
     // For C++20
@@ -2735,7 +2780,22 @@ void DQ_CoppeliaSimZmqInterface::experimental::plot_sphere(const std::string &na
 }
 
 
-bool DQ_CoppeliaSimZmqInterface::experimental::load_model(const std::string &path_to_filename, const std::string &desired_model_name, const bool &load_model_only_if_missing, const bool &remove_child_script)
+/**
+ * @brief DQ_CoppeliaSimZmqInterface::experimental::load_model loads a model to
+ *        the scene.
+ *
+ * @param path_to_filename The path to the model.
+ * @param desired_model_name The name you want for the loaded model.
+ * @param load_model_only_if_missing If the model exists (with the same alias)
+ *                                   the model is not loaded. (Default)
+ * @param remove_child_script Remove the associated child script of the model
+ *                            (Default)
+ * @return A boolean flag. True if the model was loaded. False otherwise.
+ */
+bool DQ_CoppeliaSimZmqInterface::experimental::load_model(const std::string &path_to_filename,
+                                                          const std::string &desired_model_name,
+                                                          const bool &load_model_only_if_missing,
+                                                          const bool &remove_child_script)
 {
     if (load_model_only_if_missing == true)
     {
@@ -2750,6 +2810,21 @@ bool DQ_CoppeliaSimZmqInterface::experimental::load_model(const std::string &pat
         return smptr_->_load_model(path_to_filename, desired_model_name, remove_child_script);
     }
 }
+
+/**
+ * @brief DQ_CoppeliaSimZmqInterface::experimental::::load_from_model_browser loads a model from
+ *        the CoppeliaSim model browser.
+ *
+ *      Ex: load_from_model_browser("/robots/non-mobile/FrankaEmikaPanda.ttm", "/Franka");
+ *
+ * @param path_to_filename The path to the model relative to the model browser.
+ * @param desired_model_name The name you want for the loaded model.
+ * @param load_model_only_if_missing If the model exists (with the same alias)
+ *                                   the model is not loaded. (Default)
+ * @param remove_child_script Remove the associated child script of the model
+ *                            (Default)
+ * @return A boolean flag. True if the model was loaded. False otherwise.
+ */
 
 bool DQ_CoppeliaSimZmqInterface::experimental::load_from_model_browser(const std::string &path_to_filename, const std::string &desired_model_name, const bool &load_model_only_if_missing, const bool &remove_child_script)
 {
