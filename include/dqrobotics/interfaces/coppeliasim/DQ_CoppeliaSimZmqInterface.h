@@ -164,74 +164,7 @@ public:
                  const int& cntPort,
                  const int& verbose);
 
-    void   pause_simulation() const;
-    double get_simulation_time() const;
 
-    bool   is_simulation_running() const;
-    int    get_simulation_state() const;
-    void   set_status_bar_message(const std::string& message) const;
-
-
-    std::string get_object_name(const int& handle);
-
-    template<typename T>
-    std::vector<std::string> get_object_names(const T& handles);
-
-    std::vector<std::string> get_jointnames_from_parent_object(const std::string& parent_objectname);
-    std::vector<std::string> get_shapenames_from_parent_object(const std::string& parent_objectname,
-                                                               const SHAPE_TYPE& shape_type = SHAPE_TYPE::ANY);
-
-    VectorXd get_angular_and_linear_velocities(const int& handle,
-                                               const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
-
-    VectorXd get_angular_and_linear_velocities(std::string& objectname,
-                                           const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
-
-    void set_angular_and_linear_velocities(const int& handle,
-                                           const DQ& w,
-                                           const DQ& p_dot,
-                                           const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
-    void set_angular_and_linear_velocities(std::string& objectname,
-                                           const DQ& w,
-                                           const DQ& p_dot,
-                                           const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
-    void set_twist(const int& handle,
-                   const DQ& twist,
-                   const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
-    void set_twist(const std::string& objectname,
-                   const DQ& twist, const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
-    DQ   get_twist(const int& handle,
-                   const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
-    DQ   get_twist(const std::string& objectname,
-                   const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
-
-    double get_mass(const int& handle) const;
-    double get_mass(const std::string& object_name);
-
-    DQ     get_center_of_mass(const int& handle, const REFERENCE& reference_frame=REFERENCE::ABSOLUTE_FRAME) const;
-    DQ     get_center_of_mass(const std::string& object_name, const REFERENCE& reference_frame=REFERENCE::ABSOLUTE_FRAME);
-
-    MatrixXd get_inertia_matrix(const int& handle, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
-    MatrixXd get_inertia_matrix(const std::string& link_name, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
-
-    void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
-    void   set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
-    void   set_joint_control_mode(const std::string& jointname, const JOINT_CONTROL_MODE& joint_control_mode);
-    void   set_joint_control_modes(const std::vector<std::string>& jointnames, const JOINT_CONTROL_MODE& joint_control_mode);
-    void   enable_dynamics(const bool& flag);
-    double get_simulation_time_step() const;
-    void   set_simulation_time_step(const double& time_step);
-    double get_physics_time_step() const;
-    void   set_physics_time_step(const double& time_step) const;
-    void   set_engine(const ENGINE& engine);
-
-    std::string get_engine();
-    void   set_gravity(const DQ& gravity=-9.81*k_);
-    DQ     get_gravity() const;
-
-    void load_scene(const std::string& path_to_filename) const;
-    void save_scene(const std::string& path_to_filename) const;
-    void close_scene() const;
 
     //-----------------------------------------------------------------------------------------------------//
     //-----------Deprecated methods------------------------------------------------------------------------//
@@ -342,6 +275,17 @@ public:
         void set_mujoco_body_friction(const std::string& bodyname, const std::vector<double>& friction);
         void set_mujoco_body_frictions(const std::vector<std::string>& bodynames,
                                        const std::vector<double>& friction);
+
+        void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
+        void   set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
+        void   set_joint_control_mode(const std::string& jointname, const JOINT_CONTROL_MODE& joint_control_mode);
+        void   set_joint_control_modes(const std::vector<std::string>& jointnames, const JOINT_CONTROL_MODE& joint_control_mode);
+        void   enable_dynamics(const bool& flag);
+        std::vector<std::string> get_jointnames_from_parent_object(const std::string& parent_objectname);
+
+        void load_scene(const std::string& path_to_filename) const;
+        void save_scene(const std::string& path_to_filename) const;
+        void close_scene() const;
     };
 
 
@@ -542,6 +486,8 @@ private:
     std::vector<double> _get_bounding_box_size(const std::string& objectname);
 
 
+
+
     //-----------------------------------------------------------------------
     // Mujoco settings
 
@@ -586,6 +532,76 @@ private:
     void _set_mujoco_body_friction(const std::string& bodyname, const std::vector<double>& friction);
     void _set_mujoco_body_frictions(const std::vector<std::string>& bodynames,
                                    const std::vector<double>& friction);
+
+
+    void   _pause_simulation() const;
+    double _get_simulation_time() const;
+
+    bool   _is_simulation_running() const;
+    int    _get_simulation_state() const;
+    void   _set_status_bar_message(const std::string& message) const;
+
+
+    std::string _get_object_name(const int& handle);
+
+    template<typename T>
+    std::vector<std::string> _get_object_names(const T& handles);
+
+    std::vector<std::string> _get_jointnames_from_parent_object(const std::string& parent_objectname);
+    std::vector<std::string> _get_shapenames_from_parent_object(const std::string& parent_objectname,
+                                                               const SHAPE_TYPE& shape_type = SHAPE_TYPE::ANY);
+
+    VectorXd _get_angular_and_linear_velocities(const int& handle,
+                                               const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
+
+    VectorXd _get_angular_and_linear_velocities(std::string& objectname,
+                                               const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+
+    void _set_angular_and_linear_velocities(const int& handle,
+                                           const DQ& w,
+                                           const DQ& p_dot,
+                                           const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
+    void _set_angular_and_linear_velocities(std::string& objectname,
+                                           const DQ& w,
+                                           const DQ& p_dot,
+                                           const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+    void _set_twist(const int& handle,
+                   const DQ& twist,
+                   const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
+    void _set_twist(const std::string& objectname,
+                   const DQ& twist, const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+    DQ   _get_twist(const int& handle,
+                 const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
+    DQ   _get_twist(const std::string& objectname,
+                 const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+
+    double _get_mass(const int& handle) const;
+    double _get_mass(const std::string& object_name);
+
+    DQ     _get_center_of_mass(const int& handle, const REFERENCE& reference_frame=REFERENCE::ABSOLUTE_FRAME) const;
+    DQ     _get_center_of_mass(const std::string& object_name, const REFERENCE& reference_frame=REFERENCE::ABSOLUTE_FRAME);
+
+    MatrixXd _get_inertia_matrix(const int& handle, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
+    MatrixXd _get_inertia_matrix(const std::string& link_name, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
+
+    void   _set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
+    void   _set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
+    void   _set_joint_control_mode(const std::string& jointname, const JOINT_CONTROL_MODE& joint_control_mode);
+    void   _set_joint_control_modes(const std::vector<std::string>& jointnames, const JOINT_CONTROL_MODE& joint_control_mode);
+    void   _enable_dynamics(const bool& flag);
+    double _get_simulation_time_step() const;
+    void   _set_simulation_time_step(const double& time_step);
+    double _get_physics_time_step() const;
+    void   _set_physics_time_step(const double& time_step) const;
+    void   _set_engine(const ENGINE& engine);
+
+    std::string get_engine();
+    void   _set_gravity(const DQ& gravity=-9.81*k_);
+    DQ     _get_gravity() const;
+
+    void _load_scene(const std::string& path_to_filename) const;
+    void _save_scene(const std::string& path_to_filename) const;
+    void _close_scene() const;
 
 };
 

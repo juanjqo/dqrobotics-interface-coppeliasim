@@ -35,7 +35,7 @@ class FrankaEmikaPandaCoppeliaSimZmqRobot: public DQ_SerialCoppeliaSimZmqRobot
 {
 public:
     FrankaEmikaPandaCoppeliaSimZmqRobot(const std::string& robot_name,
-                                     const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr
+                                        const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr
                                      );
     DQ_SerialManipulatorMDH kinematics();
 };

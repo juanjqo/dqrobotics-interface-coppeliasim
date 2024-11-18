@@ -34,9 +34,12 @@ namespace DQ_robotics
 class DQ_SerialCoppeliaSimZmqRobot: public DQ_SerialCoppeliaSimRobot
 {
 private:
-    std::shared_ptr<DQ_CoppeliaSimZmqInterface> coppeliasim_interface_sptr_;
+    std::shared_ptr<DQ_CoppeliaSimZmqInterface> interface_sptr_;
+    std::shared_ptr<DQ_CoppeliaSimZmqInterface::experimental> coppeliasim_interface_sptr_;
     DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE joint_control_mode_;
     bool robot_is_used_as_visualization_tool_;
+
+    std::shared_ptr<DQ_CoppeliaSimZmqInterface::experimental> _get_exp_interface_sptr();
 
     void _initialize_jointnames_from_coppeliasim();
 
@@ -44,16 +47,16 @@ protected:
     std::shared_ptr<DQ_CoppeliaSimZmqInterface> _get_interface_sptr();
 
     DQ_SerialCoppeliaSimZmqRobot(const std::string& robot_name,
-                                 const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr);
+                                 const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& interface_sptr);
+private:
+    void _set_operation_modes(const DQ_CoppeliaSimZmqInterface::JOINT_MODE& joint_mode,
+                             const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    void _set_robot_as_visualization_tool();
+    void _set_robot_as_dynamic_tool(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    void _set_joint_control_type(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    void _set_control_inputs(const VectorXd& u);
 
 public:
-
-    void set_operation_modes(const DQ_CoppeliaSimZmqInterface::JOINT_MODE& joint_mode,
-                             const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
-    void set_robot_as_visualization_tool();
-    void set_robot_as_dynamic_tool(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
-    void set_joint_control_type(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
-    void set_control_inputs(const VectorXd& u);
 
     std::vector<std::string> get_joint_names() override;
 
