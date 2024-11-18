@@ -2893,6 +2893,21 @@ std::vector<std::string> DQ_CoppeliaSimZmqInterface::experimental::get_shapename
     return smptr_->_get_shapenames_from_parent_object(parent_objectname, shape_type);
 }
 
+void DQ_CoppeliaSimZmqInterface::experimental::set_twist(const std::string &objectname, const DQ &twist, const REFERENCE &reference)
+{
+    smptr_->_set_twist(objectname, twist, reference);
+}
+
+DQ DQ_CoppeliaSimZmqInterface::experimental::get_twist(const std::string &objectname, const REFERENCE &reference)
+{
+    return smptr_->_get_twist(objectname, reference);
+}
+
+void DQ_CoppeliaSimZmqInterface::experimental::set_gravity(const DQ &gravity)
+{
+    smptr_->_set_gravity(gravity);
+}
+
 void DQ_CoppeliaSimZmqInterface::experimental::load_scene(const std::string &path_to_filename) const
 {
     smptr_->_load_scene(path_to_filename);

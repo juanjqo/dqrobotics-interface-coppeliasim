@@ -245,6 +245,13 @@ public:
         std::vector<std::string> get_shapenames_from_parent_object(const std::string& parent_objectname,
                                                                     const SHAPE_TYPE& shape_type = SHAPE_TYPE::ANY);
 
+        void set_twist(const std::string& objectname,
+                        const DQ& twist, const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+        DQ   get_twist(const std::string& objectname,
+                      const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+
+        void  set_gravity(const DQ& gravity=-9.81*k_);
+
         void load_scene(const std::string& path_to_filename) const;
         void save_scene(const std::string& path_to_filename) const;
         void close_scene() const;
