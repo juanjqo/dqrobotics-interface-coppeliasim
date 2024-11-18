@@ -42,6 +42,11 @@ using namespace Eigen;
 class DQ_CoppeliaSimZmqInterface : public DQ_CoppeliaSimInterface
 {
 public:
+    enum class REFERENCE
+    {
+        BODY_FRAME,
+        ABSOLUTE_FRAME
+    };
     enum class JOINT_MODE
     {
         KINEMATIC,
@@ -257,6 +262,7 @@ public:
     private:
         std::shared_ptr<DQ_CoppeliaSimZmqInterface> smptr_;
     public:
+        [[deprecated("Experimental! Se vira manolo")]]
         experimental(const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& smptr);
 
         void plot_reference_frame(const std::string& name,

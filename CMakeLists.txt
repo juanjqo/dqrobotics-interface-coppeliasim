@@ -17,7 +17,7 @@ INCLUDE_DIRECTORIES(${PROJECT_NAME} ${SUBMODULES}/zmqRemoteApi/clients/cpp)
 
 add_library(${PROJECT_NAME} SHARED
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZmqRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZmqRobot.cpp
@@ -65,8 +65,8 @@ endif()
 
 # Other Headers
 INSTALL(FILES
-    include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.h
     include/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.h
+    include/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.h
     DESTINATION "include/dqrobotics/interfaces/coppeliasim")
 
 # Robots
@@ -82,8 +82,8 @@ INSTALL(FILES
 # base folder
 INSTALL(FILES
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/coppeliasim")
 
 # robots folder
@@ -101,10 +101,10 @@ INSTALL(FILES
 #target_link_libraries(example2 PRIVATE ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
 
-#add_executable(example3 src/test_new_methods.cpp)
-#target_link_libraries(example3 PRIVATE
-#                      dqrobotics
-#                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
+add_executable(example3 src/test_new_methods.cpp)
+target_link_libraries(example3 PRIVATE
+                      dqrobotics
+                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
 
 # add_executable(multiple_instances src/test_panda.cpp)
 # target_link_libraries(multiple_instances PRIVATE

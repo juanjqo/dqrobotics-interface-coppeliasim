@@ -26,43 +26,54 @@ Contributors:
 
 #pragma once
 #include <vector>
-#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.h>
 
 namespace DQ_robotics
 {
-class DQ_SerialCoppeliaSimZmqRobot: public DQ_CoppeliaSimZmqRobot
+class DQ_SerialCoppeliaSimZmqRobot: public DQ_SerialCoppeliaSimRobot
 {
-protected:
-    std::vector<std::string> jointnames_;
-    std::string base_frame_name_;
+private:
+    std::shared_ptr<DQ_CoppeliaSimZmqInterface> coppeliasim_interface_sptr_;
     DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE joint_control_mode_;
     bool robot_is_used_as_visualization_tool_;
 
     void _initialize_jointnames_from_coppeliasim();
 
+protected:
+    std::shared_ptr<DQ_CoppeliaSimZmqInterface> _get_interface_sptr();
+
     DQ_SerialCoppeliaSimZmqRobot(const std::string& robot_name,
-                              const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr);
+                                 const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr);
+
 public:
 
-    virtual void set_operation_modes(const DQ_CoppeliaSimZmqInterface::JOINT_MODE& joint_mode,
-                                     const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
-    virtual void set_robot_as_visualization_tool();
-    virtual void set_robot_as_dynamic_tool(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
-    virtual void set_joint_control_type(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    void set_operation_modes(const DQ_CoppeliaSimZmqInterface::JOINT_MODE& joint_mode,
+                             const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    void set_robot_as_visualization_tool();
+    void set_robot_as_dynamic_tool(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    void set_joint_control_type(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    void set_control_inputs(const VectorXd& u);
 
-    virtual void set_control_inputs(const VectorXd& u);
+    std::vector<std::string> get_joint_names() override;
 
-    virtual std::vector<std::string> get_joint_names();
+    void set_configuration_space_positions(const VectorXd& q) override;
+    VectorXd get_configuration_space_positions() override;
 
-    virtual void set_configuration_space_positions(const VectorXd& q);
-    virtual VectorXd get_configuration_space_positions();
-    virtual void set_target_configuration_space_positions(const VectorXd& q_target);
+    void set_target_configuration_space_positions(const VectorXd& q_target) override;
 
-    virtual VectorXd get_configuration_space_velocities();
-    virtual void set_target_configuration_space_velocities(const VectorXd& v_target);
+    VectorXd get_configuration_space_velocities() override;
+    void set_target_configuration_space_velocities(const VectorXd& v_target) override;
 
-    virtual void set_configuration_space_torques(const VectorXd& torques);
-    virtual VectorXd get_configuration_space_torques();
+    void set_configuration_space_torques(const VectorXd& t) override;
+    VectorXd get_configuration_space_torques() override;
+
+    //For backwards compatibility, to be removed in a future version of dqrobotics
+    [[deprecated("Use set_configuration_space_positions instead")]]
+    void send_q_to_vrep(const VectorXd& q);
+    [[deprecated("Use get_configuration_space_positions instead")]]
+    VectorXd get_q_from_vrep();
+
 
 };
 

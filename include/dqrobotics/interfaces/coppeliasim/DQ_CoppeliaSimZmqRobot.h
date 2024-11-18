@@ -30,6 +30,7 @@ Contributors:
 #include<dqrobotics/robot_modeling/DQ_Kinematics.h>
 #include<dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.h>
 
+/*
 namespace DQ_robotics
 {
 class DQ_CoppeliaSimZmqRobot
@@ -48,4 +49,4 @@ public:
 };
 }
 
-
+*/

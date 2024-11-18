@@ -24,25 +24,19 @@ Contributors:
 
 */
 
+/*
 #include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqRobot.h>
 
 namespace DQ_robotics
 {
 
-/**
- * @brief DQ_CoppeliaSimRobot::_get_interface_sptr
- * @return
- */
+
 std::shared_ptr<DQ_CoppeliaSimZmqInterface> DQ_CoppeliaSimZmqRobot::_get_interface_sptr() const
 {
     return coppeliasim_interface_sptr_;
 }
 
-/**
- * @brief DQ_CoppeliaSimRobot::DQ_CoppeliaSimRobot
- * @param robot_name
- * @param coppeliasim_interface_sptr
- */
+
 DQ_CoppeliaSimZmqRobot::DQ_CoppeliaSimZmqRobot(const std::string& robot_name,
                                          const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr)
 {
@@ -53,3 +47,4 @@ DQ_CoppeliaSimZmqRobot::DQ_CoppeliaSimZmqRobot(const std::string& robot_name,
 }
 
 }
+*/

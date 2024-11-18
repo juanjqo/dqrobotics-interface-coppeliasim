@@ -2608,7 +2608,6 @@ std::tuple<DQ, MatrixXd> DQ_CoppeliaSimZmqInterface::_get_center_of_mass_and_ine
 DQ_CoppeliaSimZmqInterface::experimental::experimental(const std::shared_ptr<DQ_CoppeliaSimZmqInterface> &smptr)
     :smptr_{smptr}
 {
-
 }
 
 void DQ_CoppeliaSimZmqInterface::experimental::plot_reference_frame(const std::string &name,
