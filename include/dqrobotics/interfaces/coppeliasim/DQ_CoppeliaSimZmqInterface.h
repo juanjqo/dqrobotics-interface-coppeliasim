@@ -214,25 +214,19 @@ public:
         std::vector<double> get_bounding_box_size(const std::string& objectname);
 
         //-------Mujoco settings-------------------------------------------------------------
-        void set_mujoco_joint_stiffness(const std::string& jointname, const double& stiffness);
         void set_mujoco_joint_stiffnesses(const std::vector<std::string>& jointnames,
                                           const double& stiffness);
 
-        void set_mujoco_joint_damping(const std::string& jointname, const double& damping);
         void set_mujoco_joint_dampings(const std::vector<std::string>& jointnames,
                                        const double& damping);
 
-        void set_mujoco_joint_armature(const std::string& jointname, const double& armature);
         void set_mujoco_joint_armatures(const std::vector<std::string>& jointnames,
                                         const double& armature);
 
-        void set_mujoco_body_friction(const std::string& bodyname, const std::vector<double>& friction);
         void set_mujoco_body_frictions(const std::vector<std::string>& bodynames,
                                        const std::vector<double>& friction);
 
-        void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
         void   set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
-        void   set_joint_control_mode(const std::string& jointname, const JOINT_CONTROL_MODE& joint_control_mode);
         void   set_joint_control_modes(const std::vector<std::string>& jointnames, const JOINT_CONTROL_MODE& joint_control_mode);
         void   enable_dynamics(const bool& flag);
         double get_simulation_time_step() const;

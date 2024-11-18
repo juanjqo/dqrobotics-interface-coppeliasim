@@ -2863,51 +2863,30 @@ std::vector<double> DQ_CoppeliaSimZmqInterface::experimental::get_bounding_box_s
     return smptr_->_get_bounding_box_size(objectname);
 }
 
-void DQ_CoppeliaSimZmqInterface::experimental::set_mujoco_joint_stiffness(const std::string &jointname, const double &stiffness)
-{
-    smptr_->_set_mujoco_joint_stiffness(jointname, stiffness);
-}
 
 void DQ_CoppeliaSimZmqInterface::experimental::set_mujoco_joint_stiffnesses(const std::vector<std::string> &jointnames, const double &stiffness)
 {
     smptr_->_set_mujoco_joint_stiffnesses(jointnames, stiffness);
 }
 
-void DQ_CoppeliaSimZmqInterface::experimental::set_mujoco_joint_damping(const std::string &jointname, const double &damping)
-{
-    smptr_->_set_mujoco_joint_damping(jointname, damping);
-}
 
 void DQ_CoppeliaSimZmqInterface::experimental::set_mujoco_joint_dampings(const std::vector<std::string> &jointnames, const double &damping)
 {
     smptr_->_set_mujoco_joint_dampings(jointnames, damping);
 }
 
-void DQ_CoppeliaSimZmqInterface::experimental::set_mujoco_joint_armature(const std::string &jointname, const double &armature)
-{
-    smptr_->_set_mujoco_joint_armature(jointname, armature);
-}
 
 void DQ_CoppeliaSimZmqInterface::experimental::set_mujoco_joint_armatures(const std::vector<std::string> &jointnames, const double &armature)
 {
     smptr_->_set_mujoco_joint_armatures(jointnames, armature);
 }
 
-void DQ_CoppeliaSimZmqInterface::experimental::set_mujoco_body_friction(const std::string &bodyname, const std::vector<double> &friction)
-{
-    smptr_->_set_mujoco_body_friction(bodyname, friction);
-}
 
 void DQ_CoppeliaSimZmqInterface::experimental::set_mujoco_body_frictions(const std::vector<std::string> &bodynames, const std::vector<double> &friction)
 {
     smptr_->_set_mujoco_body_frictions(bodynames, friction);
 }
 
-void DQ_CoppeliaSimZmqInterface::experimental::set_joint_mode(const std::string &jointname,
-                                                              const JOINT_MODE &joint_mode)
-{
-    smptr_->_set_joint_mode(jointname, joint_mode);
-}
 
 void DQ_CoppeliaSimZmqInterface::experimental::set_joint_modes(const std::vector<std::string> &jointnames,
                                                                const JOINT_MODE &joint_mode)
@@ -2915,11 +2894,6 @@ void DQ_CoppeliaSimZmqInterface::experimental::set_joint_modes(const std::vector
     smptr_->_set_joint_modes(jointnames, joint_mode);
 }
 
-void DQ_CoppeliaSimZmqInterface::experimental::set_joint_control_mode(const std::string &jointname,
-                                                                      const JOINT_CONTROL_MODE &joint_control_mode)
-{
-    smptr_->_set_joint_control_mode(jointname, joint_control_mode);
-}
 
 void DQ_CoppeliaSimZmqInterface::experimental::set_joint_control_modes(const std::vector<std::string> &jointnames,
                                                                        const JOINT_CONTROL_MODE &joint_control_mode)
