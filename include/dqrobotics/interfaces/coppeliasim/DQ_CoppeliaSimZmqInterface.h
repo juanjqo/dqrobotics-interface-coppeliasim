@@ -238,11 +238,15 @@ public:
     void set_synchronous(const bool& flag);
     [[deprecated("This method is not required with ZeroMQ remote API.")]]
     int wait_for_simulation_step_to_end();
-    [[deprecated("This signature with MAX_TRY_COUNT is not required with ZeroMQ remote API.")]]
+
+    // For backward compatibility
+    [[deprecated("This signature with MAX_TRY_COUNT is not required with ZeroMQ remote API. "
+                 "If you use the port 19997, this signature will change it to 23000.")]]
     bool connect(const std::string& ip, const int& port, const int& TIMEOUT_IN_MILISECONDS, const int& MAX_TRY_COUNT);
 
     // For backward compatibility
-    [[deprecated("This signature with MAX_TRY_COUNT is not required with ZeroMQ remote API.")]]
+    [[deprecated("This signature with MAX_TRY_COUNT is not required with ZeroMQ remote API. "
+                 "If you use the port 19997, this signature will change it to 23000.")]]
     bool connect(const int &port, const int& TIMEOUT_IN_MILISECONDS, const int& MAX_TRY_COUNT);
 
 
@@ -308,6 +312,14 @@ public:
         void remove_object(const std::string& objectname,
                             const bool& remove_children = false);
 
+        void draw_trajectory(const std::string& objectname,
+                             const double& size = 2,
+                             const std::vector<double>& rgb_color = {1,0,1},
+                             const int& max_item_count = 1000);
+
+        bool check_collision(const std::string& objectname1, const std::string& objectname2);
+        std::vector<double> get_bounding_box_size(const std::string& objectname);
+
         //-------Mujoco settings-------------------------------------------------------------
         void set_mujoco_joint_stiffness(const std::string& jointname, const double& stiffness);
         void set_mujoco_joint_stiffnesses(const std::vector<std::string>& jointnames,
@@ -337,6 +349,8 @@ protected:
 private:
     enum class AXIS{i,j,k};
     enum class UPDATE_MAP{ADD, REMOVE};
+
+    int _get_port_from_deprecated_default_port(const int& port);
 
     std::atomic<bool> client_created_{false};
 
@@ -401,7 +415,7 @@ private:
                       const std::string& name,
                       const std::vector<double>& sizes) const;
 
-    [[nodiscard("The created primitives must be added to the created_handles_map")]]
+
     std::vector<std::string> _create_static_axis_at_origin(const int& parent_handle,
                                                            const std::string& parent_name,
                                                            const std::vector<double>& sizes,

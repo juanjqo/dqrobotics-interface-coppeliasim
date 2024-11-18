@@ -217,15 +217,20 @@ bool DQ_CoppeliaSimZmqInterface::connect(const std::string &host, const int &por
 
 bool DQ_CoppeliaSimZmqInterface::connect(const int &port, const int &TIMEOUT_IN_MILISECONDS, const int &MAX_TRY_COUNT)
 {
+    return connect("localhost", _get_port_from_deprecated_default_port(port), TIMEOUT_IN_MILISECONDS);
+}
+
+
+int DQ_CoppeliaSimZmqInterface::_get_port_from_deprecated_default_port(const int &port)
+{
     int auxport = port;
-    if (auxport == 19997)
+    if (auxport == 19997 or auxport == 19998 or auxport == 19999 or auxport == 20000)
     {
         auxport = 23000;
         std::cerr<<"The port "<<port<<" is commonly used in the legacy API. However it is not compatible with the ZMQ Remote API."<<std::endl;
         std::cerr<<"I changed the port to "<<auxport<<std::endl;
     }
-
-    return connect("localhost", auxport, TIMEOUT_IN_MILISECONDS);
+    return auxport;
 }
 
 /**
@@ -1604,10 +1609,9 @@ void DQ_CoppeliaSimZmqInterface::_create_plane(const std::string &name, const st
     {
         double rfc = 0.02*normal_scale;
         std::vector<double> scaled_size = {rfc*sizes.at(0),rfc* sizes.at(1), 0.2*normal_scale*sizes.at(1)};
-        children_names = _create_static_axis_at_origin(primitive_handle, name, scaled_size, AXIS::k, 1);
+        _create_static_axis_at_origin(primitive_handle, name, scaled_size, AXIS::k, 1);
     }
     _merge_shapes(primitive_handle);
-    //_update_created_handles_map(name, children_names);
 }
 
 
@@ -1703,20 +1707,9 @@ void DQ_CoppeliaSimZmqInterface::_create_reference_frame(const std::string &name
     std::vector<std::string> auxdest;
 
     std::vector<double> scaled_size = {scale*thickness_and_length.at(0),scale*thickness_and_length.at(0), scale*thickness_and_length.at(1)};
-    auto cnames1 = _create_static_axis_at_origin(primitive_handle, name, scaled_size, AXIS::k, 1);
-    auto cnames2 = _create_static_axis_at_origin(primitive_handle, name, scaled_size, AXIS::i, 1);
-    auto cnames3 = _create_static_axis_at_origin(primitive_handle, name, scaled_size, AXIS::j, 1);
-
-    /*
-    std::set_union(cnames1.cbegin(), cnames1.cend(),
-                   cnames2.cbegin(), cnames2.cend(),
-                   std::back_inserter(auxdest));
-    std::set_union(auxdest.cbegin(), auxdest.cend(),
-                   cnames3.cbegin(), cnames3.cend(),
-                   std::back_inserter(children_names));
-    //_update_created_handles_map(name, children_names);
-    */
-
+    _create_static_axis_at_origin(primitive_handle, name, scaled_size, AXIS::k, 1);
+    _create_static_axis_at_origin(primitive_handle, name, scaled_size, AXIS::i, 1);
+    _create_static_axis_at_origin(primitive_handle, name, scaled_size, AXIS::j, 1);
     _merge_shapes(primitive_handle);
 }
 
@@ -2280,7 +2273,7 @@ int DQ_CoppeliaSimZmqInterface::wait_for_simulation_step_to_end(){return 0;}
 bool DQ_CoppeliaSimZmqInterface::connect(const std::string &ip, const int &port, const int &TIMEOUT_IN_MILISECONDS,
                                          const int &MAX_TRY_COUNT)
 {
-    return connect(ip, port, TIMEOUT_IN_MILISECONDS);
+    return connect(ip, _get_port_from_deprecated_default_port(port), TIMEOUT_IN_MILISECONDS);
 }
 
 
@@ -2760,6 +2753,21 @@ bool DQ_CoppeliaSimZmqInterface::experimental::object_exist_on_scene(const std::
 void DQ_CoppeliaSimZmqInterface::experimental::remove_object(const std::string &objectname, const bool &remove_children)
 {
     smptr_->_remove_object(objectname, remove_children);
+}
+
+void DQ_CoppeliaSimZmqInterface::experimental::draw_trajectory(const std::string &objectname, const double &size, const std::vector<double> &rgb_color, const int &max_item_count)
+{
+    smptr_->_draw_trajectory(objectname, size, rgb_color, max_item_count);
+}
+
+bool DQ_CoppeliaSimZmqInterface::experimental::check_collision(const std::string &objectname1, const std::string &objectname2)
+{
+    return smptr_->_check_collision(objectname1, objectname2);
+}
+
+std::vector<double> DQ_CoppeliaSimZmqInterface::experimental::get_bounding_box_size(const std::string &objectname)
+{
+    return smptr_->_get_bounding_box_size(objectname);
 }
 
 void DQ_CoppeliaSimZmqInterface::experimental::set_mujoco_joint_stiffness(const std::string &jointname, const double &stiffness)
