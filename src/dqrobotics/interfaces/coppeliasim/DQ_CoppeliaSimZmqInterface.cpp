@@ -2882,6 +2882,21 @@ void DQ_CoppeliaSimZmqInterface::experimental::set_engine(const ENGINE &engine)
     smptr_->_set_engine(engine);
 }
 
+void DQ_CoppeliaSimZmqInterface::experimental::set_object_color(const std::string &objectname, const std::vector<double> &rgba_color)
+{
+    smptr_->_set_object_color(objectname, rgba_color);
+}
+
+void DQ_CoppeliaSimZmqInterface::experimental::set_object_as_respondable(const std::string &objectname, const bool &respondable_object)
+{
+    smptr_->_set_object_as_respondable(objectname, respondable_object);
+}
+
+void DQ_CoppeliaSimZmqInterface::experimental::set_object_as_static(const std::string &objectname, const bool &static_object)
+{
+    smptr_->_set_object_as_static(objectname, static_object);
+}
+
 std::vector<std::string> DQ_CoppeliaSimZmqInterface::experimental::get_jointnames_from_parent_object(const std::string &parent_objectname)
 {
     return smptr_->_get_jointnames_from_parent_object(parent_objectname);

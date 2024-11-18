@@ -241,6 +241,16 @@ public:
         void   set_physics_time_step(const double& time_step) const;
         void   set_engine(const ENGINE& engine);
 
+
+        void set_object_color(const std::string& objectname,
+                               const std::vector<double>& rgba_color);
+
+        void set_object_as_respondable(const std::string& objectname,
+                                        const bool& respondable_object = true);
+
+        void set_object_as_static(const std::string& objectname,
+                                   const bool& static_object = true);
+
         std::vector<std::string> get_jointnames_from_parent_object(const std::string& parent_objectname);
         std::vector<std::string> get_shapenames_from_parent_object(const std::string& parent_objectname,
                                                                     const SHAPE_TYPE& shape_type = SHAPE_TYPE::ANY);
