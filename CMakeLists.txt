@@ -27,7 +27,6 @@ add_library(${PROJECT_NAME} SHARED
 target_compile_definitions(${PROJECT_NAME} PUBLIC -DSIM_REMOTEAPICLIENT_OBJECTS)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/jsoncons/include)
 target_link_libraries(${PROJECT_NAME}
-                        #${CUSTOM_BOOST_COMPONENTS}
                         ${Boost_LIBRARIES}
                         zmq
                         dqrobotics
@@ -92,30 +91,3 @@ INSTALL(FILES
     src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZmqRobot.cpp
     src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZmqRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/coppeliasim/robots")
-
-
-# Temporal Only for Test
-#add_executable(example src/main.cpp)
-#target_link_libraries(example PRIVATE ${PROJECT_NAME})
-
-#add_executable(example2 src/test_library.cpp)
-#target_link_libraries(example2 PRIVATE ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
-
-
-#add_executable(example3 src/test_new_methods.cpp)
-#target_link_libraries(example3 PRIVATE
-#                      dqrobotics
-#                      ${PROJECT_NAME})#dqrobotics dqrobotics-interface-coppeliasim)
-
-# add_executable(multiple_instances src/test_panda.cpp)
-# target_link_libraries(multiple_instances PRIVATE
-#                    dqrobotics
-#                   ${PROJECT_NAME})
-
-
-# Now simply link against gtest or gtest_main as needed. Eg
-#find_package(GTest CONFIG REQUIRED)
-
-#add_executable(unit_tests src/unit_tests.cpp)
-#target_link_libraries(unit_tests GTest::gtest dqrobotics ${PROJECT_NAME})
-#add_test(NAME example_test COMMAND example)

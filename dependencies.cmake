@@ -12,11 +12,6 @@ if(UNIX AND NOT APPLE)
     
     find_package(Boost 1.71.0 COMPONENTS filesystem system)
     include_directories(${Boost_INCLUDE_DIRS})
-   # set(CUSTOM_BOOST_COMPONENTS
-   #     ${Boost_PROGRAM_FILESYTEM_LIBRARY}
-   #     ${Boost_PROGRAM_FORMAT_LIBRARY}
-   #     ${Boost_PROGRAM_OPTIONS_LIBRARY}
-   # )
 endif()
 
 if(APPLE)
@@ -58,14 +53,32 @@ if(WIN32)
     if(Boost_FOUND)
         include_directories(${Boost_INCLUDE_DIRS})
         message(AUTHOR_WARNING "Local Boost ${Boost_VERSION_MAJOR}.${Boost_VERSION_MINOR}.${Boost_VERSION_COUNT} found!")
-        set(CUSTOM_BOOST_COMPONENTS
-            ${Boost_PROGRAM_FILESYTEM_LIBRARY}
-            ${Boost_PROGRAM_FORMAT_LIBRARY}
-            ${Boost_PROGRAM_OPTIONS_LIBRARY}
-            )
     else()
         message(AUTHOR_WARNING "Local Boost not found. I'm going to download it!")
-        include(boost_dependencies.cmake)
+
+        # Download and extract the boost library from GitHub
+        # Add boost lib sources
+        set(BOOST_INCLUDE_LIBRARIES thread format filesystem system program_options)
+        set(BOOST_ENABLE_CMAKE ON)
+
+        message(STATUS "Downloading dependencies. This will take some time...")
+        include(FetchContent)
+        Set(FETCHCONTENT_QUIET FALSE) # Needed to print downloading progress
+        FetchContent_Declare(
+            Boost
+            #URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.gz
+            URL https://github.com/boostorg/boost/releases/download/boost-1.81.0/boost-1.81.0.tar.gz
+            USES_TERMINAL_DOWNLOAD FALSE
+            GIT_PROGRESS FALSE
+            DOWNLOAD_NO_EXTRACT FALSE
+        )
+        FetchContent_MakeAvailable(Boost)
+
+        #set(CUSTOM_BOOST_COMPONENTS
+        #    Boost::filesystem
+        #    Boost::format
+        #    Boost::program_options
+        #)
     endif()
 
 endif()

@@ -195,7 +195,7 @@ public:
     private:
         std::shared_ptr<DQ_CoppeliaSimZmqInterface> smptr_;
     public:
-        [[deprecated("Experimental! Se vira manolo")]]
+        [[deprecated("This unstable class aims to test concepts and prototypes. Do not use it in production.")]]
         experimental(const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& smptr);
 
         void plot_reference_frame(const std::string& name,
