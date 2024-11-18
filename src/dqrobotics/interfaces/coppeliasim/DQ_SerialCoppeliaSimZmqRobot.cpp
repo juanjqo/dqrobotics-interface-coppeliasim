@@ -167,7 +167,7 @@ std::vector<std::string> DQ_SerialCoppeliaSimZmqRobot::get_joint_names()
  * @brief DQ_SerialCoppeliaSimRobot::set_configuration_space_positions
  * @param q
  */
-void DQ_SerialCoppeliaSimZmqRobot::set_configuration_space_positions(const VectorXd &q)
+void DQ_SerialCoppeliaSimZmqRobot::set_configuration_space(const VectorXd &q)
 {
     _get_interface_sptr()->set_joint_positions(jointnames_,q);
 }
@@ -177,7 +177,7 @@ void DQ_SerialCoppeliaSimZmqRobot::set_configuration_space_positions(const Vecto
  * @brief DQ_SerialCoppeliaSimRobot::get_configuration_space_positions
  * @return
  */
-VectorXd DQ_SerialCoppeliaSimZmqRobot::get_configuration_space_positions()
+VectorXd DQ_SerialCoppeliaSimZmqRobot::get_configuration_space()
 {
     return  _get_interface_sptr()->get_joint_positions(jointnames_);
 }
@@ -187,7 +187,7 @@ VectorXd DQ_SerialCoppeliaSimZmqRobot::get_configuration_space_positions()
  * @brief DQ_SerialCoppeliaSimRobot::set_target_configuration_space_positions
  * @param q_target
  */
-void DQ_SerialCoppeliaSimZmqRobot::set_target_configuration_space_positions(const VectorXd &q_target)
+void DQ_SerialCoppeliaSimZmqRobot::set_target_configuration_space(const VectorXd &q_target)
 {
     _get_interface_sptr()->set_joint_target_positions(jointnames_, q_target);
 }
@@ -231,12 +231,27 @@ VectorXd DQ_SerialCoppeliaSimZmqRobot::get_configuration_space_torques()
 
 void DQ_SerialCoppeliaSimZmqRobot::send_q_to_vrep(const VectorXd &q)
 {
-    DQ_SerialCoppeliaSimZmqRobot::set_configuration_space_positions(q);
+    DQ_SerialCoppeliaSimZmqRobot::set_configuration_space(q);
 }
 
 VectorXd DQ_SerialCoppeliaSimZmqRobot::get_q_from_vrep()
 {
-    return DQ_SerialCoppeliaSimZmqRobot::get_configuration_space_positions();
+    return DQ_SerialCoppeliaSimZmqRobot::get_configuration_space();
+}
+
+void DQ_SerialCoppeliaSimZmqRobot::set_configuration_space_positions(const VectorXd &q)
+{
+    DQ_SerialCoppeliaSimZmqRobot::set_configuration_space(q);
+}
+
+VectorXd DQ_SerialCoppeliaSimZmqRobot::get_configuration_space_positions()
+{
+    return DQ_SerialCoppeliaSimZmqRobot::get_configuration_space();
+}
+
+void DQ_SerialCoppeliaSimZmqRobot::set_target_configuration_space_positions(const VectorXd &q_target)
+{
+    DQ_SerialCoppeliaSimZmqRobot::set_target_configuration_space(q_target);
 }
 
 }

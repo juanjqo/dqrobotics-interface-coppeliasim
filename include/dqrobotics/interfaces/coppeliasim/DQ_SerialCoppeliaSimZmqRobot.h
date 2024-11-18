@@ -60,10 +60,10 @@ public:
 
     std::vector<std::string> get_joint_names() override;
 
-    void set_configuration_space_positions(const VectorXd& q) override;
-    VectorXd get_configuration_space_positions() override;
+    void set_configuration_space(const VectorXd& q) override;
+    VectorXd get_configuration_space() override;
 
-    void set_target_configuration_space_positions(const VectorXd& q_target) override;
+    void set_target_configuration_space(const VectorXd& q_target) override;
 
     VectorXd get_configuration_space_velocities() override;
     void set_target_configuration_space_velocities(const VectorXd& v_target) override;
@@ -72,10 +72,21 @@ public:
     VectorXd get_configuration_space_torques() override;
 
     //For backwards compatibility, to be removed in a future version of dqrobotics
-    [[deprecated("Use set_configuration_space_positions instead")]]
+    [[deprecated("Use set_configuration_space instead")]]
     void send_q_to_vrep(const VectorXd& q);
-    [[deprecated("Use get_configuration_space_positions instead")]]
+    [[deprecated("Use get_configuration_space instead")]]
     VectorXd get_q_from_vrep();
+
+    [[deprecated("Use set_configuration_space instead")]]
+    void set_configuration_space_positions(const VectorXd& q);
+
+    [[deprecated("Use get_configuration_space instead")]]
+    VectorXd get_configuration_space_positions();
+
+    [[deprecated("Use set_target_configuration_space instead")]]
+    void set_target_configuration_space_positions(const VectorXd& q_target);
+
+
 
 
 };

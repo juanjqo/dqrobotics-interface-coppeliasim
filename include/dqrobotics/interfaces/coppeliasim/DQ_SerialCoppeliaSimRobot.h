@@ -49,10 +49,10 @@ public:
 
     virtual std::vector<std::string> get_joint_names() = 0;
 
-    virtual void set_configuration_space_positions(const VectorXd& q) = 0;
-    virtual VectorXd get_configuration_space_positions() = 0;
+    virtual void set_configuration_space(const VectorXd& q) = 0;
+    virtual VectorXd get_configuration_space() = 0;
 
-    virtual void set_target_configuration_space_positions(const VectorXd& q_target)=0;
+    virtual void set_target_configuration_space(const VectorXd& q_target)=0;
 
     virtual VectorXd get_configuration_space_velocities()=0;
     virtual void set_target_configuration_space_velocities(const VectorXd& v_target)=0;
