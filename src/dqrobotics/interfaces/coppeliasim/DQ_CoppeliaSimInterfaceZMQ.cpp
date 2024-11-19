@@ -189,6 +189,8 @@ bool DQ_CoppeliaSimInterfaceZMQ::_connect(const std::string &host, const int &rp
         _set_status_bar_message("       ");
         ::__set_status_bar_message("DQ Robotics established a connection on port " + std::to_string(rpcPort),
                                 sim_->verbosity_warnings);
+
+        outer_own_smptr_ = shared_from_this();
     }
     catch (const std::runtime_error& e)
     {
@@ -2286,6 +2288,12 @@ bool DQ_CoppeliaSimInterfaceZMQ::connect(const int &port,
     return connect("localhost", _get_port_from_deprecated_default_port(port), TIMEOUT_IN_MILISECONDS);
 }
 
+std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> DQ_CoppeliaSimInterfaceZMQ::_get_own_smptr()
+{
+    return outer_own_smptr_;
+}
+
+
 
 bool DQ_CoppeliaSimInterfaceZMQ::connect(const std::string &ip,
                                          const int &port,
@@ -2607,9 +2615,13 @@ std::tuple<DQ, MatrixXd> DQ_CoppeliaSimInterfaceZMQ::_get_center_of_mass_and_ine
 }
 
 
-DQ_CoppeliaSimInterfaceZMQ::experimental::experimental(const std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> &smptr)
-    :smptr_{smptr}
+DQ_CoppeliaSimInterfaceZMQ::experimental::experimental()
 {
+}
+
+void DQ_CoppeliaSimInterfaceZMQ::experimental::_set_smptr(std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> &smptr)
+{
+    smptr_ = smptr;
 }
 
 
