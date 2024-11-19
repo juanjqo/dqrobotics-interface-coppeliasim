@@ -39,8 +39,7 @@ using namespace DQ_robotics;
 using namespace Eigen;
 
 
-class DQ_CoppeliaSimInterfaceZMQ
-    : public DQ_CoppeliaSimInterface
+class DQ_CoppeliaSimInterfaceZMQ: public DQ_CoppeliaSimInterface
 {
 public:
     enum class REFERENCE
@@ -266,7 +265,9 @@ protected:
 
 
 protected:
-    std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ::experimental> experimental_smptr_;
+    class Impl;
+    std::shared_ptr<Impl> impl_;
+
     std::string host_{"localhost"};
     int rpcPort_{23000};
 
@@ -300,6 +301,11 @@ private:
     void _join_if_joinable_chronometer_thread();
     void _start_chronometer();
     void _check_connection();
+    bool _create_client(const std::string& host,
+                        const int& rpcPort,
+                        const int& cntPort,
+                        const int& verbose_,
+                        const bool& client_flag);
     //-------------------map zone--------------------------------------------
     std::string _map_simulation_state(const int& state);
     std::unordered_map<std::string, int> handles_map_;
@@ -524,6 +530,7 @@ private:
     bool   _is_simulation_running() const;
     int    _get_simulation_state() const;
     void   _set_status_bar_message(const std::string& message) const;
+    void   __set_status_bar_message(const std::string &message, const int& verbosity_type) const;
 
 
     std::string _get_object_name(const int& handle);

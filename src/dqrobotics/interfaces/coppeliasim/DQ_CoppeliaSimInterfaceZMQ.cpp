@@ -30,16 +30,32 @@ Contributors:
 #include <RemoteAPIClient.h>
 
 
-//-------------------Private components-----------------------//
-std::unique_ptr<RemoteAPIClient> client_;
-std::unique_ptr<RemoteAPIObject::sim> sim_;
+class DQ_CoppeliaSimInterfaceZMQ::Impl
+{
 
+public:
+    std::shared_ptr<RemoteAPIClient> client_;
+    std::shared_ptr<RemoteAPIObject::sim> sim_;
+
+    Impl()
+    {
+
+    };
+};
+
+
+//-------------------Private components-----------------------//
+//std::shared_ptr<RemoteAPIClient> client_;
+//std::shared_ptr<RemoteAPIObject::sim> sim_;
+
+/*
 bool _create_client(const std::string& host = "localhost",
                     const int& rpcPort = 23000,
                     const int& cntPort = -1,
                     const int& verbose_ = -1,
                     const bool& client_flag = false);
 void __set_status_bar_message(const std::string &message, const int& verbosity_type);
+*/
 
 //------------------------------------------------------------//
 
@@ -48,9 +64,9 @@ void __set_status_bar_message(const std::string &message, const int& verbosity_t
  * @param message
  * @param verbosity_type
  */
-void __set_status_bar_message(const std::string &message, const int& verbosity_type)
+void DQ_CoppeliaSimInterfaceZMQ::__set_status_bar_message(const std::string &message, const int& verbosity_type) const
 {
-    sim_->addLog(verbosity_type, message);
+    impl_->sim_->addLog(verbosity_type, message);
 }
 
 /**
@@ -62,7 +78,7 @@ void __set_status_bar_message(const std::string &message, const int& verbosity_t
  * @param client_flag
  * @return
  */
-bool _create_client(const std::string& host,
+bool DQ_CoppeliaSimInterfaceZMQ::_create_client(const std::string& host,
                     const int& rpcPort,
                     const int& cntPort,
                     const int& verbose_,
@@ -70,8 +86,8 @@ bool _create_client(const std::string& host,
 {
     if (!client_flag)
     {
-        client_ = std::make_unique<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
-        sim_    = std::make_unique<RemoteAPIObject::sim >(client_->getObject().sim());
+        impl_->client_ = std::make_shared<RemoteAPIClient>(host, rpcPort, cntPort, verbose_);
+        impl_->sim_    = std::make_shared<RemoteAPIObject::sim>(impl_->client_->getObject().sim());
     }
     return true;
 }
@@ -84,7 +100,7 @@ bool _create_client(const std::string& host,
 DQ_CoppeliaSimInterfaceZMQ::DQ_CoppeliaSimInterfaceZMQ()
     :client_created_{false}
 {
-
+    impl_ = std::make_shared<DQ_CoppeliaSimInterfaceZMQ::Impl>();
 }
 
 /**
@@ -187,11 +203,8 @@ bool DQ_CoppeliaSimInterfaceZMQ::_connect(const std::string &host, const int &rp
 
         _join_if_joinable_chronometer_thread();
         _set_status_bar_message("       ");
-        ::__set_status_bar_message("DQ Robotics established a connection on port " + std::to_string(rpcPort),
-                                sim_->verbosity_warnings);
-
-        experimental_smptr_ = std::make_shared<DQ_CoppeliaSimInterfaceZMQ::experimental>
-            (std::make_shared<DQ_CoppeliaSimInterfaceZMQ>(this));
+        __set_status_bar_message("DQ Robotics established a connection on port " + std::to_string(rpcPort),
+                                impl_->sim_->verbosity_warnings);
     }
     catch (const std::runtime_error& e)
     {
@@ -245,7 +258,7 @@ std::string DQ_CoppeliaSimInterfaceZMQ::_map_simulation_state(const int &state)
 void DQ_CoppeliaSimInterfaceZMQ::start_simulation() const
 {
     _check_client();
-    sim_->startSimulation();
+    impl_->sim_->startSimulation();
 }
 
 /**
@@ -254,7 +267,7 @@ void DQ_CoppeliaSimInterfaceZMQ::start_simulation() const
 void DQ_CoppeliaSimInterfaceZMQ::_pause_simulation() const
 {
     _check_client();
-    sim_->pauseSimulation();
+    impl_->sim_->pauseSimulation();
 
 }
 
@@ -265,7 +278,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_pause_simulation() const
 void DQ_CoppeliaSimInterfaceZMQ::stop_simulation() const
 {
     _check_client();
-    sim_->stopSimulation();
+    impl_->sim_->stopSimulation();
 }
 
 
@@ -278,7 +291,7 @@ void DQ_CoppeliaSimInterfaceZMQ::stop_simulation() const
 void DQ_CoppeliaSimInterfaceZMQ::set_stepping_mode(const bool &flag) const
 {
     _check_client();
-    sim_->setStepping(flag);
+    impl_->sim_->setStepping(flag);
 }
 
 /**
@@ -289,7 +302,7 @@ void DQ_CoppeliaSimInterfaceZMQ::set_stepping_mode(const bool &flag) const
 double DQ_CoppeliaSimInterfaceZMQ::_get_simulation_time() const
 {
     _check_client();
-    return sim_->getSimulationTime();
+    return impl_->sim_->getSimulationTime();
 }
 
 /**
@@ -299,7 +312,7 @@ double DQ_CoppeliaSimInterfaceZMQ::_get_simulation_time() const
 void DQ_CoppeliaSimInterfaceZMQ::trigger_next_simulation_step() const
 {
     _check_client();
-    sim_->step();
+    impl_->sim_->step();
 }
 
 
@@ -311,7 +324,7 @@ void DQ_CoppeliaSimInterfaceZMQ::trigger_next_simulation_step() const
 bool DQ_CoppeliaSimInterfaceZMQ::_is_simulation_running() const
 {
     _check_client();
-    return (sim_->getSimulationState() > sim_->simulation_paused);
+    return (impl_->sim_->getSimulationState() > impl_->sim_->simulation_paused);
 }
 
 
@@ -334,7 +347,7 @@ bool DQ_CoppeliaSimInterfaceZMQ::_is_simulation_running() const
 int DQ_CoppeliaSimInterfaceZMQ::_get_simulation_state() const
 {
     _check_client();
-    return sim_->getSimulationState();
+    return impl_->sim_->getSimulationState();
 }
 
 /**
@@ -346,7 +359,7 @@ int DQ_CoppeliaSimInterfaceZMQ::_get_simulation_state() const
 void DQ_CoppeliaSimInterfaceZMQ::_set_status_bar_message(const std::string &message) const
 {
     _check_client();
-    ::__set_status_bar_message(message, sim_->verbosity_undecorated);
+    __set_status_bar_message(message, impl_->sim_->verbosity_undecorated);
 }
 
 
@@ -368,7 +381,7 @@ int DQ_CoppeliaSimInterfaceZMQ::get_object_handle(const std::string &objectname)
     {
         _check_client();
         auto standard_objectname = _get_standard_name(objectname);
-        handle = sim_->getObject(standard_objectname);
+        handle = impl_->sim_->getObject(standard_objectname);
         //If the handle is not included in the map, then the map is updated.
         _update_map(standard_objectname, handle);
     }
@@ -411,7 +424,7 @@ std::vector<int> DQ_CoppeliaSimInterfaceZMQ::get_object_handles(const std::vecto
 DQ DQ_CoppeliaSimInterfaceZMQ::_get_object_translation(const int &handle) const
 {
     _check_client();
-    auto position = sim_->getObjectPosition(handle, sim_->handle_world);
+    auto position = impl_->sim_->getObjectPosition(handle, impl_->sim_->handle_world);
     const DQ t = DQ(0, position.at(0),position.at(1),position.at(2));
     return t;
 }
@@ -440,7 +453,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_object_translation(const int &handle, cons
     VectorXd vec_t = t.vec3();
     std::vector<double> position = {vec_t[0], vec_t[1],vec_t[2]};
     _check_client();
-    sim_->setObjectPosition(handle, position,sim_->handle_world);
+    impl_->sim_->setObjectPosition(handle, position,impl_->sim_->handle_world);
 }
 
 /**
@@ -463,9 +476,9 @@ void DQ_CoppeliaSimInterfaceZMQ::set_object_translation(const std::string &objec
 DQ DQ_CoppeliaSimInterfaceZMQ::_get_object_rotation(const int &handle) const
 {
     _check_client();
-    auto rotation = sim_->getObjectQuaternion(handle +
-                                              sim_->handleflag_wxyzquat,
-                                              sim_->handle_world);
+    auto rotation = impl_->sim_->getObjectQuaternion(handle +
+                                              impl_->sim_->handleflag_wxyzquat,
+                                              impl_->sim_->handle_world);
 
     return DQ(rotation.at(0), rotation.at(1), rotation.at(2), rotation.at(3));
 }
@@ -492,7 +505,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_object_rotation(const int &handle, const D
     VectorXd vec_r = r.vec4();
     std::vector<double> rotation= {vec_r[0], vec_r[1],vec_r[2], vec_r[3]};
     _check_client();
-    sim_->setObjectQuaternion(handle + sim_->handleflag_wxyzquat, rotation, sim_->handle_world);
+    impl_->sim_->setObjectQuaternion(handle + impl_->sim_->handleflag_wxyzquat, rotation, impl_->sim_->handle_world);
 }
 
 /**
@@ -542,7 +555,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_object_pose(const int &handle, const DQ &h
     VectorXd vec_p = h.translation().vec3();
     std::vector<double> pose = {vec_p[0], vec_p[1],vec_p[2],vec_r[0], vec_r[1],vec_r[2], vec_r[3]};
     _check_client();
-    sim_->setObjectPose(handle + sim_->handleflag_wxyzquat, pose, sim_->handle_world);
+    impl_->sim_->setObjectPose(handle + impl_->sim_->handleflag_wxyzquat, pose, impl_->sim_->handle_world);
 }
 
 /**
@@ -570,7 +583,7 @@ void DQ_CoppeliaSimInterfaceZMQ::set_object_pose(const std::string &objectname, 
 double DQ_CoppeliaSimInterfaceZMQ::_get_joint_position(const int &handle) const
 {
     _check_client();
-    return double(sim_->getJointPosition(handle));
+    return double(impl_->sim_->getJointPosition(handle));
 }
 
 
@@ -622,7 +635,7 @@ VectorXd DQ_CoppeliaSimInterfaceZMQ::get_joint_positions(const std::vector<std::
 void DQ_CoppeliaSimInterfaceZMQ::_set_joint_position(const int &handle, const double &angle_rad) const
 {
     _check_client();
-    sim_->setJointPosition(handle, angle_rad);
+    impl_->sim_->setJointPosition(handle, angle_rad);
 }
 
 /**
@@ -667,7 +680,7 @@ void DQ_CoppeliaSimInterfaceZMQ::set_joint_positions(const std::vector<std::stri
 void DQ_CoppeliaSimInterfaceZMQ::_set_joint_target_position(const int &handle, const double &angle_rad) const
 {
     _check_client();
-    sim_->setJointTargetPosition(handle, angle_rad);
+    impl_->sim_->setJointTargetPosition(handle, angle_rad);
 }
 
 /**
@@ -716,7 +729,7 @@ void DQ_CoppeliaSimInterfaceZMQ::set_joint_target_positions(const std::vector<st
 double DQ_CoppeliaSimInterfaceZMQ::_get_joint_velocity(const int &handle) const
 {
     _check_client();
-    return sim_->getObjectFloatParam(handle, sim_->jointfloatparam_velocity);
+    return impl_->sim_->getObjectFloatParam(handle, impl_->sim_->jointfloatparam_velocity);
 }
 
 /**
@@ -767,7 +780,7 @@ VectorXd DQ_CoppeliaSimInterfaceZMQ::get_joint_velocities(const std::vector<std:
 void DQ_CoppeliaSimInterfaceZMQ::_set_joint_target_velocity(const int &handle, const double &angle_rad_dot) const
 {
     _check_client();
-    sim_->setJointTargetVelocity(handle, angle_rad_dot);
+    impl_->sim_->setJointTargetVelocity(handle, angle_rad_dot);
 }
 
 /**
@@ -824,8 +837,8 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_joint_torque(const int &handle, const doub
 
     //simxSetJointTargetVelocity(clientid_,handle,angle_dot_rad_max,_remap_op_mode(opmode));
     //simxSetJointForce(clientid_,handle,abs(torque_f),_remap_op_mode(opmode));
-    sim_->setJointTargetVelocity(handle, angle_dot_rad_max);
-    sim_->setJointTargetForce(handle, abs(torque));
+    impl_->sim_->setJointTargetVelocity(handle, angle_dot_rad_max);
+    impl_->sim_->setJointTargetForce(handle, abs(torque));
 }
 
 /**
@@ -874,7 +887,7 @@ void DQ_CoppeliaSimInterfaceZMQ::set_joint_torques(const std::vector<std::string
 double DQ_CoppeliaSimInterfaceZMQ::_get_joint_torque(const int &handle) const
 {
     _check_client();
-    return sim_->getJointForce(handle);
+    return impl_->sim_->getJointForce(handle);
 }
 
 /**
@@ -925,7 +938,7 @@ VectorXd DQ_CoppeliaSimInterfaceZMQ::get_joint_torques(const std::vector<std::st
 std::string DQ_CoppeliaSimInterfaceZMQ::_get_object_name(const int &handle)
 {
     _check_client();
-    std::string objectname = sim_->getObjectAlias(handle, 1);
+    std::string objectname = impl_->sim_->getObjectAlias(handle, 1);
     _update_map(objectname, handle);
     return objectname;
 }
@@ -973,8 +986,8 @@ std::vector<std::string> DQ_CoppeliaSimInterfaceZMQ::_get_jointnames_from_parent
 {
     int base_handle = _get_handle_from_map(parent_objectname);
     _check_client();
-    std::vector<int64_t> jointhandles = sim_->getObjectsInTree(base_handle,
-                                        sim_->object_joint_type,
+    std::vector<int64_t> jointhandles = impl_->sim_->getObjectsInTree(base_handle,
+                                        impl_->sim_->object_joint_type,
                                         0);
     return _get_object_names(jointhandles);
 
@@ -992,14 +1005,14 @@ std::vector<std::string> DQ_CoppeliaSimInterfaceZMQ::_get_shapenames_from_parent
 {
     int base_handle = _get_handle_from_map(parent_objectname);
     _check_client();
-    std::vector<int64_t> shapehandles = sim_->getObjectsInTree(base_handle,
-                                                               sim_->object_shape_type,
+    std::vector<int64_t> shapehandles = impl_->sim_->getObjectsInTree(base_handle,
+                                                               impl_->sim_->object_shape_type,
                                                                0);
     size_t handlesizes = shapehandles.size();
     std::vector<int64_t> dynamic_features(handlesizes, 0);
 
     for (size_t i=0; i<handlesizes;i++) // 0 is dynamic.  1 is static
-        dynamic_features.at(i) = sim_->getObjectInt32Param(shapehandles.at(i), sim_->shapeintparam_static);
+        dynamic_features.at(i) = impl_->sim_->getObjectInt32Param(shapehandles.at(i), impl_->sim_->shapeintparam_static);
 
     std::vector<int64_t> aux_shapehandles;
     switch (shape_type) {
@@ -1036,7 +1049,7 @@ VectorXd DQ_CoppeliaSimInterfaceZMQ::_get_angular_and_linear_velocities(const in
     _check_client();
     for (size_t i=0; i < params.size(); i++)
     {
-        v(i) = sim_->getObjectFloatParam(handle, params.at(i));
+        v(i) = impl_->sim_->getObjectFloatParam(handle, params.at(i));
     }
     if (reference == REFERENCE::BODY_FRAME)
     {
@@ -1090,10 +1103,10 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_angular_and_linear_velocities(const int &h
         v.tail(3) = p_dot_a.vec3();
     }
     _check_client();
-    sim_->resetDynamicObject(handle);
+    impl_->sim_->resetDynamicObject(handle);
     for (size_t i=0; i < params.size(); i++)
     {
-        sim_->setObjectFloatParam(handle, params.at(i), v(i));
+        impl_->sim_->setObjectFloatParam(handle, params.at(i), v(i));
     }
 }
 
@@ -1190,16 +1203,16 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_joint_mode(const std::string &jointname, c
     switch (joint_mode)
         {
         case JOINT_MODE::KINEMATIC:
-                    jointMode = sim_->jointmode_kinematic;
+                    jointMode = impl_->sim_->jointmode_kinematic;
                     break;
         case JOINT_MODE::DYNAMIC:
-                    jointMode = sim_->jointmode_dynamic;
+                    jointMode = impl_->sim_->jointmode_dynamic;
                     break;
         case JOINT_MODE::DEPENDENT:
-                    jointMode = sim_->jointmode_dependent;
+                    jointMode = impl_->sim_->jointmode_dependent;
                     break;
         }
-        sim_->setJointMode(_get_handle_from_map(jointname), jointMode, 0);
+        impl_->sim_->setJointMode(_get_handle_from_map(jointname), jointMode, 0);
 }
 
 /**
@@ -1225,29 +1238,29 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_joint_control_mode(const std::string &join
     switch (joint_control_mode)
     {
     case JOINT_CONTROL_MODE::FREE:
-        control_mode = sim_->jointdynctrl_free;
+        control_mode = impl_->sim_->jointdynctrl_free;
         break;
     case JOINT_CONTROL_MODE::FORCE:
-        control_mode = sim_->jointdynctrl_force;
+        control_mode = impl_->sim_->jointdynctrl_force;
         break;
     case JOINT_CONTROL_MODE::VELOCITY:
-        control_mode = sim_->jointdynctrl_velocity;
+        control_mode = impl_->sim_->jointdynctrl_velocity;
         break;
     case JOINT_CONTROL_MODE::POSITION:
-        control_mode = sim_->jointdynctrl_position;
+        control_mode = impl_->sim_->jointdynctrl_position;
         break;
     case JOINT_CONTROL_MODE::SPRING:
-        control_mode = sim_->jointdynctrl_spring;
+        control_mode = impl_->sim_->jointdynctrl_spring;
         break;
     case JOINT_CONTROL_MODE::CUSTOM:
-        control_mode = sim_->jointdynctrl_callback;
+        control_mode = impl_->sim_->jointdynctrl_callback;
         break;
     case JOINT_CONTROL_MODE::TORQUE:
-        control_mode = sim_->jointdynctrl_velocity;
+        control_mode = impl_->sim_->jointdynctrl_velocity;
         break;
     }
-    sim_->setObjectInt32Param(_get_handle_from_map(jointname),
-                              sim_->jointintparam_dynctrlmode,
+    impl_->sim_->setObjectInt32Param(_get_handle_from_map(jointname),
+                              impl_->sim_->jointintparam_dynctrlmode,
                               control_mode);
 }
 
@@ -1271,7 +1284,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_joint_control_modes(const std::vector<std:
 void DQ_CoppeliaSimInterfaceZMQ::_enable_dynamics(const bool &flag)
 {
    _check_client();
-   sim_->setBoolParam(sim_->boolparam_dynamics_handling_enabled, flag);
+   impl_->sim_->setBoolParam(impl_->sim_->boolparam_dynamics_handling_enabled, flag);
 }
 
 /**
@@ -1281,7 +1294,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_enable_dynamics(const bool &flag)
 double DQ_CoppeliaSimInterfaceZMQ::_get_simulation_time_step() const
 {
     _check_client();
-    return sim_->getFloatParam(sim_->floatparam_simulation_time_step);
+    return impl_->sim_->getFloatParam(impl_->sim_->floatparam_simulation_time_step);
 }
 
 /**
@@ -1291,7 +1304,7 @@ double DQ_CoppeliaSimInterfaceZMQ::_get_simulation_time_step() const
 void DQ_CoppeliaSimInterfaceZMQ::_set_simulation_time_step(const double &time_step)
 {
     _check_client();
-    sim_->setFloatParam(sim_->floatparam_simulation_time_step, time_step);
+    impl_->sim_->setFloatParam(impl_->sim_->floatparam_simulation_time_step, time_step);
 }
 
 /**
@@ -1301,7 +1314,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_simulation_time_step(const double &time_st
 double DQ_CoppeliaSimInterfaceZMQ::_get_physics_time_step() const
 {
     _check_client();
-    return sim_->getFloatParam(sim_->floatparam_physicstimestep);
+    return impl_->sim_->getFloatParam(impl_->sim_->floatparam_physicstimestep);
 }
 
 /**
@@ -1311,7 +1324,7 @@ double DQ_CoppeliaSimInterfaceZMQ::_get_physics_time_step() const
 void DQ_CoppeliaSimInterfaceZMQ::_set_physics_time_step(const double &time_step) const
 {
     _check_client();
-    sim_->setFloatParam(sim_->floatparam_physicstimestep, time_step);
+    impl_->sim_->setFloatParam(impl_->sim_->floatparam_physicstimestep, time_step);
 }
 
 /**
@@ -1321,7 +1334,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_physics_time_step(const double &time_step)
 void DQ_CoppeliaSimInterfaceZMQ::_set_engine(const ENGINE &engine)
 {
     _check_client();
-    sim_->setInt32Param(sim_->intparam_dynamic_engine, engines_.at(engine));
+    impl_->sim_->setInt32Param(impl_->sim_->intparam_dynamic_engine, engines_.at(engine));
 }
 
 std::string DQ_CoppeliaSimInterfaceZMQ::get_engine()
@@ -1351,7 +1364,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_gravity(const DQ &gravity)
     VectorXd gravity_vec = gravity.vec3();
     std::vector<double> g = {gravity_vec(0),gravity_vec(1), gravity_vec(2)};
     _check_client();
-    sim_->setArrayParam(sim_->arrayparam_gravity, g);
+    impl_->sim_->setArrayParam(impl_->sim_->arrayparam_gravity, g);
 }
 
 /**
@@ -1361,7 +1374,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_gravity(const DQ &gravity)
 DQ DQ_CoppeliaSimInterfaceZMQ::_get_gravity() const
 {
     _check_client();
-    std::vector<double> g = sim_->getArrayParam(sim_->arrayparam_gravity);
+    std::vector<double> g = impl_->sim_->getArrayParam(impl_->sim_->arrayparam_gravity);
     return DQ(0, g.at(0), g.at(1), g.at(2));
 }
 
@@ -1377,7 +1390,7 @@ DQ DQ_CoppeliaSimInterfaceZMQ::_get_gravity() const
 void DQ_CoppeliaSimInterfaceZMQ::_load_scene(const std::string &path_to_filename) const
 {
     _check_client();
-    sim_->loadScene(path_to_filename);
+    impl_->sim_->loadScene(path_to_filename);
 }
 
 /**
@@ -1392,7 +1405,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_load_scene(const std::string &path_to_filename
 void DQ_CoppeliaSimInterfaceZMQ::_save_scene(const std::string &path_to_filename) const
 {
     _check_client();
-    sim_->saveScene(path_to_filename);
+    impl_->sim_->saveScene(path_to_filename);
 }
 
 /**
@@ -1401,7 +1414,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_save_scene(const std::string &path_to_filename
 void DQ_CoppeliaSimInterfaceZMQ::_close_scene() const
 {
     _check_client();
-    sim_->closeScene();
+    impl_->sim_->closeScene();
 }
 
 /**
@@ -1416,7 +1429,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_remove_child_script_from_object(const std::str
     if (_object_exist_on_scene(_get_standard_name(objectname)+script_name))
     {
         int handle = _get_handle_from_map(_get_standard_name(objectname)+script_name);
-        sim_->removeObjects({handle}, false);
+        impl_->sim_->removeObjects({handle}, false);
     }
 }
 
@@ -1430,7 +1443,7 @@ bool DQ_CoppeliaSimInterfaceZMQ::_object_exist_on_scene(const std::string &objec
     std::optional<json> options = {{"noError", false}};
     try {
         _check_client();
-        auto rtn = sim_->getObject(_get_standard_name(objectname), options);
+        auto rtn = impl_->sim_->getObject(_get_standard_name(objectname), options);
         return (rtn != -1) ? true : false;
     } catch (...) {
         return false;
@@ -1441,7 +1454,7 @@ bool DQ_CoppeliaSimInterfaceZMQ::_object_exist_on_scene(const std::string &objec
 void DQ_CoppeliaSimInterfaceZMQ::_set_object_name(const int &handle, const std::string &new_object_name) const
 {
     _check_client();
-    sim_->setObjectAlias(handle, new_object_name);
+    impl_->sim_->setObjectAlias(handle, new_object_name);
 }
 
 /**
@@ -1459,8 +1472,8 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_object_color(const int &handle,
                                                const std::vector<double> &rgba_color) const
 {
     _check_client();
-    sim_->setShapeColor(handle, "", sim_->colorcomponent_ambient_diffuse, {rgba_color.at(0), rgba_color.at(1),rgba_color.at(2)});
-    sim_->setShapeColor(handle, "", sim_->colorcomponent_transparency, {rgba_color.at(3)});
+    impl_->sim_->setShapeColor(handle, "", impl_->sim_->colorcomponent_ambient_diffuse, {rgba_color.at(0), rgba_color.at(1),rgba_color.at(2)});
+    impl_->sim_->setShapeColor(handle, "", impl_->sim_->colorcomponent_transparency, {rgba_color.at(3)});
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_object_color(const std::string &objectname, const std::vector<double>& rgba_color)
@@ -1477,8 +1490,8 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_object_color(const std::string &objectname
 void DQ_CoppeliaSimInterfaceZMQ::_set_object_as_respondable(const int &handle, const bool &respondable_object) const
 {
     _check_client();
-    sim_->setObjectInt32Param(handle,
-                              sim_->shapeintparam_respondable,
+    impl_->sim_->setObjectInt32Param(handle,
+                              impl_->sim_->shapeintparam_respondable,
                               (respondable_object == true ? 1 : 0));
 }
 
@@ -1491,8 +1504,8 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_object_as_respondable(const std::string &o
 void DQ_CoppeliaSimInterfaceZMQ::_set_object_as_static(const int &handle, const bool &static_object) const
 {
     _check_client();
-    sim_->setObjectInt32Param(handle,
-                              sim_->shapeintparam_static,
+    impl_->sim_->setObjectInt32Param(handle,
+                              impl_->sim_->shapeintparam_static,
                               (static_object == true ? 1 : 0));
 }
 
@@ -1510,7 +1523,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_object_as_static(const std::string &object
 void DQ_CoppeliaSimInterfaceZMQ::_set_object_parent(const int &handle, const int &parent_handle, const bool &move_child_to_parent_pose) const
 {
     _check_client();
-    sim_->setObjectParent(handle, parent_handle, !move_child_to_parent_pose);
+    impl_->sim_->setObjectParent(handle, parent_handle, !move_child_to_parent_pose);
 }
 
 /**
@@ -1534,7 +1547,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_object_parent(const std::string &objectnam
 bool DQ_CoppeliaSimInterfaceZMQ::_check_collision(const int &handle1, const int &handle2) const
 {
     _check_client();
-    auto [result, collidingObjectHandles] = sim_->checkCollision(handle1, handle2);
+    auto [result, collidingObjectHandles] = impl_->sim_->checkCollision(handle1, handle2);
     return result;
 }
 
@@ -1559,7 +1572,7 @@ bool DQ_CoppeliaSimInterfaceZMQ::_check_collision(const std::string &objectname1
 std::tuple<double, DQ, DQ> DQ_CoppeliaSimInterfaceZMQ::_check_distance(const int &handle1, const int &handle2, const double &threshold) const
 {
     _check_client();
-    auto [result, data, objectHandlePair] = sim_->checkDistance(handle1, handle2, threshold);
+    auto [result, data, objectHandlePair] = impl_->sim_->checkDistance(handle1, handle2, threshold);
          //[obj1X obj1Y obj1Z obj2X obj2Y obj2Z dist]
     DQ point1 = DQ(0, data.at(0), data.at(1), data.at(2));
     DQ point2 = DQ(0, data.at(3), data.at(4), data.at(5));
@@ -1697,11 +1710,11 @@ void DQ_CoppeliaSimInterfaceZMQ::_create_cylinder(const std::string &name, const
  */
 void DQ_CoppeliaSimInterfaceZMQ::_merge_shapes(const int &parent_handle) const
 {
-    std::vector<int64_t> shapehandles = sim_->getObjectsInTree(parent_handle, //_get_handle_from_map(name),
-                                                               sim_->object_shape_type,
+    std::vector<int64_t> shapehandles = impl_->sim_->getObjectsInTree(parent_handle, //_get_handle_from_map(name),
+                                                               impl_->sim_->object_shape_type,
                                                                0);
     std::reverse(shapehandles.begin(), shapehandles.end());
-    sim_->groupShapes(shapehandles, false);
+    impl_->sim_->groupShapes(shapehandles, false);
 }
 
 
@@ -1743,8 +1756,8 @@ void DQ_CoppeliaSimInterfaceZMQ::_draw_permanent_trajectory(const DQ &point, con
     }
     VectorXd vpoint = point.vec3();
     std::vector<double> itemdata = {0,0,0,vpoint(0), vpoint(1), vpoint(2)};
-    auto drawn_handle = sim_->addDrawingObject(sim_->drawing_lines+sim_->drawing_cyclic,size,0,-1,max_item_count, color);
-    sim_->addDrawingObjectItem(
+    auto drawn_handle = impl_->sim_->addDrawingObject(impl_->sim_->drawing_lines+impl_->sim_->drawing_cyclic,size,0,-1,max_item_count, color);
+    impl_->sim_->addDrawingObjectItem(
         drawn_handle,
         itemdata
         );
@@ -1759,7 +1772,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_draw_permanent_trajectory(const DQ &point, con
 int DQ_CoppeliaSimInterfaceZMQ::_add_simulation_lua_script(const std::string &script_name, const std::string& script_code)
 {
     _check_client();
-    int scriptHandle = sim_->createScript(sim_->scripttype_simulation,
+    int scriptHandle = impl_->sim_->createScript(impl_->sim_->scripttype_simulation,
                                           script_code, 0, "lua");
     _set_object_name(scriptHandle, _remove_first_slash_from_string(script_name));
     return scriptHandle;
@@ -1828,17 +1841,17 @@ void DQ_CoppeliaSimInterfaceZMQ::_remove_object(const std::string& objectname, c
 
     if (remove_children)
     {
-        auto handles = sim_->getObjectsInTree(handle, sim_->handle_all, 0);
+        auto handles = impl_->sim_->getObjectsInTree(handle, impl_->sim_->handle_all, 0);
         if (handles.size() > 0)
         {
             auto objectnames = _get_object_names(handles);
-            sim_->removeObjects(handles, false);
+            impl_->sim_->removeObjects(handles, false);
             for (std::size_t i=0; i<objectnames.size();i++)
                 _update_map(_get_standard_name(objectnames.at(i)), handles.at(i), UPDATE_MAP::REMOVE);
         }
     }else
     {
-        sim_->removeObjects({handle}, false);
+        impl_->sim_->removeObjects({handle}, false);
         _update_map(standard_objectname, handle, UPDATE_MAP::REMOVE);
     }
 }
@@ -1851,7 +1864,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_remove_object(const std::string& objectname, c
 std::vector<double> DQ_CoppeliaSimInterfaceZMQ::_get_bounding_box_size(const int &handle) const
 {
     _check_client();
-    auto [size, pose] = sim_->getShapeBB(handle);
+    auto [size, pose] = impl_->sim_->getShapeBB(handle);
     return size;
 }
 
@@ -1890,7 +1903,7 @@ bool DQ_CoppeliaSimInterfaceZMQ::_mujoco_is_used()
  */
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_impratio(const double &impratio)
 {
-    sim_->setEngineFloatParam(sim_->mujoco_global_impratio,-1, impratio);
+    impl_->sim_->setEngineFloatParam(impl_->sim_->mujoco_global_impratio,-1, impratio);
 }
 
 /**
@@ -1901,13 +1914,13 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_impratio(const double &impra
  */
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_wind(const std::vector<double> &wind)
 {
-    std::vector<int64_t> mujoco_global_param= {sim_->mujoco_global_wind1,
-                                               sim_->mujoco_global_wind2,
-                                               sim_->mujoco_global_wind3};
+    std::vector<int64_t> mujoco_global_param= {impl_->sim_->mujoco_global_wind1,
+                                               impl_->sim_->mujoco_global_wind2,
+                                               impl_->sim_->mujoco_global_wind3};
     _check_sizes(wind, mujoco_global_param, "Error in DQ_CoppeliaSimInterface::set_mujoco_global_wind: "
                                             "argument must be a vector of size "+std::to_string(mujoco_global_param.size()));
     for (size_t i=0;i<wind.size();i++)
-        sim_->setEngineFloatParam(mujoco_global_param.at(i),-1, wind.at(i));
+        impl_->sim_->setEngineFloatParam(mujoco_global_param.at(i),-1, wind.at(i));
 }
 
 /**
@@ -1918,7 +1931,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_wind(const std::vector<doubl
  */
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_density(const double &density)
 {
-    sim_->setEngineFloatParam(sim_->mujoco_global_density,-1, density);
+    impl_->sim_->setEngineFloatParam(impl_->sim_->mujoco_global_density,-1, density);
 }
 
 
@@ -1938,86 +1951,86 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_density(const double &densit
  */
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_viscosity(const double &viscosity)
 {
-    sim_->setEngineFloatParam(sim_->mujoco_global_viscosity,-1, viscosity);
+    impl_->sim_->setEngineFloatParam(impl_->sim_->mujoco_global_viscosity,-1, viscosity);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_boundmass(const double &boundmass)
 {
-    sim_->setEngineFloatParam(sim_->mujoco_global_boundmass,-1, boundmass);
+    impl_->sim_->setEngineFloatParam(impl_->sim_->mujoco_global_boundmass,-1, boundmass);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_boundinertia(const double &boundinertia)
 {
-    sim_->setEngineFloatParam(sim_->mujoco_global_boundinertia,-1, boundinertia);
+    impl_->sim_->setEngineFloatParam(impl_->sim_->mujoco_global_boundinertia,-1, boundinertia);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_overridemargin(const double &overridemargin)
 {
-    sim_->setEngineFloatParam(sim_->mujoco_global_overridemargin,-1, overridemargin);
+    impl_->sim_->setEngineFloatParam(impl_->sim_->mujoco_global_overridemargin,-1, overridemargin);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_overridesolref(const std::vector<double> &overridesolref)
 {
-    std::vector<int64_t> mujoco_global_param = {sim_->mujoco_global_overridesolref1,
-                                                sim_->mujoco_global_overridesolref2};
+    std::vector<int64_t> mujoco_global_param = {impl_->sim_->mujoco_global_overridesolref1,
+                                                impl_->sim_->mujoco_global_overridesolref2};
     _check_sizes(overridesolref, mujoco_global_param, "Error in DQ_CoppeliaSimInterface::set_mujoco_global_overridesolref: "
                                                       "argument must be a vector of size "+std::to_string(mujoco_global_param.size()));
     for (size_t i=0;i<overridesolref.size();i++)
-        sim_->setEngineFloatParam(mujoco_global_param.at(i),-1, overridesolref.at(i));
+        impl_->sim_->setEngineFloatParam(mujoco_global_param.at(i),-1, overridesolref.at(i));
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_overridesolimp(const std::vector<double> &overridesolimp)
 {
-    std::vector<int64_t> mujoco_global_param = {sim_->mujoco_global_overridesolimp1,
-                                                sim_->mujoco_global_overridesolimp2,
-                                                sim_->mujoco_global_overridesolimp3,
-                                                sim_->mujoco_global_overridesolimp4,
-                                                sim_->mujoco_global_overridesolimp5,
+    std::vector<int64_t> mujoco_global_param = {impl_->sim_->mujoco_global_overridesolimp1,
+                                                impl_->sim_->mujoco_global_overridesolimp2,
+                                                impl_->sim_->mujoco_global_overridesolimp3,
+                                                impl_->sim_->mujoco_global_overridesolimp4,
+                                                impl_->sim_->mujoco_global_overridesolimp5,
                                                 };
     _check_sizes(overridesolimp, mujoco_global_param, "Error in DQ_CoppeliaSimInterface::set_mujoco_global_overridesolimp: "
                                                       "argument must be a vector of size "+std::to_string(mujoco_global_param.size()));
     for (size_t i=0;i<overridesolimp.size();i++)
-        sim_->setEngineFloatParam(mujoco_global_param.at(i),-1, overridesolimp.at(i));
+        impl_->sim_->setEngineFloatParam(mujoco_global_param.at(i),-1, overridesolimp.at(i));
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_iterations(const int &iterations)
 {
-    sim_->setEngineInt32Param(sim_->mujoco_global_iterations,-1, iterations);
+    impl_->sim_->setEngineInt32Param(impl_->sim_->mujoco_global_iterations,-1, iterations);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_integrator(const int &integrator)
 {
-    sim_->setEngineInt32Param(sim_->mujoco_global_integrator,-1, integrator);
+    impl_->sim_->setEngineInt32Param(impl_->sim_->mujoco_global_integrator,-1, integrator);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_solver(const int &solver)
 {
-    sim_->setEngineInt32Param(sim_->mujoco_global_solver,-1, solver);
+    impl_->sim_->setEngineInt32Param(impl_->sim_->mujoco_global_solver,-1, solver);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_njmax(const int &njmax)
 {
-    sim_->setEngineInt32Param(sim_->mujoco_global_njmax,-1, njmax);
+    impl_->sim_->setEngineInt32Param(impl_->sim_->mujoco_global_njmax,-1, njmax);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_nstack(const int &nstack)
 {
-    sim_->setEngineInt32Param(sim_->mujoco_global_nstack,-1, nstack);
+    impl_->sim_->setEngineInt32Param(impl_->sim_->mujoco_global_nstack,-1, nstack);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_nconmax(const int &nconmax)
 {
-    sim_->setEngineInt32Param(sim_->mujoco_global_nconmax,-1, nconmax);
+    impl_->sim_->setEngineInt32Param(impl_->sim_->mujoco_global_nconmax,-1, nconmax);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_cone(const int &cone)
 {
-    sim_->setEngineInt32Param(sim_->mujoco_global_cone,-1, cone);
+    impl_->sim_->setEngineInt32Param(impl_->sim_->mujoco_global_cone,-1, cone);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_overridekin(const int &overridekin)
 {
-    sim_->setEngineInt32Param(sim_->mujoco_global_overridekin,-1, overridekin);
+    impl_->sim_->setEngineInt32Param(impl_->sim_->mujoco_global_overridekin,-1, overridekin);
 }
 
 /*
@@ -2029,27 +2042,27 @@ void DQ_CoppeliaSimInterfaceZMQ::set_mujoco_global_rebuildcondition(const int &r
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_computeinertias(const bool &computeinertias)
 {
-   sim_->setEngineBoolParam(sim_->mujoco_global_computeinertias,-1, computeinertias);
+   impl_->sim_->setEngineBoolParam(impl_->sim_->mujoco_global_computeinertias,-1, computeinertias);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_multithreaded(const bool &multithreaded)
 {
-   sim_->setEngineBoolParam(sim_->mujoco_global_multithreaded,-1, multithreaded);
+   impl_->sim_->setEngineBoolParam(impl_->sim_->mujoco_global_multithreaded,-1, multithreaded);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_multiccd(const bool &multiccd)
 {
-   sim_->setEngineBoolParam(sim_->mujoco_global_multiccd,-1, multiccd);
+   impl_->sim_->setEngineBoolParam(impl_->sim_->mujoco_global_multiccd,-1, multiccd);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_balanceinertias(const bool &balanceinertias)
 {
-   sim_->setEngineBoolParam(sim_->mujoco_global_balanceinertias,-1, balanceinertias);
+   impl_->sim_->setEngineBoolParam(impl_->sim_->mujoco_global_balanceinertias,-1, balanceinertias);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_overridecontacts(const bool &overridecontacts)
 {
-    sim_->setEngineBoolParam(sim_->mujoco_global_overridecontacts,-1, overridecontacts);
+    impl_->sim_->setEngineBoolParam(impl_->sim_->mujoco_global_overridecontacts,-1, overridecontacts);
 }
 
 /**
@@ -2063,7 +2076,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_global_overridecontacts(const bool 
  */
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_joint_stiffness(const std::string &jointname, const double &stiffness)
 {
-   sim_->setEngineFloatParam(sim_->mujoco_joint_stiffness,_get_handle_from_map(jointname), stiffness);
+   impl_->sim_->setEngineFloatParam(impl_->sim_->mujoco_joint_stiffness,_get_handle_from_map(jointname), stiffness);
 }
 
 /**
@@ -2085,7 +2098,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_joint_stiffnesses(const std::vector
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_joint_damping(const std::string &jointname, const double &damping)
 {
-    sim_->setEngineFloatParam(sim_->mujoco_joint_damping, _get_handle_from_map(jointname), damping);
+    impl_->sim_->setEngineFloatParam(impl_->sim_->mujoco_joint_damping, _get_handle_from_map(jointname), damping);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_joint_dampings(const std::vector<std::string> &jointnames,
@@ -2111,7 +2124,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_joint_dampings(const std::vector<st
  */
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_joint_armature(const std::string &jointname, const double &armature)
 {
-   sim_->setEngineFloatParam(sim_->mujoco_joint_armature,_get_handle_from_map(jointname), armature);
+   impl_->sim_->setEngineFloatParam(impl_->sim_->mujoco_joint_armature,_get_handle_from_map(jointname), armature);
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_joint_armatures(const std::vector<std::string> &jointnames,
@@ -2123,13 +2136,13 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_joint_armatures(const std::vector<s
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_body_friction(const std::string &bodyname, const std::vector<double> &friction)
 {
-    std::vector<int64_t> mujoco_body_param = {sim_->mujoco_body_friction1,
-                                              sim_->mujoco_body_friction2,
-                                              sim_->mujoco_body_friction3};
+    std::vector<int64_t> mujoco_body_param = {impl_->sim_->mujoco_body_friction1,
+                                              impl_->sim_->mujoco_body_friction2,
+                                              impl_->sim_->mujoco_body_friction3};
     _check_sizes(friction, mujoco_body_param, "Error in DQ_CoppeliaSimInterface::set_mujoco_body_friction: "
                                               "friction must be a vector of size "+std::to_string(mujoco_body_param.size()));
     for (size_t i=0;i<mujoco_body_param.size();i++)
-        sim_->setEngineFloatParam(mujoco_body_param.at(i), _get_handle_from_map(bodyname),friction.at(i));
+        impl_->sim_->setEngineFloatParam(mujoco_body_param.at(i), _get_handle_from_map(bodyname),friction.at(i));
 }
 
 void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_body_frictions(const std::vector<std::string> &bodynames, const std::vector<double> &friction)
@@ -2149,7 +2162,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_mujoco_body_frictions(const std::vector<st
 double DQ_CoppeliaSimInterfaceZMQ::_get_mass(const int &handle) const
 {
    _check_client();
-   return sim_->getShapeMass(handle);
+   return impl_->sim_->getShapeMass(handle);
 }
 
 /**
@@ -2289,8 +2302,6 @@ bool DQ_CoppeliaSimInterfaceZMQ::connect(const int &port,
     return connect("localhost", _get_port_from_deprecated_default_port(port), TIMEOUT_IN_MILISECONDS);
 }
 
-
-
 bool DQ_CoppeliaSimInterfaceZMQ::connect(const std::string &ip,
                                          const int &port,
                                          const int &TIMEOUT_IN_MILISECONDS,
@@ -2359,7 +2370,7 @@ std::string DQ_CoppeliaSimInterfaceZMQ::_get_standard_name(const std::string &st
 DQ_CoppeliaSimInterfaceZMQ::ENGINE DQ_CoppeliaSimInterfaceZMQ::_get_engine()
 {
     _check_client();
-    int64_t eng = sim_->getInt32Param(sim_->intparam_dynamic_engine);
+    int64_t eng = impl_->sim_->getInt32Param(impl_->sim_->intparam_dynamic_engine);
     return engines_invmap.at(eng);
 }
 
@@ -2370,19 +2381,19 @@ DQ_CoppeliaSimInterfaceZMQ::ENGINE DQ_CoppeliaSimInterfaceZMQ::_get_engine()
  */
 std::vector<int> DQ_CoppeliaSimInterfaceZMQ::_get_velocity_const_params() const
 {
-    std::vector<int> params = {sim_->shapefloatparam_init_velocity_a,
-        sim_->shapefloatparam_init_velocity_b,
-        sim_->shapefloatparam_init_velocity_g,
-        sim_->shapefloatparam_init_velocity_x,
-        sim_->shapefloatparam_init_velocity_y,
-        sim_->shapefloatparam_init_velocity_z
+    std::vector<int> params = {impl_->sim_->shapefloatparam_init_velocity_a,
+        impl_->sim_->shapefloatparam_init_velocity_b,
+        impl_->sim_->shapefloatparam_init_velocity_g,
+        impl_->sim_->shapefloatparam_init_velocity_x,
+        impl_->sim_->shapefloatparam_init_velocity_y,
+        impl_->sim_->shapefloatparam_init_velocity_z
     };
     return params;
 }
 
 std::string DQ_CoppeliaSimInterfaceZMQ::_get_resources_path() const
 {
-    return sim_->getStringParam(sim_->stringparam_resourcesdir);
+    return impl_->sim_->getStringParam(impl_->sim_->stringparam_resourcesdir);
 }
 
 /**
@@ -2395,7 +2406,7 @@ bool DQ_CoppeliaSimInterfaceZMQ::_load_model(const std::string &path_to_filename
                                           const std::string &desired_model_name,
                                           const bool &remove_child_script)
 {
-    int rtn = sim_->loadModel(path_to_filename);
+    int rtn = impl_->sim_->loadModel(path_to_filename);
     if (rtn != -1)
     {
         _set_object_name(rtn, _remove_first_slash_from_string(desired_model_name));
@@ -2467,7 +2478,7 @@ int DQ_CoppeliaSimInterfaceZMQ::_add_primitive(const PRIMITIVE &primitive, const
     if (!_object_exist_on_scene(name))
     {
         _check_client();
-        int shapeHandle = sim_->createPrimitiveShape(_get_primitive_identifier(primitive), sizes, 0);
+        int shapeHandle = impl_->sim_->createPrimitiveShape(_get_primitive_identifier(primitive), sizes, 0);
         _set_object_name(shapeHandle, _remove_first_slash_from_string(name));
         return shapeHandle;
     }else
@@ -2554,19 +2565,19 @@ int DQ_CoppeliaSimInterfaceZMQ::_get_primitive_identifier(const PRIMITIVE &primi
     switch (primitive)
     {
     case PRIMITIVE::PLANE:
-        return sim_->primitiveshape_plane;
+        return impl_->sim_->primitiveshape_plane;
     case PRIMITIVE::DISC:
-        return sim_->primitiveshape_disc;
+        return impl_->sim_->primitiveshape_disc;
     case PRIMITIVE::CUBOID:
-        return sim_->primitiveshape_cuboid;
+        return impl_->sim_->primitiveshape_cuboid;
     case PRIMITIVE::SPHEROID:
-        return sim_->primitiveshape_spheroid;
+        return impl_->sim_->primitiveshape_spheroid;
     case PRIMITIVE::CYLINDER:
-        return sim_->primitiveshape_cylinder;
+        return impl_->sim_->primitiveshape_cylinder;
     case PRIMITIVE::CONE:
-        return sim_->primitiveshape_cone;
+        return impl_->sim_->primitiveshape_cone;
     case PRIMITIVE::CAPSULE:
-        return sim_->primitiveshape_capsule;
+        return impl_->sim_->primitiveshape_capsule;
     default: // This line is required in GNU/Linux
         _throw_runtime_error("wrong argument");
 
@@ -2599,7 +2610,7 @@ std::tuple<DQ, MatrixXd> DQ_CoppeliaSimInterfaceZMQ::_get_center_of_mass_and_ine
 {
     std::vector<double> inertia_matrix_coeff;
     std::vector<double> center_of_mass_coeff;
-    std::tie(inertia_matrix_coeff, center_of_mass_coeff) = sim_->getShapeInertia(handle);
+    std::tie(inertia_matrix_coeff, center_of_mass_coeff) = impl_->sim_->getShapeInertia(handle);
 
     MatrixXd Inertia_maxtrix_body_frame = Map<VectorXd>(inertia_matrix_coeff.data(),
                                                         inertia_matrix_coeff.size()).reshaped(3,3);
