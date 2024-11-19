@@ -40,7 +40,7 @@ using namespace Eigen;
 
 
 class DQ_CoppeliaSimInterfaceZMQ
-    : public DQ_CoppeliaSimInterface, std::enable_shared_from_this<DQ_CoppeliaSimInterfaceZMQ>
+    : public DQ_CoppeliaSimInterface
 {
 public:
     enum class REFERENCE
@@ -145,15 +145,15 @@ public:
 
     //-----------------------------------------------------------------------------------------------------//
     //---------------Experimental methods------------------------------------------------------------------//
+protected:
     class experimental
     {
     private:
         std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> smptr_;
 
-    protected:
+    public:
         [[deprecated("This unstable class aims to test concepts and prototypes. Do not use it in production.")]]
-        experimental();
-        void _set_smptr(std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ>& smptr);
+        experimental(const std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ>& smptr);
 
         void plot_reference_frame(const std::string& name,
                                   const DQ& pose,
@@ -266,13 +266,12 @@ public:
 
 
 protected:
-    std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> _get_own_smptr();
+    std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ::experimental> experimental_smptr_;
     std::string host_{"localhost"};
     int rpcPort_{23000};
 
 
 private:
-    std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> outer_own_smptr_;
     int cntPort_{-1};
     int verbose_{-1};
 

@@ -95,3 +95,9 @@ INSTALL(FILES
 #    src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZMQRobot.cpp
 #    src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZMQRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/coppeliasim/robots")
+
+
+add_executable(general_tests src/main.cpp)
+target_link_libraries(general_tests PRIVATE
+                    dqrobotics
+                    ${PROJECT_NAME})

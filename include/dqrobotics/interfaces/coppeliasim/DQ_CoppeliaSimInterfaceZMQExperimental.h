@@ -1,15 +1,14 @@
 #pragma once
 #include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterfaceZMQ.h>
 
-class DQ_CoppeliaSimInterfaceZMQExperimental: public DQ_CoppeliaSimInterfaceZMQ, public DQ_CoppeliaSimInterfaceZMQ::experimental
+class DQ_CoppeliaSimInterfaceZMQExperimental: public DQ_CoppeliaSimInterfaceZMQ
 {
 protected:
     std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ::experimental> vi_exp_;
+    std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> vi_;
 public:
     DQ_CoppeliaSimInterfaceZMQExperimental();
-    bool connect(const std::string& host = "localhost",
-                 const int& port = 23000,
-                 const int&TIMEOUT_IN_MILISECONDS = 300) override;
+
     void plot_reference_frame(const std::string& name,
                               const DQ& pose,
                               const double& scale = 1,
