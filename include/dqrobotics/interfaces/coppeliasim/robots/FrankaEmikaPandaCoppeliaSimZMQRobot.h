@@ -19,34 +19,26 @@ This file is based on DQ Robotics.
 Contributors:
 - Juan Jose Quiroz Omana
        - Responsible for the original implementation.
+         This class is based on the FrankaEmikaPandaVrepRobot class
+         (https://github.com/dqrobotics/cpp-interface-vrep/blob/master/include/dqrobotics/interfaces/vrep/robots/FrankaEmikaPandaVrepRobot.h)
+
 */
 
 #pragma once
-#include <dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.h>
-#include <dqrobotics/robot_modeling/DQ_SerialManipulatorDH.h>
+#include <vector>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobotZMQ.h>
+#include <dqrobotics/robot_modeling/DQ_SerialManipulatorMDH.h>
 
 namespace DQ_robotics
 {
-
-
-class URXCoppeliaSimZmqRobot: public DQ_SerialCoppeliaSimZmqRobot
-{   
+class FrankaEmikaPandaCoppeliaSimZMQRobot: public DQ_CoppeliaSimRobotZMQ
+{
 public:
-    enum class MODEL{
-        UR5
-    };
-
-public:
-    URXCoppeliaSimZmqRobot(const std::string& robot_name,
-                        const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr,
-                        const MODEL& model = MODEL::UR5);
-    DQ_SerialManipulatorDH kinematics();
-private:
-    URXCoppeliaSimZmqRobot::MODEL model_;
-
+    FrankaEmikaPandaCoppeliaSimZMQRobot(const std::string& robot_name,
+                                        const std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ>& coppeliasim_interface_sptr
+                                     );
+    DQ_SerialManipulatorMDH kinematics();
 };
-
 }
-
 
 

@@ -16,11 +16,11 @@ INCLUDE_DIRECTORIES(${PROJECT_NAME} ${SUBMODULES}/zmqRemoteApi/clients/cpp)
 
 
 add_library(${PROJECT_NAME} SHARED
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.cpp
-    src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZmqRobot.cpp
-    src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZmqRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterfaceZMQ.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobotZMQ.cpp
+    src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZMQRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZMQRobot.cpp
     submodules/zmqRemoteApi/clients/cpp/RemoteAPIClient.cpp
   )
 
@@ -40,7 +40,7 @@ set_source_files_properties(RemoteAPIClient.cpp OBJECT_DEPENDS ${SOURCE_DIR}/Rem
 
 SET_TARGET_PROPERTIES(${PROJECT_NAME}
     PROPERTIES PUBLIC_HEADER
-    "include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.h"
+    "include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterfaceZMQ.h"
     )
 
 INSTALL(TARGETS ${PROJECT_NAME}
@@ -65,14 +65,14 @@ endif()
 
 # Other Headers
 INSTALL(FILES
-    include/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.h
-    include/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.h
+    include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobotZMQ.h
+    include/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.h
     DESTINATION "include/dqrobotics/interfaces/coppeliasim")
 
 # Robots
 INSTALL(FILES
-    include/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZmqRobot.h
-    include/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZmqRobot.h
+    include/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZMQRobot.h
+    include/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZMQRobot.h
     DESTINATION "include/dqrobotics/interfaces/coppeliasim/robots")
 
 ################################################################
@@ -81,13 +81,13 @@ INSTALL(FILES
 
 # base folder
 INSTALL(FILES
-    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.cpp
-    src/dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterfaceZMQ.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobotZMQ.cpp
+    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/coppeliasim")
 
 # robots folder
 INSTALL(FILES
-    src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZmqRobot.cpp
-    src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZmqRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZMQRobot.cpp
+    src/dqrobotics/interfaces/coppeliasim/robots/URXCoppeliaSimZMQRobot.cpp
     DESTINATION "src/dqrobotics/interfaces/coppeliasim/robots")

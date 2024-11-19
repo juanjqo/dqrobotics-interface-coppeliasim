@@ -19,41 +19,41 @@ This file is based on DQ Robotics.
 Contributors:
 - Juan Jose Quiroz Omana
        - Responsible for the original implementation.
-         The DQ_SerialCoppeliaSimZmqRobot class is partially based on the DQ_SerialVrepRobot class
+         The DQ_CoppeliaSimRobotZMQ class is partially based on the DQ_SerialVrepRobot class
          (https://github.com/dqrobotics/cpp-interface-vrep/blob/master/include/dqrobotics/interfaces/vrep/DQ_SerialVrepRobot.h)
 
 */
 
 #pragma once
 #include <vector>
-#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimZmqInterface.h>
-#include <dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterfaceZMQ.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.h>
 
 namespace DQ_robotics
 {
-class DQ_SerialCoppeliaSimZmqRobot: public DQ_SerialCoppeliaSimRobot
+class DQ_CoppeliaSimRobotZMQ: public DQ_CoppeliaSimRobot
 {
 private:
-    std::shared_ptr<DQ_CoppeliaSimZmqInterface> interface_sptr_;
-    std::shared_ptr<DQ_CoppeliaSimZmqInterface::experimental> coppeliasim_interface_sptr_;
-    DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE joint_control_mode_;
+    std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> interface_sptr_;
+    std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ::experimental> coppeliasim_interface_sptr_;
+    DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE joint_control_mode_;
     bool robot_is_used_as_visualization_tool_;
 
-    std::shared_ptr<DQ_CoppeliaSimZmqInterface::experimental> _get_exp_interface_sptr();
+    std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ::experimental> _get_exp_interface_sptr();
 
     void _initialize_jointnames_from_coppeliasim();
 
 protected:
-    std::shared_ptr<DQ_CoppeliaSimZmqInterface> _get_interface_sptr();
+    std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> _get_interface_sptr();
 
-    DQ_SerialCoppeliaSimZmqRobot(const std::string& robot_name,
-                                 const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& interface_sptr);
+    DQ_CoppeliaSimRobotZMQ(const std::string& robot_name,
+                                 const std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ>& interface_sptr);
 private:
-    void _set_operation_modes(const DQ_CoppeliaSimZmqInterface::JOINT_MODE& joint_mode,
-                             const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    void _set_operation_modes(const DQ_CoppeliaSimInterfaceZMQ::JOINT_MODE& joint_mode,
+                             const DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE& joint_control_mode);
     void _set_robot_as_visualization_tool();
-    void _set_robot_as_dynamic_tool(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
-    void _set_joint_control_type(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE& joint_control_mode);
+    void _set_robot_as_dynamic_tool(const DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE& joint_control_mode);
+    void _set_joint_control_type(const DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE& joint_control_mode);
     void _set_control_inputs(const VectorXd& u);
 
 public:

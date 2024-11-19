@@ -39,7 +39,7 @@ using namespace DQ_robotics;
 using namespace Eigen;
 
 
-class DQ_CoppeliaSimZmqInterface : public DQ_CoppeliaSimInterface
+class DQ_CoppeliaSimInterfaceZMQ : public DQ_CoppeliaSimInterface
 {
 public:
     enum class REFERENCE
@@ -86,8 +86,8 @@ public:
         ANY
     };
 
-    DQ_CoppeliaSimZmqInterface();
-    ~DQ_CoppeliaSimZmqInterface();
+    DQ_CoppeliaSimInterfaceZMQ();
+    ~DQ_CoppeliaSimInterfaceZMQ();
 
     //-----------Override from DQ_CoppeliaSimInterface ---------------------------------------
     bool connect(const std::string& host = "localhost",
@@ -147,10 +147,10 @@ public:
     class experimental
     {
     private:
-        std::shared_ptr<DQ_CoppeliaSimZmqInterface> smptr_;
+        std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> smptr_;
     public:
         [[deprecated("This unstable class aims to test concepts and prototypes. Do not use it in production.")]]
-        experimental(const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& smptr);
+        experimental(const std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ>& smptr);
 
         void plot_reference_frame(const std::string& name,
                                   const DQ& pose,

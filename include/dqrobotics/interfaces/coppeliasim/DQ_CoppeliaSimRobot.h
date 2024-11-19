@@ -25,17 +25,41 @@ Contributors:
           https://github.com/dqrobotics/cpp-interface-vrep/blob/master/include/dqrobotics/interfaces/vrep/DQ_SerialVrepRobot.h
 */
 
-#include <dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimRobot.h>
+#pragma once
+#include <dqrobotics/DQ.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterface.h>
+#include <string>
+#include <vector>
 
+
+using namespace Eigen;
 
 namespace DQ_robotics
 {
-
-DQ_SerialCoppeliaSimRobot::DQ_SerialCoppeliaSimRobot(const std::string &robot_name)
-    :robot_name_{robot_name}
+class DQ_CoppeliaSimRobot
 {
+protected:
+    std::string robot_name_;
+    std::vector<std::string> jointnames_;
+    std::string base_frame_name_;
+    DQ_CoppeliaSimRobot(const std::string& robot_name);
 
-}
+public:
+    virtual ~DQ_CoppeliaSimRobot() = default;
 
+    virtual std::vector<std::string> get_joint_names() = 0;
+
+    virtual void set_configuration_space(const VectorXd& q) = 0;
+    virtual VectorXd get_configuration_space() = 0;
+
+    virtual void set_target_configuration_space(const VectorXd& q_target)=0;
+
+    virtual VectorXd get_configuration_space_velocities()=0;
+    virtual void set_target_configuration_space_velocities(const VectorXd& v_target)=0;
+
+    virtual void set_configuration_space_torques(const VectorXd& t)=0;
+    virtual VectorXd get_configuration_space_torques()=0;
+
+};
 }
 

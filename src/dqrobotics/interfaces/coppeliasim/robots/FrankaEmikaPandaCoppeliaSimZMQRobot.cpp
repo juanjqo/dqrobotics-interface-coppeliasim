@@ -24,21 +24,35 @@ Contributors:
 
 */
 
-#pragma once
-#include <vector>
-#include <dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.h>
-#include <dqrobotics/robot_modeling/DQ_SerialManipulatorMDH.h>
+#include <dqrobotics/interfaces/coppeliasim/robots/FrankaEmikaPandaCoppeliaSimZMQRobot.h>
+#include<dqrobotics/robots/FrankaEmikaPandaRobot.h>
 
 namespace DQ_robotics
 {
-class FrankaEmikaPandaCoppeliaSimZmqRobot: public DQ_SerialCoppeliaSimZmqRobot
+
+
+
+/**
+ * @brief FrankaEmikaPandaCoppeliaSimZMQRobot::FrankaEmikaPandaCoppeliaSimZMQRobot
+ * @param robot_name
+ * @param coppeliasim_interface_sptr
+ */
+FrankaEmikaPandaCoppeliaSimZMQRobot::FrankaEmikaPandaCoppeliaSimZMQRobot(const std::string &robot_name, const std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> &coppeliasim_interface_sptr)
+    :DQ_CoppeliaSimRobotZMQ(robot_name, coppeliasim_interface_sptr)
 {
-public:
-    FrankaEmikaPandaCoppeliaSimZmqRobot(const std::string& robot_name,
-                                        const std::shared_ptr<DQ_CoppeliaSimZmqInterface>& coppeliasim_interface_sptr
-                                     );
-    DQ_SerialManipulatorMDH kinematics();
-};
+
 }
 
+/**
+ * @brief FrankaEmikaPandaCoppeliaSimZMQRobot::kinematics
+ * @return
+ */
+DQ_SerialManipulatorMDH FrankaEmikaPandaCoppeliaSimZMQRobot::kinematics()
+{
+    DQ_SerialManipulatorMDH kin = FrankaEmikaPandaRobot::kinematics();
+    kin.set_reference_frame(_get_interface_sptr()->get_object_pose(base_frame_name_));
+    kin.set_base_frame(_get_interface_sptr()->get_object_pose(base_frame_name_));
+    return kin;
+}
 
+}

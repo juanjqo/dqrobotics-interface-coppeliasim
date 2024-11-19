@@ -19,12 +19,12 @@ This file is based on DQ Robotics.
 Contributors:
 - Juan Jose Quiroz Omana
        - Responsible for the original implementation.
-         The DQ_SerialCoppeliaSimZmqRobot class is partially based on the DQ_SerialVrepRobot class
+         The DQ_CoppeliaSimRobotZMQ class is partially based on the DQ_SerialVrepRobot class
          (https://github.com/dqrobotics/cpp-interface-vrep/blob/master/include/dqrobotics/interfaces/vrep/DQ_SerialVrepRobot.h)
 
 */
 
-#include <dqrobotics/interfaces/coppeliasim/DQ_SerialCoppeliaSimZmqRobot.h>
+#include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobotZMQ.h>
 
 
 namespace DQ_robotics
@@ -32,7 +32,7 @@ namespace DQ_robotics
 
 
 
-void DQ_SerialCoppeliaSimZmqRobot::_initialize_jointnames_from_coppeliasim()
+void DQ_CoppeliaSimRobotZMQ::_initialize_jointnames_from_coppeliasim()
 {
     jointnames_ = _get_exp_interface_sptr()->get_jointnames_from_parent_object(robot_name_);
     base_frame_name_ = jointnames_.at(0);
@@ -44,19 +44,19 @@ void DQ_SerialCoppeliaSimZmqRobot::_initialize_jointnames_from_coppeliasim()
  * @param robot_name
  * @param interface_sptr
  */
-DQ_SerialCoppeliaSimZmqRobot::DQ_SerialCoppeliaSimZmqRobot(const std::string &robot_name,
-                                                           const std::shared_ptr<DQ_CoppeliaSimZmqInterface> &interface_sptr)
-    :DQ_SerialCoppeliaSimRobot(robot_name), interface_sptr_{interface_sptr}
+DQ_CoppeliaSimRobotZMQ::DQ_CoppeliaSimRobotZMQ(const std::string &robot_name,
+                                                           const std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> &interface_sptr)
+    :DQ_CoppeliaSimRobot(robot_name), interface_sptr_{interface_sptr}
 {
-    coppeliasim_interface_sptr_ = std::make_shared<DQ_CoppeliaSimZmqInterface::experimental>(interface_sptr_);
+    coppeliasim_interface_sptr_ = std::make_shared<DQ_CoppeliaSimInterfaceZMQ::experimental>(interface_sptr_);
     _initialize_jointnames_from_coppeliasim();
     // By Default, the robot is controlled by joint positions with both the dynamic engine
     // and the stepping mode enabled.
-    joint_control_mode_ = DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::POSITION;
+    joint_control_mode_ = DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE::POSITION;
     robot_is_used_as_visualization_tool_ = false;
 }
 
-std::shared_ptr<DQ_CoppeliaSimZmqInterface> DQ_SerialCoppeliaSimZmqRobot::_get_interface_sptr()
+std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> DQ_CoppeliaSimRobotZMQ::_get_interface_sptr()
 {
     return interface_sptr_;
 }
@@ -64,7 +64,7 @@ std::shared_ptr<DQ_CoppeliaSimZmqInterface> DQ_SerialCoppeliaSimZmqRobot::_get_i
 /**
  * @brief DQ_SerialCoppeliaSimRobot::_initialize_jointnames_from_coppeliasim
  */
-std::shared_ptr<DQ_CoppeliaSimZmqInterface::experimental> DQ_SerialCoppeliaSimZmqRobot::_get_exp_interface_sptr()
+std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ::experimental> DQ_CoppeliaSimRobotZMQ::_get_exp_interface_sptr()
 {
     return coppeliasim_interface_sptr_;
 }
@@ -74,7 +74,7 @@ std::shared_ptr<DQ_CoppeliaSimZmqInterface::experimental> DQ_SerialCoppeliaSimZm
  * @param joint_mode
  * @param joint_control_mode
  */
-void DQ_SerialCoppeliaSimZmqRobot::_set_operation_modes(const DQ_CoppeliaSimZmqInterface::JOINT_MODE &joint_mode, const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE &joint_control_mode)
+void DQ_CoppeliaSimRobotZMQ::_set_operation_modes(const DQ_CoppeliaSimInterfaceZMQ::JOINT_MODE &joint_mode, const DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE &joint_control_mode)
 {
     joint_control_mode_ = joint_control_mode;
     _get_exp_interface_sptr()->set_joint_modes(jointnames_, joint_mode);
@@ -88,12 +88,12 @@ void DQ_SerialCoppeliaSimZmqRobot::_set_operation_modes(const DQ_CoppeliaSimZmqI
  *        by joint position commands without taking into account the dynamics.
  *        In other words, the CoppeliaSim scene is used as a visualization tool.
  */
-void DQ_SerialCoppeliaSimZmqRobot::_set_robot_as_visualization_tool()
+void DQ_CoppeliaSimRobotZMQ::_set_robot_as_visualization_tool()
 {
     _get_interface_sptr()->set_stepping_mode(false);
     _get_exp_interface_sptr()->enable_dynamics(false);
     _get_exp_interface_sptr()->set_joint_modes(jointnames_,
-                                           DQ_CoppeliaSimZmqInterface::JOINT_MODE::KINEMATIC);
+                                           DQ_CoppeliaSimInterfaceZMQ::JOINT_MODE::KINEMATIC);
     robot_is_used_as_visualization_tool_ = true;
 }
 
@@ -105,7 +105,7 @@ void DQ_SerialCoppeliaSimZmqRobot::_set_robot_as_visualization_tool()
  *
  * @param joint_control_mode Use POSITION, VELOCITY or TORQUE.
  */
-void DQ_SerialCoppeliaSimZmqRobot::_set_robot_as_dynamic_tool(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE &joint_control_mode)
+void DQ_CoppeliaSimRobotZMQ::_set_robot_as_dynamic_tool(const DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE &joint_control_mode)
 {
     _get_exp_interface_sptr()->enable_dynamics(true);
     _get_interface_sptr()->set_stepping_mode(true);
@@ -117,9 +117,9 @@ void DQ_SerialCoppeliaSimZmqRobot::_set_robot_as_dynamic_tool(const DQ_CoppeliaS
  *        of the robot.
  * @param joint_control_mode Use POSITION, VELOCITY or TORQUE.
  */
-void DQ_SerialCoppeliaSimZmqRobot::_set_joint_control_type(const DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE &joint_control_mode)
+void DQ_CoppeliaSimRobotZMQ::_set_joint_control_type(const DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE &joint_control_mode)
 {
-    _set_operation_modes(DQ_CoppeliaSimZmqInterface::JOINT_MODE::DYNAMIC, joint_control_mode);
+    _set_operation_modes(DQ_CoppeliaSimInterfaceZMQ::JOINT_MODE::DYNAMIC, joint_control_mode);
 }
 
 /**
@@ -127,7 +127,7 @@ void DQ_SerialCoppeliaSimZmqRobot::_set_joint_control_type(const DQ_CoppeliaSimZ
  *
  * @param u joint positions, velocities or torques.
  */
-void DQ_SerialCoppeliaSimZmqRobot::_set_control_inputs(const VectorXd &u)
+void DQ_CoppeliaSimRobotZMQ::_set_control_inputs(const VectorXd &u)
 {
     if (robot_is_used_as_visualization_tool_)
         _get_interface_sptr()->set_joint_positions(jointnames_, u);
@@ -135,21 +135,21 @@ void DQ_SerialCoppeliaSimZmqRobot::_set_control_inputs(const VectorXd &u)
     {
         switch (joint_control_mode_)
         {
-        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::FREE:
+        case DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE::FREE:
             break;
-        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::FORCE:
+        case DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE::FORCE:
             break;
-        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::VELOCITY:
+        case DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE::VELOCITY:
             _get_interface_sptr()->set_joint_target_velocities(jointnames_, u);
             break;
-        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::POSITION:
+        case DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE::POSITION:
             _get_interface_sptr()->set_joint_target_positions(jointnames_, u);
             break;
-        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::SPRING:
+        case DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE::SPRING:
             break;
-        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::CUSTOM:
+        case DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE::CUSTOM:
             break;
-        case DQ_CoppeliaSimZmqInterface::JOINT_CONTROL_MODE::TORQUE:
+        case DQ_CoppeliaSimInterfaceZMQ::JOINT_CONTROL_MODE::TORQUE:
             _get_interface_sptr()->set_joint_torques(jointnames_, u);
             break;
         }
@@ -157,7 +157,7 @@ void DQ_SerialCoppeliaSimZmqRobot::_set_control_inputs(const VectorXd &u)
     }
 }
 
-std::vector<std::string> DQ_SerialCoppeliaSimZmqRobot::get_joint_names()
+std::vector<std::string> DQ_CoppeliaSimRobotZMQ::get_joint_names()
 {
     return jointnames_;
 }
@@ -167,7 +167,7 @@ std::vector<std::string> DQ_SerialCoppeliaSimZmqRobot::get_joint_names()
  * @brief DQ_SerialCoppeliaSimRobot::set_configuration_space_positions
  * @param q
  */
-void DQ_SerialCoppeliaSimZmqRobot::set_configuration_space(const VectorXd &q)
+void DQ_CoppeliaSimRobotZMQ::set_configuration_space(const VectorXd &q)
 {
     _get_interface_sptr()->set_joint_positions(jointnames_,q);
 }
@@ -177,7 +177,7 @@ void DQ_SerialCoppeliaSimZmqRobot::set_configuration_space(const VectorXd &q)
  * @brief DQ_SerialCoppeliaSimRobot::get_configuration_space_positions
  * @return
  */
-VectorXd DQ_SerialCoppeliaSimZmqRobot::get_configuration_space()
+VectorXd DQ_CoppeliaSimRobotZMQ::get_configuration_space()
 {
     return  _get_interface_sptr()->get_joint_positions(jointnames_);
 }
@@ -187,7 +187,7 @@ VectorXd DQ_SerialCoppeliaSimZmqRobot::get_configuration_space()
  * @brief DQ_SerialCoppeliaSimRobot::set_target_configuration_space_positions
  * @param q_target
  */
-void DQ_SerialCoppeliaSimZmqRobot::set_target_configuration_space(const VectorXd &q_target)
+void DQ_CoppeliaSimRobotZMQ::set_target_configuration_space(const VectorXd &q_target)
 {
     _get_interface_sptr()->set_joint_target_positions(jointnames_, q_target);
 }
@@ -197,7 +197,7 @@ void DQ_SerialCoppeliaSimZmqRobot::set_target_configuration_space(const VectorXd
  * @brief DQ_SerialCoppeliaSimRobot::get_configuration_space_velocities
  * @return
  */
-VectorXd DQ_SerialCoppeliaSimZmqRobot::get_configuration_space_velocities()
+VectorXd DQ_CoppeliaSimRobotZMQ::get_configuration_space_velocities()
 {
     return _get_interface_sptr()->get_joint_velocities(jointnames_);
 }
@@ -206,7 +206,7 @@ VectorXd DQ_SerialCoppeliaSimZmqRobot::get_configuration_space_velocities()
  * @brief DQ_SerialCoppeliaSimRobot::set_target_configuration_space_velocities
  * @param v_target
  */
-void DQ_SerialCoppeliaSimZmqRobot::set_target_configuration_space_velocities(const VectorXd &v_target)
+void DQ_CoppeliaSimRobotZMQ::set_target_configuration_space_velocities(const VectorXd &v_target)
 {
     _get_interface_sptr()->set_joint_target_velocities(jointnames_, v_target);
 }
@@ -215,7 +215,7 @@ void DQ_SerialCoppeliaSimZmqRobot::set_target_configuration_space_velocities(con
  * @brief DQ_SerialCoppeliaSimRobot::set_configuration_space_torques
  * @param torques
  */
-void DQ_SerialCoppeliaSimZmqRobot::set_configuration_space_torques(const VectorXd &torques)
+void DQ_CoppeliaSimRobotZMQ::set_configuration_space_torques(const VectorXd &torques)
 {
     _get_interface_sptr()->set_joint_torques(jointnames_, torques);
 }
@@ -224,34 +224,34 @@ void DQ_SerialCoppeliaSimZmqRobot::set_configuration_space_torques(const VectorX
  * @brief DQ_SerialCoppeliaSimRobot::get_configuration_space_torques
  * @return
  */
-VectorXd DQ_SerialCoppeliaSimZmqRobot::get_configuration_space_torques()
+VectorXd DQ_CoppeliaSimRobotZMQ::get_configuration_space_torques()
 {
     return _get_interface_sptr()->get_joint_torques(jointnames_);
 }
 
-void DQ_SerialCoppeliaSimZmqRobot::send_q_to_vrep(const VectorXd &q)
+void DQ_CoppeliaSimRobotZMQ::send_q_to_vrep(const VectorXd &q)
 {
-    DQ_SerialCoppeliaSimZmqRobot::set_configuration_space(q);
+    DQ_CoppeliaSimRobotZMQ::set_configuration_space(q);
 }
 
-VectorXd DQ_SerialCoppeliaSimZmqRobot::get_q_from_vrep()
+VectorXd DQ_CoppeliaSimRobotZMQ::get_q_from_vrep()
 {
-    return DQ_SerialCoppeliaSimZmqRobot::get_configuration_space();
+    return DQ_CoppeliaSimRobotZMQ::get_configuration_space();
 }
 
-void DQ_SerialCoppeliaSimZmqRobot::set_configuration_space_positions(const VectorXd &q)
+void DQ_CoppeliaSimRobotZMQ::set_configuration_space_positions(const VectorXd &q)
 {
-    DQ_SerialCoppeliaSimZmqRobot::set_configuration_space(q);
+    DQ_CoppeliaSimRobotZMQ::set_configuration_space(q);
 }
 
-VectorXd DQ_SerialCoppeliaSimZmqRobot::get_configuration_space_positions()
+VectorXd DQ_CoppeliaSimRobotZMQ::get_configuration_space_positions()
 {
-    return DQ_SerialCoppeliaSimZmqRobot::get_configuration_space();
+    return DQ_CoppeliaSimRobotZMQ::get_configuration_space();
 }
 
-void DQ_SerialCoppeliaSimZmqRobot::set_target_configuration_space_positions(const VectorXd &q_target)
+void DQ_CoppeliaSimRobotZMQ::set_target_configuration_space_positions(const VectorXd &q_target)
 {
-    DQ_SerialCoppeliaSimZmqRobot::set_target_configuration_space(q_target);
+    DQ_CoppeliaSimRobotZMQ::set_target_configuration_space(q_target);
 }
 
 }
