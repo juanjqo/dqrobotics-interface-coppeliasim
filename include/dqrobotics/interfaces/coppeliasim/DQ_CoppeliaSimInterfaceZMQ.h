@@ -121,7 +121,15 @@ public:
     std::string _get_object_name(const int& handle);
 
     template<typename T>
-    std::vector<std::string> _get_object_names(const T& handles);
+    std::vector<std::string> _get_object_names(const T &handles)
+    {
+        int n = handles.size();
+        std::vector<std::string> objectnames(n);
+        for(auto i=0;i<n;i++)
+            objectnames.at(i)=_get_object_name(handles.at(i));
+
+        return objectnames;
+    }
 
     //-----------------------------------------------------------------------------------------------------//
     //-----------Deprecated methods------------------------------------------------------------------------//

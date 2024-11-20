@@ -30,6 +30,16 @@ Contributors:
 #include "internal/_zmq_wrapper.h"
 
 /**
+ * @brief _set_status_bar_message
+ * @param message
+ * @param verbosity_type
+ */
+void DQ_CoppeliaSimInterfaceZMQ::__set_status_bar_message(const std::string &message, const int& verbosity_type) const
+{
+    _ZMQWrapper::get_sim()->addLog(verbosity_type, message);
+}
+
+/**
  * @brief DQ_CoppeliaSimInterfaceZMQ::DQ_CoppeliaSimInterfaceZMQ
  */
 DQ_CoppeliaSimInterfaceZMQ::DQ_CoppeliaSimInterfaceZMQ()
@@ -139,7 +149,7 @@ bool DQ_CoppeliaSimInterfaceZMQ::_connect(const std::string &host, const int &rp
         _join_if_joinable_chronometer_thread();
         _set_status_bar_message("       ");
         __set_status_bar_message("DQ Robotics established a connection on port " + std::to_string(rpcPort),
-                                _ZMQWrapper::get_sim()->verbosity_warnings);
+                                 _ZMQWrapper::get_sim()->verbosity_warnings);
     }
     catch (const std::runtime_error& e)
     {
@@ -345,8 +355,8 @@ DQ DQ_CoppeliaSimInterfaceZMQ::_get_object_rotation(const int &handle) const
 {
     _check_client();
     auto rotation = _ZMQWrapper::get_sim()->getObjectQuaternion(handle +
-                                              _ZMQWrapper::get_sim()->handleflag_wxyzquat,
-                                              _ZMQWrapper::get_sim()->handle_world);
+                                                                    _ZMQWrapper::get_sim()->handleflag_wxyzquat,
+                                                                _ZMQWrapper::get_sim()->handle_world);
 
     return DQ(rotation.at(0), rotation.at(1), rotation.at(2), rotation.at(3));
 }
@@ -534,10 +544,10 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_joint_positions(const std::vector<int> &ha
  */
 void DQ_CoppeliaSimInterfaceZMQ::set_joint_positions(const std::vector<std::string> &jointnames, const VectorXd &angles_rad)
 {
-     _check_sizes(jointnames, angles_rad, "Error in DQ_CoppeliaSimInterface::set_joint_positions: "
-                                          "jointnames and angles_rad have incompatible sizes");
+    _check_sizes(jointnames, angles_rad, "Error in DQ_CoppeliaSimInterface::set_joint_positions: "
+                                         "jointnames and angles_rad have incompatible sizes");
     for(std::size_t i=0;i<jointnames.size();i++)
-         _set_joint_position(jointnames.at(i), angles_rad(i));
+        _set_joint_position(jointnames.at(i), angles_rad(i));
 }
 
 /**
@@ -742,7 +752,7 @@ void DQ_CoppeliaSimInterfaceZMQ::_set_joint_torques(const std::vector<int> &hand
 void DQ_CoppeliaSimInterfaceZMQ::set_joint_torques(const std::vector<std::string> &jointnames, const VectorXd &torques)
 {
     _check_sizes(jointnames, torques, "Error in DQ_CoppeliaSimInterface::set_joint_torques: "
-                                             "jointnames and torques have incompatible sizes");
+                                      "jointnames and torques have incompatible sizes");
     for(std::size_t i=0;i<jointnames.size();i++)
         _set_joint_torque(jointnames.at(i), torques(i));
 }
@@ -811,21 +821,6 @@ std::string DQ_CoppeliaSimInterfaceZMQ::_get_object_name(const int &handle)
     return objectname;
 }
 
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQ::get_object_names
- * @param handles
- * @return
- */
-template<typename T>
-std::vector<std::string> DQ_CoppeliaSimInterfaceZMQ::_get_object_names(const T &handles)
-{
-    int n = handles.size();
-    std::vector<std::string> objectnames(n);
-    for(auto i=0;i<n;i++)
-        objectnames.at(i)=_get_object_name(handles.at(i));
-
-    return objectnames;
-}
 //-----------------------------------------------------------------------------------------
 
 /**
@@ -838,7 +833,7 @@ std::vector<std::string> DQ_CoppeliaSimInterfaceZMQ::_get_object_names(const T &
  * @param mode       The operation mode. Use UPDATE_MAP::ADD or UPDATE_MAP::REMOVE accordingly.
  */
 void DQ_CoppeliaSimInterfaceZMQ::_update_map(const std::string &objectname,
-                                          const int &handle, const UPDATE_MAP &mode)
+                                             const int &handle, const UPDATE_MAP &mode)
 {
     if (mode == DQ_CoppeliaSimInterfaceZMQ::UPDATE_MAP::ADD)
         handles_map_.try_emplace(objectname, handle);
@@ -912,7 +907,7 @@ std::string DQ_CoppeliaSimInterfaceZMQ::_remove_first_slash_from_string(const st
     std::string new_str = str;
     auto found = str.find('/');
     if (found != std::string::npos && found == 0) // The string containt the '/' in the first position
-            new_str.erase(0,1); // remove the '/'
+        new_str.erase(0,1); // remove the '/'
     return new_str;
 }
 
