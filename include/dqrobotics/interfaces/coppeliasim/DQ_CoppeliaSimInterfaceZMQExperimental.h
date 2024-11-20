@@ -163,8 +163,9 @@ public:
 
     void set_mujoco_body_frictions(const std::vector<std::string>& bodynames,
                                    const std::vector<double>& friction);
-
+    void   set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
     void   set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
+    void   set_joint_control_mode(const std::string& jointname, const JOINT_CONTROL_MODE& joint_control_mode);
     void   set_joint_control_modes(const std::vector<std::string>& jointnames, const JOINT_CONTROL_MODE& joint_control_mode);
     void   enable_dynamics(const bool& flag);
     double get_simulation_time_step() const;
@@ -173,30 +174,14 @@ public:
     void   set_physics_time_step(const double& time_step) const;
     void   set_engine(const ENGINE& engine);
 
-
-    void set_object_color(const std::string& objectname,
-                          const std::vector<double>& rgba_color);
-
-    void set_object_as_respondable(const std::string& objectname,
-                                   const bool& respondable_object = true);
-
-    void set_object_as_static(const std::string& objectname,
-                              const bool& static_object = true);
-
-    std::vector<std::string> get_jointnames_from_parent_object(const std::string& parent_objectname);
-    std::vector<std::string> get_shapenames_from_parent_object(const std::string& parent_objectname,
-                                                               const SHAPE_TYPE& shape_type = SHAPE_TYPE::ANY);
-
-    void set_twist(const std::string& objectname,
-                   const DQ& twist, const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
-    DQ   get_twist(const std::string& objectname,
-                 const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
-
-    void  set_gravity(const DQ& gravity=-9.81*k_);
+    std::string get_engine();
+    void   set_gravity(const DQ& gravity=-9.81*k_);
+    DQ     get_gravity() const;
 
     void load_scene(const std::string& path_to_filename) const;
     void save_scene(const std::string& path_to_filename) const;
     void close_scene() const;
+
 
 protected:
 
@@ -315,7 +300,6 @@ protected:
 
 
     bool _check_collision(const int& handle1, const int& handle2) const;
-    bool _check_collision(const std::string& objectname1, const std::string& objectname2);
     std::tuple<double, DQ, DQ> _check_distance(const int& handle1, const int& handle2, const double& threshold = 0) const;
     std::tuple<double, DQ, DQ> _check_distance(const std::string& objectname1, const std::string& objectname2, const double& threshold = 0);
 
@@ -336,16 +320,8 @@ protected:
     int _add_simulation_lua_script(const std::string& script_name,
                                    const std::string& script_code);
 
-    void _draw_trajectory(const std::string& objectname,
-                          const double& size = 2,
-                          const std::vector<double>& rgb_color = {1,0,1},
-                          const int& max_item_count = 1000);
-
-    void _remove_object(const std::string& objectname,
-                        const bool& remove_children = false);
-
     std::vector<double> _get_bounding_box_size(const int& handle) const;
-    std::vector<double> _get_bounding_box_size(const std::string& objectname);
+
 
     //-----------------------------------------------------------------------
     // Mujoco settings
@@ -377,20 +353,10 @@ protected:
 
 
     void _set_mujoco_joint_stiffness(const std::string& jointname, const double& stiffness);
-    void _set_mujoco_joint_stiffnesses(const std::vector<std::string>& jointnames,
-                                       const double& stiffness);
+    void _set_mujoco_joint_damping  (const std::string& jointname, const double& damping);
+    void _set_mujoco_joint_armature (const std::string& jointname, const double& armature);
+    void _set_mujoco_body_friction  (const std::string& bodyname,  const std::vector<double>& friction);
 
-    void _set_mujoco_joint_damping(const std::string& jointname, const double& damping);
-    void _set_mujoco_joint_dampings(const std::vector<std::string>& jointnames,
-                                    const double& damping);
-
-    void _set_mujoco_joint_armature(const std::string& jointname, const double& armature);
-    void _set_mujoco_joint_armatures(const std::vector<std::string>& jointnames,
-                                     const double& armature);
-
-    void _set_mujoco_body_friction(const std::string& bodyname, const std::vector<double>& friction);
-    void _set_mujoco_body_frictions(const std::vector<std::string>& bodynames,
-                                    const std::vector<double>& friction);
 
 
     void   _pause_simulation() const;
@@ -438,24 +404,7 @@ protected:
     MatrixXd _get_inertia_matrix(const int& handle, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
     MatrixXd _get_inertia_matrix(const std::string& link_name, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
 
-    void   _set_joint_mode(const std::string& jointname, const JOINT_MODE& joint_mode);
-    void   _set_joint_modes(const std::vector<std::string>& jointnames, const JOINT_MODE& joint_mode);
-    void   _set_joint_control_mode(const std::string& jointname, const JOINT_CONTROL_MODE& joint_control_mode);
-    void   _set_joint_control_modes(const std::vector<std::string>& jointnames, const JOINT_CONTROL_MODE& joint_control_mode);
-    void   _enable_dynamics(const bool& flag);
-    double _get_simulation_time_step() const;
-    void   _set_simulation_time_step(const double& time_step);
-    double _get_physics_time_step() const;
-    void   _set_physics_time_step(const double& time_step) const;
-    void   _set_engine(const ENGINE& engine);
 
-    std::string get_engine();
-    void   _set_gravity(const DQ& gravity=-9.81*k_);
-    DQ     _get_gravity() const;
-
-    void _load_scene(const std::string& path_to_filename) const;
-    void _save_scene(const std::string& path_to_filename) const;
-    void _close_scene() const;
 };
 
 
