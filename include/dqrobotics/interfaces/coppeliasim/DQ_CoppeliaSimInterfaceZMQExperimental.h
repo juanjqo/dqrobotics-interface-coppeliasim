@@ -175,6 +175,8 @@ public:
     void   set_engine(const ENGINE& engine);
 
     std::string get_engine();
+
+
     void   set_gravity(const DQ& gravity=-9.81*k_);
     DQ     get_gravity() const;
 
@@ -182,10 +184,205 @@ public:
     void save_scene(const std::string& path_to_filename) const;
     void close_scene() const;
 
+    std::vector<int> get_velocity_const_params() const;
+
+    std::string get_resources_path() const;
+
+
+    MatrixXd get_transformation_matrix(const std::vector<double>& coeff_vector) const;
+    MatrixXd get_rotation_matrix(const DQ& r) const;
+
+    DQ get_pose_from_direction(const DQ& direction, const DQ& point = DQ(1));
+
+    void set_static_object_properties(const std::string& name,
+                                      const std::string& parent_name,
+                                      const DQ& pose,
+                                      const std::vector<double>& rgba_color);
+
+
+    void set_static_object_properties(const int& handle,
+                                      const int& parent_handle,
+                                      const DQ& pose,
+                                      const std::vector<double>& rgba_color) const;
+
+    void create_reference_frame(const std::string& name,
+                                const double& scale = 1,
+                                const std::vector<double>& thickness_and_length = {0.005, 0.1}) const;
+
+    void create_plane(const std::string& name,
+                      const std::vector<double>& sizes = {0.2,0.2},
+                      const std::vector<double>& rgba_color = {1,0,0,0.5},
+                      const bool& add_normal = true,
+                      const double& normal_scale = 1) const;
+
+    void create_line(const std::string& name,
+                     const std::vector<double>& thickness_and_length = {0.01,1.5},
+                     const std::vector<double>& rgba_color = {1,0,0,0.5},
+                     const bool& add_arrow = true,
+                     const double& arrow_scale = 1) const;
+
+    void create_cylinder(const std::string& name,
+                         const std::vector<double>& width_and_length = {0.2,1.0},
+                         const std::vector<double>& rgba_color = {1,0,0,0.5},
+                         const bool& add_line = true,
+                         const double& line_scale = 1) const;
+
+    void merge_shapes(const int& parent_handle) const;
+
+    std::tuple<DQ, MatrixXd> get_center_of_mass_and_inertia_matrix(const int& handle) const;
+
+    int get_primitive_identifier(const PRIMITIVE& primitive) const;
+
+    void set_object_parent(const int& handle, const int& parent_handle, const bool& move_child_to_parent_pose) const;
+    void set_object_parent(const std::string& objectname, const std::string& parent_object_name,
+                           const bool& move_child_to_parent_pose = true);
+
+    void remove_child_script_from_object(const std::string& objectname, const std::string& script_name = "/Script");
+
+    void set_object_name(const int& handle,
+                         const std::string& new_object_name) const;
+    void set_object_name(const std::string& current_object_name,
+                         const std::string& new_object_name);
+
+    void set_object_color(const int& handle,
+                          const std::vector<double>& rgba_color) const;
+
+    void set_object_color(const std::string& objectname,
+                          const std::vector<double>& rgba_color);
+
+    void set_object_as_respondable(const int& handle,
+                                   const bool& respondable_object = true) const;
+
+    void set_object_as_respondable(const std::string& objectname,
+                                   const bool& respondable_object = true);
+
+    void set_object_as_static(const int& handle,
+                              const bool& static_object = true) const;
+
+    void set_object_as_static(const std::string& objectname,
+                              const bool& static_object = true);
+
+
+    bool check_collision(const int& handle1, const int& handle2) const;
+    std::tuple<double, DQ, DQ> check_distance(const int& handle1, const int& handle2, const double& threshold = 0) const;
+    std::tuple<double, DQ, DQ> check_distance(const std::string& objectname1, const std::string& objectname2, const double& threshold = 0);
+
+
+    double compute_distance(const int& handle1,
+                            const int& handle2,
+                            const double& threshold = 0) const;
+    double compute_distance(const std::string& objectname1,
+                            const std::string& objectname2,
+                            const double& threshold = 0);
+
+
+    void draw_permanent_trajectory(const DQ& point,
+                                   const double& size = 2,
+                                   const std::vector<double>& color = {1,0,0},
+                                   const int& max_item_count = 1000);
+
+    int add_simulation_lua_script(const std::string& script_name,
+                                  const std::string& script_code);
+
+    std::vector<double> get_bounding_box_size(const int& handle) const;
+
+
+    //-----------------------------------------------------------------------
+    // Mujoco settings
+
+    bool mujoco_is_used();
+    void set_mujoco_global_impratio(const double& impratio);
+    void set_mujoco_global_wind(const std::vector<double>& wind);
+    void set_mujoco_global_density(const double& density);
+    void set_mujoco_global_viscosity(const double& viscosity);
+    void set_mujoco_global_boundmass(const double& boundmass);
+    void set_mujoco_global_boundinertia(const double& boundinertia);
+    void set_mujoco_global_overridemargin(const double& overridemargin);
+    void set_mujoco_global_overridesolref(const std::vector<double>& overridesolref);
+    void set_mujoco_global_overridesolimp(const std::vector<double>& overridesolimp);
+    void set_mujoco_global_iterations(const int& iterations);
+    void set_mujoco_global_integrator(const int& integrator);
+    void set_mujoco_global_solver(const int& solver);
+    void set_mujoco_global_njmax(const int& njmax);
+    void set_mujoco_global_nstack(const int& nstack);
+    void set_mujoco_global_nconmax(const int& nconmax);
+    void set_mujoco_global_cone(const int& cone);
+    void set_mujoco_global_overridekin(const int& overridekin);
+    //void set_mujoco_global_rebuildcondition(const int& rebuildcondition);
+    void set_mujoco_global_computeinertias(const bool& computeinertias);
+    void set_mujoco_global_multithreaded(const bool& multithreaded);
+    void set_mujoco_global_multiccd(const bool& multiccd);
+    void set_mujoco_global_balanceinertias(const bool& balanceinertias);
+    void set_mujoco_global_overridecontacts(const bool& overridecontacts);
+
+
+    void set_mujoco_joint_stiffness(const std::string& jointname, const double& stiffness);
+    void set_mujoco_joint_damping  (const std::string& jointname, const double& damping);
+    void set_mujoco_joint_armature (const std::string& jointname, const double& armature);
+    void set_mujoco_body_friction  (const std::string& bodyname,  const std::vector<double>& friction);
+
+    void   pause_simulation() const;
+    double get_simulation_time() const;
+
+    bool   is_simulation_running() const;
+    int    get_simulation_state() const;
+    void   set_status_bar_message(const std::string& message) const;
+
+    std::vector<std::string> get_jointnames_from_parent_object(const std::string& parent_objectname);
+    std::vector<std::string> get_shapenames_from_parent_object(const std::string& parent_objectname,
+                                                               const SHAPE_TYPE& shape_type = SHAPE_TYPE::ANY);
+
+    VectorXd get_angular_and_linear_velocities(const int& handle,
+                                               const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
+
+    VectorXd get_angular_and_linear_velocities(std::string& objectname,
+                                               const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+
+    void set_angular_and_linear_velocities(const int& handle,
+                                           const DQ& w,
+                                           const DQ& p_dot,
+                                           const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
+    void set_angular_and_linear_velocities(std::string& objectname,
+                                           const DQ& w,
+                                           const DQ& p_dot,
+                                           const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+    void set_twist(const int& handle,
+                   const DQ& twist,
+                   const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
+    void set_twist(const std::string& objectname,
+                   const DQ& twist,
+                   const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+
+    DQ   get_twist(const int& handle,
+                 const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
+    DQ   get_twist(const std::string& objectname,
+                 const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
+
+    double get_mass(const int& handle) const;
+    double get_mass(const std::string& object_name);
+
+    DQ     get_center_of_mass(const int& handle, const REFERENCE& reference_frame=REFERENCE::ABSOLUTE_FRAME) const;
+    DQ     get_center_of_mass(const std::string& object_name, const REFERENCE& reference_frame=REFERENCE::ABSOLUTE_FRAME);
+
+    MatrixXd get_inertia_matrix(const int& handle, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
+    MatrixXd get_inertia_matrix(const std::string& link_name, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
 
 protected:
 
+    std::vector<std::string> _create_static_axis_at_origin(const int& parent_handle,
+                                                           const std::string& parent_name,
+                                                           const std::vector<double>& sizes,
+                                                           const AXIS& axis,
+                                                           const double& alpha_color) const;
+
     ENGINE _get_engine();
+
+    bool _load_model(const std::string& path_to_filename,
+                     const std::string& desired_model_name,
+                     const bool& remove_child_script);
+
+    void   __set_status_bar_message(const std::string &message, const int& verbosity_type) const;
+
     std::unordered_map<ENGINE, int> engines_ = {{ENGINE::BULLET, 0},
                                                 {ENGINE::ODE,    1},
                                                 {ENGINE::VORTEX, 2},
@@ -208,201 +405,6 @@ protected:
                                                                {20, "simulation advancing first after pause"},
                                                                {21, "simulation advancing about to stop"}};
 
-    std::vector<int> _get_velocity_const_params() const;
-
-    std::string _get_resources_path() const;
-    bool _load_model(const std::string& path_to_filename,
-                     const std::string& desired_model_name,
-                     const bool& remove_child_script);
-
-    MatrixXd _get_transformation_matrix(const std::vector<double>& coeff_vector) const;
-    MatrixXd _get_rotation_matrix(const DQ& r) const;
-
-    DQ _get_pose_from_direction(const DQ& direction, const DQ& point = DQ(1));
-
-
-
-    std::vector<std::string> _create_static_axis_at_origin(const int& parent_handle,
-                                                           const std::string& parent_name,
-                                                           const std::vector<double>& sizes,
-                                                           const AXIS& axis,
-                                                           const double& alpha_color = 1) const;
-
-    void _set_static_object_properties(const std::string& name,
-                                       const std::string& parent_name,
-                                       const DQ& pose,
-                                       const std::vector<double>& rgba_color);
-
-
-    void _set_static_object_properties(const int& handle,
-                                       const int& parent_handle,
-                                       const DQ& pose,
-                                       const std::vector<double>& rgba_color) const;
-
-    void _create_reference_frame(const std::string& name,
-                                 const double& scale = 1,
-                                 const std::vector<double>& thickness_and_length = {0.005, 0.1}) const;
-
-    void _create_plane(const std::string& name,
-                       const std::vector<double>& sizes = {0.2,0.2},
-                       const std::vector<double>& rgba_color = {1,0,0,0.5},
-                       const bool& add_normal = true,
-                       const double& normal_scale = 1) const;
-
-    void _create_line(const std::string& name,
-                      const std::vector<double>& thickness_and_length = {0.01,1.5},
-                      const std::vector<double>& rgba_color = {1,0,0,0.5},
-                      const bool& add_arrow = true,
-                      const double& arrow_scale = 1) const;
-
-    void _create_cylinder(const std::string& name,
-                          const std::vector<double>& width_and_length = {0.2,1.0},
-                          const std::vector<double>& rgba_color = {1,0,0,0.5},
-                          const bool& add_line = true,
-                          const double& line_scale = 1) const;
-
-    void _merge_shapes(const int& parent_handle) const;
-
-    std::tuple<DQ, MatrixXd> _get_center_of_mass_and_inertia_matrix(const int& handle) const;
-
-
-
-    int _get_primitive_identifier(const PRIMITIVE& primitive) const;
-
-    void _set_object_parent(const int& handle, const int& parent_handle, const bool& move_child_to_parent_pose) const;
-    void _set_object_parent(const std::string& objectname, const std::string& parent_object_name,
-                            const bool& move_child_to_parent_pose = true);
-
-    void _remove_child_script_from_object(const std::string& objectname, const std::string& script_name = "/Script");
-
-    void _set_object_name(const int& handle,
-                          const std::string& new_object_name) const;
-    void _set_object_name(const std::string& current_object_name,
-                          const std::string& new_object_name);
-
-    void _set_object_color(const int& handle,
-                           const std::vector<double>& rgba_color) const;
-
-    void _set_object_color(const std::string& objectname,
-                           const std::vector<double>& rgba_color);
-
-    void _set_object_as_respondable(const int& handle,
-                                    const bool& respondable_object = true) const;
-
-    void _set_object_as_respondable(const std::string& objectname,
-                                    const bool& respondable_object = true);
-
-    void _set_object_as_static(const int& handle,
-                               const bool& static_object = true) const;
-
-    void _set_object_as_static(const std::string& objectname,
-                               const bool& static_object = true);
-
-
-    bool _check_collision(const int& handle1, const int& handle2) const;
-    std::tuple<double, DQ, DQ> _check_distance(const int& handle1, const int& handle2, const double& threshold = 0) const;
-    std::tuple<double, DQ, DQ> _check_distance(const std::string& objectname1, const std::string& objectname2, const double& threshold = 0);
-
-
-    double _compute_distance(const int& handle1,
-                             const int& handle2,
-                             const double& threshold = 0) const;
-    double _compute_distance(const std::string& objectname1,
-                             const std::string& objectname2,
-                             const double& threshold = 0);
-
-
-    void _draw_permanent_trajectory(const DQ& point,
-                                    const double& size = 2,
-                                    const std::vector<double>& color = {1,0,0},
-                                    const int& max_item_count = 1000);
-
-    int _add_simulation_lua_script(const std::string& script_name,
-                                   const std::string& script_code);
-
-    std::vector<double> _get_bounding_box_size(const int& handle) const;
-
-
-    //-----------------------------------------------------------------------
-    // Mujoco settings
-
-    bool _mujoco_is_used();
-    void _set_mujoco_global_impratio(const double& impratio);
-    void _set_mujoco_global_wind(const std::vector<double>& wind);
-    void _set_mujoco_global_density(const double& density);
-    void _set_mujoco_global_viscosity(const double& viscosity);
-    void _set_mujoco_global_boundmass(const double& boundmass);
-    void _set_mujoco_global_boundinertia(const double& boundinertia);
-    void _set_mujoco_global_overridemargin(const double& overridemargin);
-    void _set_mujoco_global_overridesolref(const std::vector<double>& overridesolref);
-    void _set_mujoco_global_overridesolimp(const std::vector<double>& overridesolimp);
-    void _set_mujoco_global_iterations(const int& iterations);
-    void _set_mujoco_global_integrator(const int& integrator);
-    void _set_mujoco_global_solver(const int& solver);
-    void _set_mujoco_global_njmax(const int& njmax);
-    void _set_mujoco_global_nstack(const int& nstack);
-    void _set_mujoco_global_nconmax(const int& nconmax);
-    void _set_mujoco_global_cone(const int& cone);
-    void _set_mujoco_global_overridekin(const int& overridekin);
-    //void set_mujoco_global_rebuildcondition(const int& rebuildcondition);
-    void _set_mujoco_global_computeinertias(const bool& computeinertias);
-    void _set_mujoco_global_multithreaded(const bool& multithreaded);
-    void _set_mujoco_global_multiccd(const bool& multiccd);
-    void _set_mujoco_global_balanceinertias(const bool& balanceinertias);
-    void _set_mujoco_global_overridecontacts(const bool& overridecontacts);
-
-
-    void _set_mujoco_joint_stiffness(const std::string& jointname, const double& stiffness);
-    void _set_mujoco_joint_damping  (const std::string& jointname, const double& damping);
-    void _set_mujoco_joint_armature (const std::string& jointname, const double& armature);
-    void _set_mujoco_body_friction  (const std::string& bodyname,  const std::vector<double>& friction);
-
-
-
-    void   _pause_simulation() const;
-    double _get_simulation_time() const;
-
-    bool   _is_simulation_running() const;
-    int    _get_simulation_state() const;
-    void   _set_status_bar_message(const std::string& message) const;
-    void   __set_status_bar_message(const std::string &message, const int& verbosity_type) const;
-
-    std::vector<std::string> _get_jointnames_from_parent_object(const std::string& parent_objectname);
-    std::vector<std::string> _get_shapenames_from_parent_object(const std::string& parent_objectname,
-                                                                const SHAPE_TYPE& shape_type = SHAPE_TYPE::ANY);
-
-    VectorXd _get_angular_and_linear_velocities(const int& handle,
-                                                const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
-
-    VectorXd _get_angular_and_linear_velocities(std::string& objectname,
-                                                const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
-
-    void _set_angular_and_linear_velocities(const int& handle,
-                                            const DQ& w,
-                                            const DQ& p_dot,
-                                            const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
-    void _set_angular_and_linear_velocities(std::string& objectname,
-                                            const DQ& w,
-                                            const DQ& p_dot,
-                                            const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
-    void _set_twist(const int& handle,
-                    const DQ& twist,
-                    const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
-    void _set_twist(const std::string& objectname,
-                    const DQ& twist, const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
-    DQ   _get_twist(const int& handle,
-                  const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME) const;
-    DQ   _get_twist(const std::string& objectname,
-                  const REFERENCE& reference = REFERENCE::ABSOLUTE_FRAME);
-
-    double _get_mass(const int& handle) const;
-    double _get_mass(const std::string& object_name);
-
-    DQ     _get_center_of_mass(const int& handle, const REFERENCE& reference_frame=REFERENCE::ABSOLUTE_FRAME) const;
-    DQ     _get_center_of_mass(const std::string& object_name, const REFERENCE& reference_frame=REFERENCE::ABSOLUTE_FRAME);
-
-    MatrixXd _get_inertia_matrix(const int& handle, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
-    MatrixXd _get_inertia_matrix(const std::string& link_name, const REFERENCE& reference_frame=REFERENCE::BODY_FRAME);
 
 
 };

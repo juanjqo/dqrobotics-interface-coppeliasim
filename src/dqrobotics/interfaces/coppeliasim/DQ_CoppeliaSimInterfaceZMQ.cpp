@@ -347,7 +347,8 @@ void DQ_CoppeliaSimInterfaceZMQ::set_object_translation(const std::string &objec
 
 /**
  * @brief DQ_CoppeliaSimInterfaceZMQ::get_object_rotation returns a unit quaternion that represents the rotation
- *        of an object in the CoppeliaSim scene with respect to the absolute frame.
+ *        of an object in the CoppeliaSim scene with respect to the absolute frame. Because the NEWTON engine
+ *        generates unit quaternion norm issues, we used normalize().
  * @param handle the object handle
  * @return The object rotation.
  */
@@ -358,7 +359,7 @@ DQ DQ_CoppeliaSimInterfaceZMQ::_get_object_rotation(const int &handle) const
                                                                     _ZMQWrapper::get_sim()->handleflag_wxyzquat,
                                                                 _ZMQWrapper::get_sim()->handle_world);
 
-    return DQ(rotation.at(0), rotation.at(1), rotation.at(2), rotation.at(3));
+    return DQ(rotation.at(0), rotation.at(1), rotation.at(2), rotation.at(3)).normalize();
 }
 
 /**
