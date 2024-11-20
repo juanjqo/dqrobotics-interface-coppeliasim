@@ -40,7 +40,7 @@ VectorXd compute_control_signal(const MatrixXd J,
 
 int main()
 {
-    auto vi = std::make_shared<DQ_CoppeliaSimInterfaceZMQExperimental>();
+    auto vi = std::make_shared<DQ_CoppeliaSimInterfaceZMQ>();
     vi->connect();
 
 
@@ -61,7 +61,7 @@ int main()
   //  vi_exp->set_joint_modes(robot.get_joint_names(), DQ_CoppeliaSimInterfaceZMQ::JOINT_MODE::KINEMATIC);
 
 
-    vi->set_object_pose("/Desired_pose", x);
+   // vi->set_object_pose("/Desired_pose", x);
 
     vi->start_simulation();
 

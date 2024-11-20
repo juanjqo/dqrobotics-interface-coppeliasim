@@ -265,9 +265,6 @@ protected:
 
 
 protected:
-    class Impl;
-    std::shared_ptr<Impl> impl_;
-
     std::string host_{"localhost"};
     int rpcPort_{23000};
 
@@ -301,11 +298,6 @@ private:
     void _join_if_joinable_chronometer_thread();
     void _start_chronometer();
     void _check_connection();
-    bool _create_client(const std::string& host,
-                        const int& rpcPort,
-                        const int& cntPort,
-                        const int& verbose_,
-                        const bool& client_flag);
     //-------------------map zone--------------------------------------------
     std::string _map_simulation_state(const int& state);
     std::unordered_map<std::string, int> handles_map_;

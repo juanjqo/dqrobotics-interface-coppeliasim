@@ -6,7 +6,6 @@ class DQ_CoppeliaSimInterfaceZMQExperimental: public DQ_CoppeliaSimInterfaceZMQ
 protected:
     std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ::experimental> vi_exp_;
     std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ> vi_;
-    std::shared_ptr<DQ_CoppeliaSimInterfaceZMQ::Impl> local_impl_;
 
 public:
     DQ_CoppeliaSimInterfaceZMQExperimental();

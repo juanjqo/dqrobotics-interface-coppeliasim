@@ -16,6 +16,7 @@ INCLUDE_DIRECTORIES(${PROJECT_NAME} ${SUBMODULES}/zmqRemoteApi/clients/cpp)
 
 
 add_library(${PROJECT_NAME} SHARED
+    src/dqrobotics/interfaces/coppeliasim/internal/_zmq_wrapper.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterfaceZMQ.cpp
     src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterfaceZMQExperimental.cpp
 #    src/dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimRobot.cpp
