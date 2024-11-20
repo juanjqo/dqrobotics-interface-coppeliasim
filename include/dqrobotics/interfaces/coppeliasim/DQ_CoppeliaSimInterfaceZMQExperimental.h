@@ -89,58 +89,6 @@ public:
     DQ_CoppeliaSimInterfaceZMQExperimental();
     ~DQ_CoppeliaSimInterfaceZMQExperimental();
 
-    //-----------Override from DQ_CoppeliaSimInterface ---------------------------------------
-    bool connect(const std::string& host = "localhost",
-                 const int& port = 23000,
-                 const int&TIMEOUT_IN_MILISECONDS = 300) override;
-
-    void   start_simulation() const override;
-    void   stop_simulation()  const override;
-    void   set_stepping_mode(const bool& flag) const override;
-    void   trigger_next_simulation_step() const override;
-
-    int    get_object_handle(const std::string& objectname) override;
-    std::vector<int> get_object_handles(const std::vector<std::string>& objectnames) override;
-    DQ   get_object_translation(const std::string& objectname) override;
-    void set_object_translation(const std::string& objectname, const DQ& t) override;
-    DQ   get_object_rotation(const std::string& objectname) override;
-    void set_object_rotation(const std::string& objectname, const DQ& r) override;
-    void set_object_pose(const std::string& objectname, const DQ& h) override;
-    DQ   get_object_pose(const std::string& objectname) override;
-
-    VectorXd get_joint_positions(const std::vector<std::string>& jointnames) override;
-    void     set_joint_positions(const std::vector<std::string>& jointnames,
-                             const VectorXd& angles_rad) override;
-    void     set_joint_target_positions(const std::vector<std::string>& jointnames,
-                                    const VectorXd& angles_rad) override;
-    VectorXd get_joint_velocities(const std::vector<std::string>& jointnames) override;
-    void     set_joint_target_velocities(const std::vector<std::string>& jointnames,
-                                     const VectorXd& angles_rad_dot) override;
-    void     set_joint_torques(const std::vector<std::string>& jointnames,
-                           const VectorXd& torques) override;
-    VectorXd get_joint_torques(const std::vector<std::string>& jointnames) override;
-
-    //-----------------------------------------------------------------------------------------------------//
-    //-----------Deprecated methods------------------------------------------------------------------------//
-    [[deprecated("This method is not required with ZeroMQ remote API.")]]
-    void disconnect();
-    [[deprecated("This method is not required with ZeroMQ remote API.")]]
-    void disconnect_all();
-    [[deprecated("The synchronous mode is now called stepping mode. Consider using set_stepping_mode(flag) instead.")]]
-    void set_synchronous(const bool& flag);
-    [[deprecated("This method is not required with ZeroMQ remote API.")]]
-    int wait_for_simulation_step_to_end();
-
-    // For backward compatibility
-    [[deprecated("This signature with MAX_TRY_COUNT is not required with ZeroMQ remote API. "
-                 "If you use the port 19997, this signature will change it to 23000.")]]
-    bool connect(const std::string& ip, const int& port, const int& TIMEOUT_IN_MILISECONDS, const int& MAX_TRY_COUNT);
-
-    // For backward compatibility
-    [[deprecated("This signature with MAX_TRY_COUNT is not required with ZeroMQ remote API. "
-                 "If you use the port 19997, this signature will change it to 23000.")]]
-    bool connect(const int &port, const int& TIMEOUT_IN_MILISECONDS, const int& MAX_TRY_COUNT);
-
 
     void plot_reference_frame(const std::string& name,
                               const DQ& pose,
@@ -258,6 +206,7 @@ protected:
                                                 {ENGINE::VORTEX, 2},
                                                 {ENGINE::NEWTON, 3},
                                                 {ENGINE::MUJOCO, 4}};
+
     std::unordered_map<int,ENGINE> engines_invmap = {{0,ENGINE::BULLET},
                                                       {1,ENGINE::ODE},
                                                       {2,ENGINE::VORTEX},

@@ -40,18 +40,18 @@ VectorXd compute_control_signal(const MatrixXd J,
 
 int main()
 {
-    auto vi = std::make_shared<DQ_CoppeliaSimInterfaceZMQ>();
-    vi->connect();
+    auto vi = std::make_shared<DQ_CoppeliaSimInterfaceZMQExperimental>();
+    vi->connect("localhost", 23000, 1000);
 
 
-  //  vi->close_scene();
+   vi->close_scene();
 
     // Load the models only if they are not already on the scene.
   //  vi_exp->load_from_model_browser("/robots/non-mobile/UR5.ttm", "/UR5");
   //  vi_exp->load_from_model_browser("/other/reference frame.ttm", "/Current_pose");
     //vi_exp->load_from_model_browser("/other/reference frame.ttm", "/Desired_pose");
     DQ x = 1 + 0.5*E_*0.3*k_;
-   // vi->plot_reference_frame("/Desired_pose", DQ(1), 1.5, {0.02, 0.1});
+    vi->plot_reference_frame("/Desired_pose", DQ(1), 1.5, {0.01, 0.1});
 
 
 
@@ -61,7 +61,7 @@ int main()
   //  vi_exp->set_joint_modes(robot.get_joint_names(), DQ_CoppeliaSimInterfaceZMQ::JOINT_MODE::KINEMATIC);
 
 
-   // vi->set_object_pose("/Desired_pose", x);
+    vi->set_object_pose("/Desired_pose", x);
 
     vi->start_simulation();
 

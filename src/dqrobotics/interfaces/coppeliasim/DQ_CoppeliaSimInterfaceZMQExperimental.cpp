@@ -61,31 +61,6 @@ DQ_CoppeliaSimInterfaceZMQExperimental::~DQ_CoppeliaSimInterfaceZMQExperimental(
 
 
 /**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::connect establish a connection between the client (your code) and
- *             the host (the computer running the CoppeliaSim scene).
- *             Calling this method is required before anything else can happen.
- * @param host The IP address of the computer that hosts the CoppeliaSim simulation. If the client (your code)
- *             and the simulation are running in the same computer, you can use "localhost".
- * @param port The port to establish a connection. (e.g. 23000, 23001, 23002, 23003...).
- * @param TIMEOUT_IN_MILISECONDS The timeout to establish the connection.
- * @return true if the connection is established. False otherwise.
- */
-bool DQ_CoppeliaSimInterfaceZMQExperimental::connect(const std::string &host, const int &port, const int &TIMEOUT_IN_MILISECONDS)
-{
-    return _connect(host, port, TIMEOUT_IN_MILISECONDS, -1, -1);
-}
-
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::start_simulation starts the CoppeliaSim simulation.
- */
-void DQ_CoppeliaSimInterfaceZMQExperimental::start_simulation() const
-{
-    _check_client();
-    _ZMQWrapper::get_sim()->startSimulation();
-}
-
-/**
  * @brief DQ_CoppeliaSimInterfaceZMQExperimental::pause_simulation pauses the CoppeliaSim simulation.
  */
 void DQ_CoppeliaSimInterfaceZMQExperimental::_pause_simulation() const
@@ -96,27 +71,6 @@ void DQ_CoppeliaSimInterfaceZMQExperimental::_pause_simulation() const
 }
 
 
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::stop_simulation stops the  CoppeliaSim simulation.
- */
-void DQ_CoppeliaSimInterfaceZMQExperimental::stop_simulation() const
-{
-    _check_client();
-    _ZMQWrapper::get_sim()->stopSimulation();
-}
-
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::set_stepping_mode enables or disables the stepping mode
- *        (formerly known as synchronous mode).
- * @param flag. Eg: set_stepping_mode(true)  // enables the stepping mode
- *                  set_stepping_mode(false)  // disables the stepping mode
- */
-void DQ_CoppeliaSimInterfaceZMQExperimental::set_stepping_mode(const bool &flag) const
-{
-    _check_client();
-    _ZMQWrapper::get_sim()->setStepping(flag);
-}
 
 /**
  * @brief DQ_CoppeliaSimInterfaceZMQExperimental::get_simulation_time returns the simulation time.
@@ -127,16 +81,6 @@ double DQ_CoppeliaSimInterfaceZMQExperimental::_get_simulation_time() const
 {
     _check_client();
     return _ZMQWrapper::get_sim()->getSimulationTime();
-}
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::trigger_next_simulation_step This method sends a trigger
- *        signal to the CoppeliaSim scene, which performs a simulation step when the stepping mode is used.
- */
-void DQ_CoppeliaSimInterfaceZMQExperimental::trigger_next_simulation_step() const
-{
-    _check_client();
-    _ZMQWrapper::get_sim()->step();
 }
 
 
@@ -187,237 +131,6 @@ void DQ_CoppeliaSimInterfaceZMQExperimental::_set_status_bar_message(const std::
 }
 
 
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::get_object_handle gets the object handle from
- *        CoppeliaSim.
- * @param objectname The name of the object in the CoppeliaSim scene.
- * @return the object handle.
- */
-int DQ_CoppeliaSimInterfaceZMQExperimental::get_object_handle(const std::string &objectname)
-{
-    int handle;
-    std::string additional_error_message = "";
-    if (!_start_with_slash(objectname) && enable_deprecated_name_compatibility_ == false)
-    {
-        additional_error_message = std::string("Did you mean \"/" + objectname + "\"? \n");
-    }
-    try
-    {
-        _check_client();
-        auto standard_objectname = _get_standard_name(objectname);
-        handle = _ZMQWrapper::get_sim()->getObject(standard_objectname);
-        //If the handle is not included in the map, then the map is updated.
-        _update_map(standard_objectname, handle);
-    }
-    catch(const std::runtime_error& e)
-    {
-        auto error_msg =
-            std::string(e.what())
-            + " \n"
-            + std::string("The object \"")
-            + objectname + std::string("\"")
-            + std::string(" does not exist in the current scene in CoppeliaSim. \n")
-            + additional_error_message;
-        _throw_runtime_error(error_msg);
-    }
-    return handle;
-}
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::get_object_handles returns a vector containing the object handles.
- * @param objectnames The vector that contains the object names in the CoppeliaSim scene.
- * @return The desired vector of handles.
- */
-std::vector<int> DQ_CoppeliaSimInterfaceZMQExperimental::get_object_handles(const std::vector<std::string> &objectnames)
-{
-    int n = objectnames.size();
-    std::vector<int> handles(n);
-    for(auto i=0;i<n;i++)
-        handles[i]=get_object_handle(objectnames[i]);
-
-    return handles;
-}
-
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::get_object_translation returns a pure quaternion that represents the position
- *        of an object in the CoppeliaSim scene with respect to the absolute frame.
- * @param objectname The name of the object.
- * @return The position of the object.
- */
-DQ DQ_CoppeliaSimInterfaceZMQExperimental::get_object_translation(const std::string &objectname)
-{
-    return _get_object_translation(_get_handle_from_map(objectname));
-}
-
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::set_object_translation sets the translation of an object
- *        in the CoppeliaSim scene.
- * @param objectname the name of the object
- * @param t The pure quaternion that represents the desired position with respect to the absolute frame..
- */
-void DQ_CoppeliaSimInterfaceZMQExperimental::set_object_translation(const std::string &objectname, const DQ &t)
-{
-    _set_object_translation(_get_handle_from_map(objectname), t);
-}
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::get_object_rotation returns a unit quaternion that represents the rotation
- *        of an object in the CoppeliaSim scene with respect to the absolute frame.
- * @param objectname the name of the object.
- * @return The object rotation
- */
-DQ DQ_CoppeliaSimInterfaceZMQExperimental::get_object_rotation(const std::string &objectname)
-{
-    return _get_object_rotation(_get_handle_from_map(objectname));
-}
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::set_object_rotation sets the rotation of an object in the CoppeliaSim scene.
- * @param objectname the name of the object
- * @param r A unit quaternion that represents the desired rotation with respect to the absolute frame.
- */
-void DQ_CoppeliaSimInterfaceZMQExperimental::set_object_rotation(const std::string &objectname, const DQ &r)
-{
-    _set_object_rotation(_get_handle_from_map(objectname), r);
-}
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::get_object_pose returns a unit dual quaternion that represents
- *        the object pose in the CoppeliaSim scene with respect to the absolute frame.
- * @param objectname The name of the object in the CoppeliaSim scene.
- * @return the desired object pose
- */
-DQ DQ_CoppeliaSimInterfaceZMQExperimental::get_object_pose(const std::string &objectname)
-{
-    return _get_object_pose(_get_handle_from_map(objectname));
-}
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::set_object_pose sets the pose of an object in the CoppeliaSim scene.
- * @param objectname The name of the object.
- * @param h A unit dual qualternion that represents the desired object pose with respect to the absolute frame.
- */
-void DQ_CoppeliaSimInterfaceZMQExperimental::set_object_pose(const std::string &objectname, const DQ &h)
-{
-    // For C++20
-    // std::string function_name = static_cast<std::string>(std::source_location::current().function_name());
-    std::string function_name = {"DQ_CoppeliaSimInterface::set_object_pose"};
-    if (!is_unit(h))
-        _throw_runtime_error(function_name + ". The pose must be a unit dual quaternion!");
-    int handle = _get_handle_from_map(objectname);
-    _set_object_pose(handle, h);
-}
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::get_joint_positions gets the joint positions in the CoppeliaSim scene.
- * @param jointnames A vector containing the names of the joints.
- * @return The joint positions
- */
-VectorXd DQ_CoppeliaSimInterfaceZMQExperimental::get_joint_positions(const std::vector<std::string> &jointnames)
-{
-    int n = jointnames.size();
-    VectorXd joint_positions(n);
-    for(auto i=0;i<n;i++)
-        joint_positions(i)=_get_joint_position(jointnames[i]);
-
-    return joint_positions;
-}
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::set_joint_positions sets the joint positions in the CoppeliaSim scene
- * @param jointnames A vector containing the joint names.
- * @param angles_rad The desired joint positions.
- */
-void DQ_CoppeliaSimInterfaceZMQExperimental::set_joint_positions(const std::vector<std::string> &jointnames, const VectorXd &angles_rad)
-{
-    _check_sizes(jointnames, angles_rad, "Error in DQ_CoppeliaSimInterface::set_joint_positions: "
-                                         "jointnames and angles_rad have incompatible sizes");
-    for(std::size_t i=0;i<jointnames.size();i++)
-        _set_joint_position(jointnames.at(i), angles_rad(i));
-}
-
-
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::set_joint_target_positions sets the joint target positions in the CoppeliaSim scene.
- *                      This method requires a dynamics enabled scene, and joints in dynamic mode with position control mode.
- *                      Check this link for more information about joint modes:
- *                      https://www.coppeliarobotics.com/helpFiles/en/jointModes.htm
- *
- * @param jointnames A vector containing the names of the joints.
- * @param angles_rad The desired joint positions.
- */
-void DQ_CoppeliaSimInterfaceZMQExperimental::set_joint_target_positions(const std::vector<std::string> &jointnames, const VectorXd &angles_rad)
-{
-    _check_sizes(jointnames, angles_rad, "Error in DQ_CoppeliaSimInterface::set_joint_target_positions: "
-                                         "jointnames and angles_rad have incompatible sizes");
-    for(std::size_t i=0;i<jointnames.size();i++)
-        _set_joint_target_position(jointnames.at(i), angles_rad(i));
-}
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::get_joint_velocities gets the joint velocities in the CoppeliaSim scene.
- * @param jointnames A vector containing the names of the joints.
- * @return The joint velocities
- */
-VectorXd DQ_CoppeliaSimInterfaceZMQExperimental::get_joint_velocities(const std::vector<std::string> &jointnames)
-{
-    int n = jointnames.size();
-    VectorXd joint_velocities(n);
-    for(auto i=0;i<n;i++)
-        joint_velocities(i)=_get_joint_velocity(jointnames[i]);
-
-    return joint_velocities;
-}
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::set_joint_target_velocities sets the joint target velocities in the CoppeliaSim scene.
- *                      This method requires a dynamics enabled scene, and joints in dynamic mode with velocity control mode.
- *                      Check this link for more information about joint modes:
- *                      https://www.coppeliarobotics.com/helpFiles/en/jointModes.htm
- * @param jointnames    A vector containing the names of the joints.
- * @param angles_rad_dot  The desired joint velocities.
- */
-void DQ_CoppeliaSimInterfaceZMQExperimental::set_joint_target_velocities(const std::vector<std::string> &jointnames, const VectorXd &angles_rad_dot)
-{
-    _check_sizes(jointnames, angles_rad_dot, "Error in DQ_CoppeliaSimInterface::set_joint_target_velocities: "
-                                             "jointnames and angles_rad_Dot have incompatible sizes");
-    for(std::size_t i=0;i<jointnames.size();i++)
-        _set_joint_target_velocity(jointnames.at(i), angles_rad_dot(i));
-}
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::set_joint_torques sets the joint torques in the CoppeliaSim scene.
- *                      This method requires a dynamics enabled scene, and joints in dynamic mode with force control mode.
- *                      Check this link for more information about joint modes:
- *                      https://www.coppeliarobotics.com/helpFiles/en/jointModes.htm
- * @param jointnames A vector containing the names of the joints.
- * @param torques The desired joint torques.
- */
-void DQ_CoppeliaSimInterfaceZMQExperimental::set_joint_torques(const std::vector<std::string> &jointnames, const VectorXd &torques)
-{
-    _check_sizes(jointnames, torques, "Error in DQ_CoppeliaSimInterface::set_joint_torques: "
-                                      "jointnames and torques have incompatible sizes");
-    for(std::size_t i=0;i<jointnames.size();i++)
-        _set_joint_torque(jointnames.at(i), torques(i));
-}
-
-/**
- * @brief DQ_CoppeliaSimInterfaceZMQExperimental::get_joint_torques gets the joint torques in the CoppeliaSim scene.
- * @param jointnames A vector containing the names of the joints.
- * @return the joint torques.
- */
-VectorXd DQ_CoppeliaSimInterfaceZMQExperimental::get_joint_torques(const std::vector<std::string> &jointnames)
-{
-    int n = jointnames.size();
-    VectorXd joint_torques(n);
-    for(auto i=0;i<n;i++)
-        joint_torques(i)=_get_joint_torque(jointnames[i]);
-
-    return joint_torques;
-}
 
 /**
  * @brief DQ_CoppeliaSimInterfaceZMQExperimental::get_jointnames_from_parent_object returns a vector containing all the joint names
@@ -1682,27 +1395,6 @@ MatrixXd DQ_CoppeliaSimInterfaceZMQExperimental::_get_inertia_matrix(const int &
 MatrixXd DQ_CoppeliaSimInterfaceZMQExperimental::_get_inertia_matrix(const std::string &link_name, const REFERENCE &reference_frame)
 {
     return _get_inertia_matrix(_get_handle_from_map(link_name), reference_frame);
-}
-
-//---------------Deprecated methods-----------------------------
-void DQ_CoppeliaSimInterfaceZMQExperimental::disconnect(){}
-void DQ_CoppeliaSimInterfaceZMQExperimental::disconnect_all(){}
-void DQ_CoppeliaSimInterfaceZMQExperimental::set_synchronous(const bool &flag){set_stepping_mode(flag);}
-int DQ_CoppeliaSimInterfaceZMQExperimental::wait_for_simulation_step_to_end(){return 0;}
-
-bool DQ_CoppeliaSimInterfaceZMQExperimental::connect(const int &port,
-                                         const int &TIMEOUT_IN_MILISECONDS,
-                                         const int &MAX_TRY_COUNT)
-{
-    return connect("localhost", _get_port_from_deprecated_default_port(port), TIMEOUT_IN_MILISECONDS);
-}
-
-bool DQ_CoppeliaSimInterfaceZMQExperimental::connect(const std::string &ip,
-                                         const int &port,
-                                         const int &TIMEOUT_IN_MILISECONDS,
-                                         const int &MAX_TRY_COUNT)
-{
-    return connect(ip, _get_port_from_deprecated_default_port(port), TIMEOUT_IN_MILISECONDS);
 }
 
 /**
