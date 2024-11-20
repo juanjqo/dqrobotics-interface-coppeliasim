@@ -98,7 +98,3 @@ INSTALL(FILES
     DESTINATION "src/dqrobotics/interfaces/coppeliasim/robots")
 
 
-add_executable(general_tests src/main.cpp)
-target_link_libraries(general_tests PRIVATE
-                    dqrobotics
-                    ${PROJECT_NAME})
