@@ -136,7 +136,7 @@ public:
 
     int add_primitive(const PRIMITIVE& primitive,
                       const std::string& name,
-                      const std::vector<double>& sizes);
+                      const std::vector<double>& sizes) const;
 
     bool object_exist_on_scene(const std::string& objectname) const;
 
@@ -235,9 +235,6 @@ protected:
 
     DQ _get_pose_from_direction(const DQ& direction, const DQ& point = DQ(1));
 
-    int _add_primitive(const PRIMITIVE& primitive,
-                       const std::string& name,
-                       const std::vector<double>& sizes) const;
 
 
     std::vector<std::string> _create_static_axis_at_origin(const int& parent_handle,
@@ -292,8 +289,6 @@ protected:
                             const bool& move_child_to_parent_pose = true);
 
     void _remove_child_script_from_object(const std::string& objectname, const std::string& script_name = "/Script");
-
-    bool _object_exist_on_scene(const std::string& objectname) const;
 
     void _set_object_name(const int& handle,
                           const std::string& new_object_name) const;
