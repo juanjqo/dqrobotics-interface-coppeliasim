@@ -40,50 +40,6 @@ using namespace Eigen;
 class DQ_CoppeliaSimInterfaceZMQ: public DQ_CoppeliaSimInterface
 {
 public:
-    enum class REFERENCE
-    {
-        BODY_FRAME,
-        ABSOLUTE_FRAME
-    };
-    enum class JOINT_MODE
-    {
-        KINEMATIC,
-        DYNAMIC,
-        DEPENDENT
-    };
-    enum class ENGINE
-    {
-        BULLET,
-        ODE,
-        VORTEX,
-        NEWTON,
-        MUJOCO
-    };
-    enum class JOINT_CONTROL_MODE
-    {
-        FREE,
-        FORCE,
-        VELOCITY,
-        POSITION,
-        SPRING,
-        CUSTOM,
-        TORQUE
-    };
-    enum class PRIMITIVE {
-        PLANE,
-        DISC,
-        CUBOID,
-        SPHEROID,
-        CYLINDER,
-        CONE,
-        CAPSULE
-    };
-    enum class SHAPE_TYPE{
-        DYNAMIC,
-        STATIC,
-        ANY
-    };
-
     DQ_CoppeliaSimInterfaceZMQ();
     ~DQ_CoppeliaSimInterfaceZMQ();
 
