@@ -26,7 +26,6 @@ Contributors:
 
 #include "dqrobotics/DQ.h"
 #include <dqrobotics/interfaces/coppeliasim/DQ_CoppeliaSimInterfaceZMQ.h>
-#include <algorithm>
 #include "internal/_zmq_wrapper.h"
 
 /**
