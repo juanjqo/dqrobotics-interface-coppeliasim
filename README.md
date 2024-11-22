@@ -3,10 +3,16 @@
 
 
 
+# :warning: :no_entry: [DEPRECATED] Active at https://github.com/dqrobotics/cpp-interface-coppeliasim-zmq
 
-# dqrobotics-interface-coppeliasim (Matlab ≥ 2023b, C++17, and CoppeliaSim ≥ v4.7.0-rev0)
+## Don't use this interface for your project! :warning:
 
-An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API. This API provides more functionalities when compared to the legacy remote API (the one used by the [DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep)). However, unlike DQ Robotics, dqrobotics-interface-coppeliasim is experimental and lacks official support. 
+![Static Badge](https://img.shields.io/badge/warning-yellow)
+This project is deprecated. The supported version is now in the [DQ Robotics](https://github.com/dqrobotics/cpp-interface-coppeliasim-zmq). 
+
+# dqrobotics-interface-coppeliasim (Matlab ≥ 2023b, C++17, and CoppeliaSim ≥ v4.7.0-rev0) 
+
+An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on ZeroMQ remote API. This API provides more functionalities than the legacy remote API. ~~However, unlike DQ Robotics, dqrobotics-interface-coppeliasim is experimental and lacks official support.~~ 
 
 |  ![Static Badge](https://img.shields.io/badge/CoppeliaSim-4.8.0--rev0-orange)  | SO | Status (C++17) | Status (Python) |  Status (Matlab ≥ R2023b) |
 | ------------- | ------------- |------------- |------------- |------------- |
@@ -14,20 +20,6 @@ An **unofficial** DQ Robotics interface to connect with CoppeliaSim based on Zer
 | ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)   | Ubuntu {22.04, 24.04} LTS ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)  |  ![Static Badge](https://img.shields.io/badge/beta-yellow)|![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/pre--alpha-red)|
 | ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)   | Windows 11 ![Static Badge](https://img.shields.io/badge/x64-blue) ![Static Badge](https://img.shields.io/badge/arm64-blue)   |  ![Static Badge](https://img.shields.io/badge/pre--alpha-red) | ![Static Badge](https://img.shields.io/badge/unsupported-gray)|![Static Badge](https://img.shields.io/badge/pre--alpha-red)|
 
-
-# Don't use this interface for your project! :warning:
-
-![Static Badge](https://img.shields.io/badge/warning-yellow)
-This project is under active development, incomplete, and experimental/unstable. Therefore, **I highly recommend** the [official DQ Robotics interface](https://github.com/dqrobotics/cpp-interface-vrep) if you want stability and outstanding technical support. 
-
-| Feature  | Status (C++17) | Status (Python) |  Status (Matlab ≥ R2023b) |
-| -------- | -------------- |---------------- |-------------------------- |
-|  Implementation | :construction: under construction :rocket:| -- | :construction: under construction :turtle: |
-| Documentation | :construction: under construction :rocket: | -- | :pushpin: planned |
-| Unit Testing | :construction: under construction :rocket: | -- | :pushpin: planned|
-| Packages | :pushpin: planned | -- | :pushpin: planned |
-
-**The C++17 version is the baseline, and you could expect it to be the most stable, reliable, and better-supported version.**
 
 
 ## Basic requirements (for C++ users)
