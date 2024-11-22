@@ -98,3 +98,19 @@ INSTALL(FILES
     DESTINATION "src/dqrobotics/interfaces/coppeliasim/robots")
 
 
+add_executable(test src/test.cpp)
+target_link_libraries(test PRIVATE
+                    dqrobotics
+                    ${PROJECT_NAME})
+
+add_executable(test_zmq src/test_zmq.cpp)
+target_link_libraries(test_zmq PRIVATE
+                    dqrobotics
+                    ${PROJECT_NAME})
+
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+add_executable(unit_tests src/unit_tests.cpp)
+target_link_libraries(unit_tests ${GTEST_LIBRARIES} ${PROJECT_NAME})
+
+
