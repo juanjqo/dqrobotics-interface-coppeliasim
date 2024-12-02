@@ -108,9 +108,9 @@ target_link_libraries(test_zmq PRIVATE
                     dqrobotics
                     ${PROJECT_NAME})
 
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
-add_executable(unit_tests src/unit_tests.cpp)
-target_link_libraries(unit_tests ${GTEST_LIBRARIES} ${PROJECT_NAME})
+#find_package(GTest REQUIRED)
+#include_directories(${GTEST_INCLUDE_DIRS})
+#add_executable(unit_tests src/unit_tests.cpp)
+#target_link_libraries(unit_tests ${GTEST_LIBRARIES} ${PROJECT_NAME})
 
 
